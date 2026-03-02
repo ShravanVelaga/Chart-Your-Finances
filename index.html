@@ -7,89 +7,69 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#F7F4EF; --surface:#FFFFFF; --border:#E8E2D9;
   --text:#1C1917; --muted:#78716C; --faint:#A8A29E;
   --teal:#0D9488; --teal-lt:#CCFBF1; --teal-dk:#0F766E;
   --amber:#D97706; --amber-lt:#FEF3C7;
-  --rose:#E11D48;  --rose-lt:#FFE4E6;
+  --rose:#E11D48; --rose-lt:#FFE4E6;
   --indigo:#4F46E5; --indigo-lt:#EEF2FF;
   --green:#16A34A; --green-lt:#DCFCE7;
   --purple:#7C3AED; --purple-lt:#EDE9FE;
+  --orange:#EA580C; --orange-lt:#FFEDD5;
 }
-*{font-family:'DM Sans',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-.mono{font-family:'DM Mono',monospace;}
-body{background:var(--bg);color:var(--text);min-height:100vh;}
-
-/* Cards */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;}
-.inset{background:var(--bg);border:1px solid var(--border);border-radius:12px;}
-.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
-
-/* Inputs */
-.field-input{width:100%;background:transparent;border:none;border-bottom:2px solid var(--border);font-family:'DM Mono',monospace;font-size:1.35rem;font-weight:500;color:var(--text);outline:none;padding-bottom:4px;transition:border-color .2s;}
-.field-input:focus{border-color:var(--teal);}
-.small-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:0.9rem;font-weight:500;color:var(--text);outline:none;padding:8px 12px;transition:border-color .2s;}
-.small-input:focus{border-color:var(--teal);}
-
-/* Sliders */
-input[type=range]{-webkit-appearance:none;height:5px;border-radius:99px;outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:99px;cursor:pointer;transition:transform .15s;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.15);}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
-#fdRangeInput::-webkit-slider-thumb{background:var(--indigo);}
-#sipRangeInput::-webkit-slider-thumb{background:var(--teal);}
-
-/* Surplus hero */
-.hero-surplus{background:linear-gradient(135deg,#0F766E 0%,#0D9488 60%,#14B8A6 100%);border-radius:16px;}
-.hero-deficit{background:linear-gradient(135deg,#9F1239 0%,#E11D48 60%,#FB7185 100%);border-radius:16px;}
-
-/* Tabs */
-.tab-bar{display:flex;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:4px;}
-.tab-btn{flex:1;padding:8px 12px;border-radius:9px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
-.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08);}
-.tab-panel{display:none;}.tab-panel.active{display:block;}
-
-/* Stat rows */
-.stat-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;}
-.stat-row+.stat-row{border-top:1px solid var(--border);}
-
-/* Forecast */
-.forecast-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
-.forecast-row:last-child{border-bottom:none;}
-
-/* Tags */
-.tag{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;letter-spacing:.04em;}
-
-/* Asset table */
-.asset-table th{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;padding-bottom:10px;}
-.asset-table td{padding:10px 4px;vertical-align:middle;}
-.asset-table tbody tr{border-bottom:1px solid var(--border);}
-.asset-table tbody tr:last-child{border-bottom:none;}
-
-/* Adj button */
-.adj-btn{font-size:12px;font-weight:600;padding:5px 14px;border-radius:99px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;}
-.adj-btn.on{background:var(--indigo);color:white;border-color:var(--indigo);}
-
-/* Insight cards */
-.insight-card{border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid;}
-.insight-tip{background:#F0FDF4;border-color:#86EFAC;color:#14532D;}
-.insight-warn{background:#FFFBEB;border-color:#FCD34D;color:#78350F;}
-.insight-info{background:var(--indigo-lt);border-color:#C7D2FE;color:#312E81;}
-
-/* Scenario */
-.scenario-tab{padding:6px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
-.scenario-tab.active{background:var(--purple);color:white;border-color:var(--purple);}
-
-/* Milestone pill */
-.milestone-dot{width:10px;height:10px;border-radius:99px;background:var(--amber);border:2px solid white;box-shadow:0 0 0 2px var(--amber);flex-shrink:0;}
-
-/* Animations */
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.anim{animation:fadeUp .4s ease both;}
-
-@media print{.no-print{display:none!important;}}
+*, *::before, *::after { font-family:'DM Sans',sans-serif; box-sizing:border-box; margin:0; padding:0; }
+.mono { font-family:'DM Mono',monospace; }
+body { background:var(--bg); color:var(--text); min-height:100vh; }
+.card  { background:var(--surface); border:1px solid var(--border); border-radius:16px; }
+.inset { background:var(--bg); border:1px solid var(--border); border-radius:12px; }
+.sl    { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+.fi { width:100%; background:transparent; border:none; border-bottom:2px solid var(--border); font-family:'DM Mono',monospace; font-size:1.3rem; font-weight:500; color:var(--text); outline:none; padding-bottom:4px; transition:border-color .2s; }
+.fi:focus { border-color:var(--teal); }
+.si { width:100%; background:var(--bg); border:1.5px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:.9rem; font-weight:500; color:var(--text); outline:none; padding:7px 10px; transition:border-color .2s; }
+.si:focus { border-color:var(--teal); }
+select.si { font-family:'DM Sans',sans-serif; }
+input[type=range] { -webkit-appearance:none; height:5px; border-radius:99px; outline:none; cursor:pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:99px; cursor:pointer; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.15); transition:transform .15s; }
+input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
+#fdRng::-webkit-slider-thumb  { background:var(--indigo); }
+#sipRng::-webkit-slider-thumb { background:var(--teal); }
+.hero-s { background:linear-gradient(135deg,#0F766E,#0D9488,#14B8A6); border-radius:16px; }
+.hero-d { background:linear-gradient(135deg,#9F1239,#E11D48,#FB7185); border-radius:16px; }
+.tab-bar { display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:4px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tab-bar::-webkit-scrollbar { display:none; }
+.tb { flex-shrink:0; padding:8px 14px; border-radius:9px; border:none; background:transparent; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; transition:all .2s; white-space:nowrap; }
+.tb.on { background:var(--surface); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.tp { display:none; } .tp.on { display:block; }
+.sr { display:flex; justify-content:space-between; align-items:center; padding:6px 0; }
+.sr + .sr { border-top:1px solid var(--border); }
+.fr { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+.fr:last-child { border-bottom:none; }
+.tag  { display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding:3px 10px; border-radius:99px; letter-spacing:.04em; }
+.pill { display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:99px; }
+.at th { font-size:11px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.07em; padding-bottom:10px; }
+.at td { padding:9px 4px; vertical-align:middle; }
+.at tbody tr { border-bottom:1px solid var(--border); }
+.at tbody tr:last-child { border-bottom:none; }
+.ab { font-size:12px; font-weight:600; padding:5px 14px; border-radius:99px; border:1.5px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all .2s; }
+.ab.on { background:var(--indigo); color:#fff; border-color:var(--indigo); }
+.ob { font-size:12px; font-weight:600; padding:5px 14px; border-radius:99px; border:1.5px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all .2s; }
+.ob.on { background:var(--orange); color:#fff; border-color:var(--orange); }
+.stab { padding:6px 16px; border-radius:8px; border:1.5px solid var(--border); background:transparent; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; transition:all .2s; }
+.stab.on { background:var(--purple); color:#fff; border-color:var(--purple); }
+.ic { border-radius:12px; padding:14px 16px; margin-bottom:10px; border:1px solid; }
+.ic-tip  { background:#F0FDF4; border-color:#86EFAC; color:#14532D; }
+.ic-warn { background:#FFFBEB; border-color:#FCD34D; color:#78350F; }
+.ic-info { background:var(--indigo-lt); border-color:#C7D2FE; color:#312E81; }
+.ec { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:12px 14px; transition:border-color .2s; }
+.ec:focus-within { border-color:var(--teal); }
+.ec.timed { border-color:#FCD34D; background:#FFFEF0; }
+@keyframes fu { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.anim { animation:fu .4s ease both; }
+@media (max-width:640px) { .fi { font-size:1.1rem; } .hm { display:none !important; } }
+@media print { .np { display:none !important; } }
 </style>
 </head>
 <body class="p-4 md:p-6">
@@ -103,844 +83,665 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
       <span class="tag" style="background:var(--indigo-lt);color:var(--indigo)">FY 2024–25</span>
     </div>
     <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Master Planning <span style="color:var(--teal)">Dashboard</span></h1>
-    <p class="text-sm mt-1" style="color:var(--muted)">Tax · Investments · Forecast · Goal Planner · What-If Scenarios</p>
+    <p class="text-sm mt-1" style="color:var(--muted)">Tax · Investments · Forecast · Goals · What-If Scenarios</p>
   </div>
-  <div class="flex gap-2 no-print shrink-0">
-    <button onclick="window.print()" class="text-sm font-semibold px-5 py-2.5 rounded-xl text-white" style="background:var(--teal)">↓ PDF</button>
-    <button onclick="resetToZero()" class="text-sm font-semibold px-5 py-2.5 rounded-xl border" style="border-color:var(--border);color:var(--muted)">Clear All</button>
+  <div class="flex flex-wrap gap-2 np shrink-0">
+    <button onclick="window.print()" class="text-sm font-semibold px-4 py-2 rounded-xl text-white" style="background:var(--teal)">↓ PDF</button>
+    <button onclick="exportData()" class="text-sm font-semibold px-4 py-2 rounded-xl border" style="border-color:var(--border);color:var(--muted)">↓ Backup</button>
+    <button onclick="document.getElementById('impF').click()" class="text-sm font-semibold px-4 py-2 rounded-xl border" style="border-color:var(--border);color:var(--muted)">↑ Restore</button>
+    <input type="file" id="impF" accept=".json" class="hidden" onchange="importData(event)">
+    <button onclick="resetAll()" class="text-sm font-semibold px-4 py-2 rounded-xl border" style="border-color:var(--rose-lt);color:var(--rose)">Clear</button>
   </div>
 </header>
 
-<!-- ALWAYS-VISIBLE SURPLUS STRIP -->
+<!-- INCOME + SURPLUS -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-  <!-- Income inputs -->
   <div class="lg:col-span-2 card p-6 space-y-5">
-    <p class="section-label">Combined Household Income</p>
+    <p class="sl">Combined Household Income</p>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--indigo)">Spouse 1 · Annual ₹</p>
-        <input type="text" id="b1" value="0" oninput="handleInput(this);recalc();saveToLocal()" class="field-input mono">
+        <input type="text" id="b1" value="0" oninput="hi(this);rc();sv()" class="fi mono">
         <div class="flex gap-2 mt-2 items-center">
           <span class="text-xs" style="color:var(--faint)">Growth %/yr</span>
-          <input type="number" id="g1" value="8" min="0" max="30" oninput="recalc();saveToLocal()" class="small-input mono" style="width:64px;padding:4px 8px;font-size:.8rem">
+          <input type="number" id="g1" value="8" min="0" max="30" oninput="rc();sv()" class="si mono" style="width:60px;padding:4px 8px;font-size:.8rem">
         </div>
       </div>
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--teal)">Spouse 2 · Annual ₹</p>
-        <input type="text" id="b2" value="0" oninput="handleInput(this);recalc();saveToLocal()" class="field-input mono">
+        <input type="text" id="b2" value="0" oninput="hi(this);rc();sv()" class="fi mono">
         <div class="flex gap-2 mt-2 items-center">
           <span class="text-xs" style="color:var(--faint)">Growth %/yr</span>
-          <input type="number" id="g2" value="8" min="0" max="30" oninput="recalc();saveToLocal()" class="small-input mono" style="width:64px;padding:4px 8px;font-size:.8rem">
+          <input type="number" id="g2" value="8" min="0" max="30" oninput="rc();sv()" class="si mono" style="width:60px;padding:4px 8px;font-size:.8rem">
         </div>
       </div>
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--rose)">Total Expenses · Annual ₹</p>
-        <input type="text" id="expTotal" value="0" oninput="handleInput(this);recalc();saveToLocal()" class="field-input mono" readonly style="color:var(--faint);cursor:default" title="Auto-summed from expense categories below">
-        <p class="text-xs mt-2" style="color:var(--faint)">← auto from categories</p>
+        <p class="mono text-xl font-bold pt-1" id="expDisp" style="color:var(--rose)">₹0</p>
+        <p class="text-xs mt-2" style="color:var(--faint)">← auto-summed from categories</p>
       </div>
     </div>
-    <!-- Tax summary inline -->
     <div class="grid grid-cols-2 gap-3 pt-1">
-      <div class="inset p-3 space-y-1">
-        <p class="text-xs font-semibold" style="color:var(--indigo)">Spouse 1 · Net In-Hand</p>
-        <div class="stat-row"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="s1_gross">₹0</span></div>
-        <div class="stat-row"><span class="text-xs" style="color:var(--faint)">Tax</span><span class="mono text-xs" style="color:var(--rose)" id="s1_tax">₹0</span></div>
-        <div class="stat-row"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="s1_net">₹0</span></div>
-        <div class="stat-row"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="s1_rate">0%</span></div>
+      <div class="inset p-3">
+        <p class="text-xs font-semibold mb-2" style="color:var(--indigo)">Spouse 1 · Net In-Hand</p>
+        <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="s1g">₹0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Tax</span><span class="mono text-xs" style="color:var(--rose)" id="s1t">₹0</span></div>
+        <div class="sr"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="s1n">₹0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="s1r">0%</span></div>
       </div>
-      <div class="inset p-3 space-y-1">
-        <p class="text-xs font-semibold" style="color:var(--teal)">Spouse 2 · Net In-Hand</p>
-        <div class="stat-row"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="s2_gross">₹0</span></div>
-        <div class="stat-row"><span class="text-xs" style="color:var(--faint)">Tax</span><span class="mono text-xs" style="color:var(--rose)" id="s2_tax">₹0</span></div>
-        <div class="stat-row"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="s2_net">₹0</span></div>
-        <div class="stat-row"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="s2_rate">0%</span></div>
+      <div class="inset p-3">
+        <p class="text-xs font-semibold mb-2" style="color:var(--teal)">Spouse 2 · Net In-Hand</p>
+        <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="s2g">₹0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Tax</span><span class="mono text-xs" style="color:var(--rose)" id="s2t">₹0</span></div>
+        <div class="sr"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="s2n">₹0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="s2r">0%</span></div>
       </div>
     </div>
   </div>
-
-  <!-- Surplus hero -->
-  <div class="hero-surplus p-6 flex flex-col justify-between text-white" id="surplusCard">
-    <p class="text-sm font-semibold opacity-80 uppercase tracking-widest" id="surplusLabel">Monthly Surplus</p>
+  <div class="hero-s p-6 flex flex-col justify-between text-white" id="sCard">
+    <p class="text-sm font-semibold opacity-80 uppercase tracking-widest" id="sLbl">Monthly Surplus</p>
     <div class="my-4">
-      <p class="mono text-4xl font-bold leading-none" id="monthlySurplusDisplay">₹0</p>
-      <p class="mono text-sm opacity-60 mt-2" id="annualSurplusDisplay">₹0 / year</p>
+      <p class="mono text-4xl font-bold leading-none" id="sDisp">₹0</p>
+      <p class="mono text-sm opacity-60 mt-2" id="saDisp">₹0 / year</p>
     </div>
     <div class="grid grid-cols-2 gap-3">
       <div class="rounded-xl p-3 text-center" style="background:rgba(255,255,255,.15)">
         <p class="text-xs font-semibold opacity-75 uppercase tracking-wider mb-1">To FD</p>
-        <p class="mono text-base font-bold" id="fdVal">₹0</p>
+        <p class="mono text-base font-bold" id="fdV">₹0</p>
       </div>
       <div class="rounded-xl p-3 text-center" style="background:rgba(255,255,255,.15)">
         <p class="text-xs font-semibold opacity-75 uppercase tracking-wider mb-1">To SIP</p>
-        <p class="mono text-base font-bold" id="sipVal">₹0</p>
+        <p class="mono text-base font-bold" id="sipV">₹0</p>
       </div>
     </div>
   </div>
 </div>
 
 <!-- TAB BAR -->
-<div class="tab-bar no-print" id="tabBar">
-  <button class="tab-btn active" onclick="switchTab('expenses')">💸 Expenses</button>
-  <button class="tab-btn" onclick="switchTab('investments')">📈 Investments</button>
-  <button class="tab-btn" onclick="switchTab('forecast')">🔭 Forecast</button>
-  <button class="tab-btn" onclick="switchTab('scenarios')">⚖️ What-If</button>
-  <button class="tab-btn" onclick="switchTab('insights')">💡 Insights</button>
+<div class="tab-bar np">
+  <button class="tb on" onclick="switchTab('expenses',this)">💸 Expenses</button>
+  <button class="tb" onclick="switchTab('investments',this)">📈 Investments</button>
+  <button class="tb" onclick="switchTab('forecast',this)">🔭 Forecast</button>
+  <button class="tb" onclick="switchTab('scenarios',this)">⚖️ What-If</button>
+  <button class="tb" onclick="switchTab('insights',this)">💡 Insights</button>
 </div>
 
-<!-- ═══════════════════════════════════════ TAB: EXPENSES ═══ -->
-<div id="tab-expenses" class="tab-panel active space-y-4">
-  <div class="card p-6">
-    <div class="flex justify-between items-center mb-5">
-      <div>
-        <p class="section-label">Monthly Expense Breakdown</p>
-        <p class="text-sm mt-1" style="color:var(--muted)">All amounts are monthly — annual total is auto-calculated</p>
-      </div>
-      <div class="mono text-right">
-        <p class="text-xs" style="color:var(--faint)">Monthly Total</p>
-        <p class="text-xl font-bold" style="color:var(--rose)" id="expMonthlyTotal">₹0</p>
-      </div>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="expenseGrid">
-      <!-- Expense categories rendered by JS -->
-    </div>
-    <button onclick="addExpenseCategory()" class="mt-4 text-sm font-semibold px-4 py-2 rounded-lg border no-print" style="border-color:var(--border);color:var(--muted)">+ Add Category</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════ TAB: INVESTMENTS ═══ -->
-<div id="tab-investments" class="tab-panel space-y-5">
+<!-- TAB: EXPENSES -->
+<div id="tp-expenses" class="tp on space-y-4">
   <div class="card p-6">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
       <div>
-        <p class="section-label">Investment Matrix</p>
-        <p class="text-sm mt-1" style="color:var(--muted)">Yield from non-tax-free assets is added to each spouse's taxable gross</p>
+        <p class="sl">Monthly Expense Categories</p>
+        <p class="text-sm mt-1" style="color:var(--muted)">Set start &amp; end year per category (blank = permanent). Toggle inflation per row individually.</p>
       </div>
-      <div class="flex gap-2 no-print">
-        <select id="categorySelector" class="small-input text-sm" style="max-width:230px">
+      <div class="flex gap-2 items-center flex-wrap np">
+        <button id="eiBtn" onclick="toggleExpInfl()" class="ob">📈 Inflation Off</button>
+        <button onclick="addExp()" class="text-sm font-semibold px-4 py-2 rounded-lg border" style="border-color:var(--border);color:var(--muted)">+ Add</button>
+      </div>
+    </div>
+    <div class="hm grid mb-3 items-center" style="grid-template-columns:1.8fr 1.1fr 0.55fr 0.55fr 0.4fr 0.9fr 26px;gap:8px">
+      <p class="sl">Category</p><p class="sl">Monthly ₹</p><p class="sl">Start Yr</p><p class="sl">End Yr</p><p class="sl text-center">Infl?</p><p class="sl">Status</p><p></p>
+    </div>
+    <div id="expList" class="space-y-2"></div>
+    <div class="mt-4 p-3 rounded-xl flex justify-between items-center" style="background:var(--rose-lt)">
+      <span class="text-sm font-semibold" style="color:var(--rose)">Current Monthly Total</span>
+      <span class="mono text-lg font-bold" style="color:var(--rose)" id="expMTot">₹0</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: INVESTMENTS -->
+<div id="tp-investments" class="tp space-y-5">
+  <div class="card p-6">
+    <p class="sl mb-4">EPF / Provident Fund</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--indigo)">S1 Basic Salary ₹/yr</p><input type="text" id="e1b" value="0" oninput="hi(this);rc();sv()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--teal)">S2 Basic Salary ₹/yr</p><input type="text" id="e2b" value="0" oninput="hi(this);rc();sv()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">EPF Interest %</p><input type="number" id="epfR" value="8.25" min="1" max="15" step="0.05" oninput="rc();sv()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Current Balance ₹</p><input type="text" id="epfB" value="0" oninput="hi(this);rc();sv()" class="si mono"></div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mt-4">
+      <div class="inset p-3 text-center"><p class="text-xs" style="color:var(--faint)">Monthly Contribution</p><p class="mono text-base font-bold mt-1" id="epfM">₹0</p></div>
+      <div class="inset p-3 text-center"><p class="text-xs" style="color:var(--faint)">EPF Corpus in 30 Yrs</p><p class="mono text-base font-bold mt-1" style="color:var(--teal)" id="epfC30">₹0 Cr</p></div>
+      <div class="inset p-3 text-center"><p class="text-xs" style="color:var(--faint)">Note</p><p class="text-xs mt-1" style="color:var(--muted)">12% employee + 12% employer · tax-free on withdrawal</p></div>
+    </div>
+  </div>
+
+  <div class="card p-6">
+    <div class="flex justify-between items-center mb-3">
+      <p class="sl">EMI / Loan Tracker</p>
+      <button onclick="addEMI()" class="text-sm font-semibold px-4 py-2 rounded-lg border np" style="border-color:var(--border);color:var(--muted)">+ Add Loan</button>
+    </div>
+    <p class="text-sm mb-4" style="color:var(--muted)">Loans reduce monthly surplus for their duration and drop off automatically in the forecast when paid off.</p>
+    <div id="emiList" class="space-y-3"></div>
+    <div id="emiNone" class="text-center py-4" style="color:var(--faint)"><p class="text-sm">No loans added yet.</p></div>
+    <div class="mt-4 p-3 rounded-xl flex justify-between items-center" style="background:var(--orange-lt)">
+      <span class="text-sm font-semibold" style="color:var(--orange)">Total Current Monthly EMI</span>
+      <span class="mono text-lg font-bold" style="color:var(--orange)" id="emiTot">₹0</span>
+    </div>
+  </div>
+
+  <div class="card p-6">
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
+      <div><p class="sl">Investment Matrix</p><p class="text-sm mt-1" style="color:var(--muted)">Yield from non-tax-free assets is added to each spouse's taxable gross</p></div>
+      <div class="flex gap-2 np">
+        <select id="catSel" class="si" style="max-width:220px">
           <option value="7.0">FD — Major Bank (7%)</option>
           <option value="8.5">FD — Small Finance (8.5%)</option>
           <option value="7.5">Govt Schemes (7.5%)</option>
           <option value="3.5">Rental Property (3.5%)</option>
           <option value="0.0">Custom Asset</option>
         </select>
-        <button onclick="addCategorizedRow()" class="text-sm font-semibold px-4 py-2 rounded-xl text-white shrink-0" style="background:var(--indigo)">+ Add</button>
+        <button onclick="addAssetRow()" class="text-sm font-semibold px-4 py-2 rounded-xl text-white shrink-0" style="background:var(--indigo)">+ Add</button>
       </div>
     </div>
-    <div id="roiWarning" class="hidden mb-4" style="background:#FFFBEB;border:1px solid #FCD34D;color:#92400E;border-radius:8px;padding:10px 14px;font-size:13px;">⚠ One or more assets have ROI above 30% — double-check.</div>
+    <div id="roiW" class="hidden mb-4" style="background:#FFFBEB;border:1px solid #FCD34D;color:#92400E;border-radius:8px;padding:10px 14px;font-size:13px">⚠ One or more assets have ROI above 30% — please verify.</div>
     <div class="overflow-x-auto">
-      <table class="w-full asset-table">
+      <table class="w-full at">
         <thead><tr>
           <th class="text-left">Asset</th><th class="text-left">Principal (₹)</th>
           <th class="text-center">ROI %</th><th class="text-left">Owner</th>
-          <th class="text-center">Tax-Free</th><th class="no-print"></th>
+          <th class="text-center">Tax-Free</th><th class="np"></th>
         </tr></thead>
-        <tbody id="assetBody"></tbody>
-        <tfoot>
-          <tr style="border-top:2px solid var(--border)">
-            <td class="pt-3 text-sm font-semibold" style="color:var(--muted)">Portfolio Total</td>
-            <td class="pt-3 mono text-sm font-bold" id="totalPrincipal">₹0</td>
-            <td class="pt-3 mono text-sm font-bold text-center" style="color:var(--teal)" id="blendedROI">—</td>
-            <td colspan="3" class="pt-3 text-xs" style="color:var(--faint)">Blended yield</td>
-          </tr>
-        </tfoot>
+        <tbody id="aBody"></tbody>
+        <tfoot><tr style="border-top:2px solid var(--border)">
+          <td class="pt-3 text-sm font-semibold" style="color:var(--muted)">Portfolio Total</td>
+          <td class="pt-3 mono text-sm font-bold" id="totP">₹0</td>
+          <td class="pt-3 mono text-sm font-bold text-center" style="color:var(--teal)" id="bROI">—</td>
+          <td colspan="3" class="pt-3 text-xs" style="color:var(--faint)">Blended yield</td>
+        </tr></tfoot>
       </table>
     </div>
   </div>
 
-  <!-- Reinvestment strategy -->
   <div class="card p-6">
-    <p class="section-label mb-5">Reinvestment Strategy</p>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+    <p class="sl mb-5">Reinvestment Strategy</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">SIP Returns %/yr</p><input type="number" id="sipRet" value="12" min="1" max="30" oninput="rc();sv()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">FD Rate %/yr</p><input type="number" id="fdRt" value="7" min="1" max="15" oninput="rc();sv()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %/yr</p><input type="number" id="infR" value="5" min="1" max="15" oninput="rc();sv()" class="si mono"></div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">SIP Returns %/yr</p>
-        <input type="number" id="sipRet" value="12" min="1" max="30" oninput="recalc();saveToLocal()" class="small-input mono">
+        <div class="flex justify-between mb-2"><p class="text-sm font-medium" style="color:var(--indigo)">FD Split</p><p class="mono text-sm font-bold" style="color:var(--indigo)" id="fdLbl">50%</p></div>
+        <input type="range" id="fdRng" min="0" max="100" value="50" oninput="vs('fd');rc();sv()" class="w-full" style="background:linear-gradient(to right,var(--indigo) 50%,var(--border) 50%)">
       </div>
       <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">FD Rate %/yr</p>
-        <input type="number" id="fdRate" value="7" min="1" max="15" oninput="recalc();saveToLocal()" class="small-input mono">
-      </div>
-      <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %/yr</p>
-        <input type="number" id="infRet" value="5" min="1" max="15" oninput="recalc();saveToLocal()" class="small-input mono">
+        <div class="flex justify-between mb-2"><p class="text-sm font-medium" style="color:var(--teal)">SIP Split</p><p class="mono text-sm font-bold" style="color:var(--teal)" id="sipLbl">50%</p></div>
+        <input type="range" id="sipRng" min="0" max="100" value="50" oninput="vs('sip');rc();sv()" class="w-full" style="background:linear-gradient(to right,var(--teal) 50%,var(--border) 50%)">
       </div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <div>
-        <div class="flex justify-between mb-2"><p class="text-sm font-medium" style="color:var(--indigo)">FD Split</p><p class="mono text-sm font-bold" style="color:var(--indigo)" id="fdLabel">50%</p></div>
-        <input type="range" id="fdRangeInput" min="0" max="100" value="50" oninput="validateSplit('fd');recalc();saveToLocal()" class="w-full" style="background:linear-gradient(to right,var(--indigo) 50%,var(--border) 50%)">
-      </div>
-      <div>
-        <div class="flex justify-between mb-2"><p class="text-sm font-medium" style="color:var(--teal)">SIP Split</p><p class="mono text-sm font-bold" style="color:var(--teal)" id="sipLabel">50%</p></div>
-        <input type="range" id="sipRangeInput" min="0" max="100" value="50" oninput="validateSplit('sip');recalc();saveToLocal()" class="w-full" style="background:linear-gradient(to right,var(--teal) 50%,var(--border) 50%)">
-      </div>
-    </div>
-    <p class="text-xs mt-3 text-center" style="color:var(--faint)">Sliders always sum to 100%</p>
+    <p class="text-xs mt-3 text-center" style="color:var(--faint)">Always sums to 100%</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ TAB: FORECAST ═══ -->
-<div id="tab-forecast" class="tab-panel space-y-5">
+<!-- TAB: FORECAST -->
+<div id="tp-forecast" class="tp space-y-5">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-    <!-- 30-Year Wealth Path -->
     <div class="card p-6">
       <div class="flex justify-between items-center mb-4">
-        <p class="section-label">30-Year Wealth Path</p>
-        <button id="adjToggleBtn" onclick="toggleAdj()" class="adj-btn no-print">Inflation Adj.</button>
+        <p class="sl">30-Year Wealth Path</p>
+        <button id="adjBtn" onclick="togAdj()" class="ab np">Inflation Adj.</button>
       </div>
-      <div id="forecastTable"></div>
-      <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="adjNote">Showing nominal values · includes salary growth</p>
+      <div id="fcTbl"></div>
+      <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="adjNote">Nominal · salary growth · time-bound expenses &amp; EMIs modelled</p>
     </div>
-
-    <!-- Milestones -->
     <div class="card p-6">
-      <div class="flex justify-between items-center mb-4">
-        <p class="section-label">Milestone Markers</p>
-        <button onclick="addMilestone()" class="text-xs font-semibold px-3 py-1.5 rounded-lg border no-print" style="border-color:var(--border);color:var(--muted)">+ Add</button>
+      <div class="flex justify-between items-center mb-3">
+        <p class="sl">Milestone Markers</p>
+        <button onclick="addMS()" class="text-xs font-semibold px-3 py-1.5 rounded-lg border np" style="border-color:var(--border);color:var(--muted)">+ Add</button>
       </div>
-      <p class="text-sm mb-4" style="color:var(--muted)">Add financial goals — they'll appear on the forecast as markers.</p>
-      <div id="milestoneList" class="space-y-3"></div>
-      <div id="milestoneNone" class="text-center py-6" style="color:var(--faint)">
-        <p class="text-2xl mb-2">🎯</p>
-        <p class="text-sm">No milestones yet. Add goals like "Child's college", "Home purchase", "Retirement".</p>
+      <p class="text-sm mb-4" style="color:var(--muted)">Goals appear as markers on the forecast bars at the right year.</p>
+      <div id="msList" class="space-y-3"></div>
+      <div id="msNone" class="text-center py-5" style="color:var(--faint)">
+        <p class="text-2xl mb-1">🎯</p><p class="text-sm">Add goals — Child's college, Home purchase, Retirement…</p>
       </div>
     </div>
   </div>
-
-  <!-- Goal Planner + Drawdown -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
     <div class="card p-6 space-y-4">
-      <div><p class="section-label">Goal Planner</p><p class="text-sm mt-1" style="color:var(--muted)">How much do you need to invest monthly to hit a target?</p></div>
+      <div><p class="sl">Goal Planner</p><p class="text-sm mt-1" style="color:var(--muted)">How much to invest monthly to hit a target corpus?</p></div>
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Target Corpus (₹)</p>
-          <input type="text" id="goalCorpus" value="0" oninput="handleInput(this);recalc();saveToLocal()" class="small-input mono">
-        </div>
-        <div>
-          <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">In (years)</p>
-          <input type="number" id="goalYears" value="20" min="1" max="40" oninput="recalc();saveToLocal()" class="small-input mono">
-        </div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Target Corpus (₹)</p><input type="text" id="gC" value="0" oninput="hi(this);rc();sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">In (years)</p><input type="number" id="gY" value="20" min="1" max="40" oninput="rc();sv()" class="si mono"></div>
       </div>
       <div class="inset p-4 text-center">
         <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="color:var(--faint)">Required Monthly SIP</p>
-        <p class="mono text-2xl font-bold" style="color:var(--amber)" id="goalSIP">₹0</p>
-        <p class="text-sm mt-2 font-medium" id="goalFeasibility"></p>
+        <p class="mono text-2xl font-bold" style="color:var(--amber)" id="gSIP">₹0</p>
+        <p class="text-sm mt-2 font-medium" id="gFeas"></p>
       </div>
     </div>
-
     <div class="card p-6 space-y-4">
-      <div><p class="section-label">Corpus Drawdown Simulator</p><p class="text-sm mt-1" style="color:var(--muted)">If you retire with a corpus, how long will it last?</p></div>
+      <div><p class="sl">Corpus Drawdown Simulator</p><p class="text-sm mt-1" style="color:var(--muted)">If you retire with a corpus, how long does it last?</p></div>
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Retirement Corpus (₹)</p>
-          <input type="text" id="ddCorpus" value="0" oninput="handleInput(this);recalc();saveToLocal()" class="small-input mono">
-        </div>
-        <div>
-          <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Annual Withdraw (₹)</p>
-          <input type="text" id="ddWithdraw" value="0" oninput="handleInput(this);recalc();saveToLocal()" class="small-input mono">
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Portfolio Return %</p>
-          <input type="number" id="ddReturn" value="8" min="1" max="20" oninput="recalc();saveToLocal()" class="small-input mono">
-        </div>
-        <div>
-          <p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %</p>
-          <input type="number" id="ddInflation" value="5" min="1" max="15" oninput="recalc();saveToLocal()" class="small-input mono">
-        </div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Retirement Corpus (₹)</p><input type="text" id="ddC" value="0" oninput="hi(this);rc();sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Annual Withdrawal (₹)</p><input type="text" id="ddW" value="0" oninput="hi(this);rc();sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Portfolio Return %</p><input type="number" id="ddRt" value="8" min="1" max="20" oninput="rc();sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %</p><input type="number" id="ddI" value="5" min="1" max="15" oninput="rc();sv()" class="si mono"></div>
       </div>
       <div class="inset p-4 text-center">
         <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="color:var(--faint)">Corpus Lasts</p>
-        <p class="mono text-2xl font-bold" style="color:var(--purple)" id="ddResult">—</p>
-        <p class="text-sm mt-2" style="color:var(--muted)" id="ddNote"></p>
+        <p class="mono text-2xl font-bold" style="color:var(--purple)" id="ddRes">—</p>
+        <p class="text-sm mt-1" style="color:var(--muted)" id="ddNote"></p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ TAB: WHAT-IF SCENARIOS ═══ -->
-<div id="tab-scenarios" class="tab-panel space-y-5">
+<!-- TAB: WHAT-IF -->
+<div id="tp-scenarios" class="tp space-y-5">
   <div class="card p-6">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
-      <div>
-        <p class="section-label">What-If Scenario Comparison</p>
-        <p class="text-sm mt-1" style="color:var(--muted)">Compare two different financial paths side by side over 30 years.</p>
-      </div>
-      <div class="flex gap-2 no-print">
-        <button class="scenario-tab active" id="scTab_A" onclick="switchScenario('A')">Scenario A</button>
-        <button class="scenario-tab" id="scTab_B" onclick="switchScenario('B')">Scenario B</button>
-      </div>
+      <div><p class="sl">What-If Scenario Comparison</p><p class="text-sm mt-1" style="color:var(--muted)">Compare two financial paths side-by-side over 10, 20, and 30 years.</p></div>
+      <div class="flex gap-2 np"><button class="stab on" id="stA" onclick="swSC('A')">Scenario A</button><button class="stab" id="stB" onclick="swSC('B')">Scenario B</button></div>
     </div>
-
-    <!-- Scenario inputs -->
-    <div id="scenarioEditor" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Scenario Name</p>
-        <input type="text" id="sc_name" placeholder="e.g. Buy a House" class="small-input" oninput="saveScenario()">
-      </div>
-      <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Extra Monthly Expense (₹)</p>
-        <input type="text" id="sc_extraExp" value="0" oninput="handleInput(this);saveScenario();renderComparison()" class="small-input mono">
-      </div>
-      <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">One-Time Investment (₹)</p>
-        <input type="text" id="sc_lumpsum" value="0" oninput="handleInput(this);saveScenario();renderComparison()" class="small-input mono">
-      </div>
-      <div>
-        <p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Extra Monthly Income (₹)</p>
-        <input type="text" id="sc_extraInc" value="0" oninput="handleInput(this);saveScenario();renderComparison()" class="small-input mono">
-      </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Scenario Name</p><input type="text" id="scN" placeholder="e.g. Buy a House" class="si" oninput="saveSC()"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Extra Monthly Expense (₹)</p><input type="text" id="scE" value="0" oninput="hi(this);saveSC()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">One-Time Investment (₹)</p><input type="text" id="scL" value="0" oninput="hi(this);saveSC()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Extra Monthly Income (₹)</p><input type="text" id="scI" value="0" oninput="hi(this);saveSC()" class="si mono"></div>
     </div>
-
-    <!-- Comparison table -->
-    <div id="scenarioComparison"></div>
+    <div id="scComp"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ TAB: INSIGHTS ═══ -->
-<div id="tab-insights" class="tab-panel">
+<!-- TAB: INSIGHTS -->
+<div id="tp-insights" class="tp">
   <div class="card p-6">
-    <p class="section-label mb-5">Smart Insights & Tax Optimisation</p>
-    <div id="insightsPanel">
-      <p class="text-sm" style="color:var(--faint)">Fill in your income and assets to see personalised insights.</p>
-    </div>
+    <p class="sl mb-5">Smart Insights &amp; Tax Optimisation</p>
+    <div id="insP"><p class="text-sm" style="color:var(--faint)">Fill in your data to see personalised insights.</p></div>
   </div>
 </div>
 
 <p id="audit" class="mono text-xs text-center pb-4" style="color:var(--faint)">Audit: Ready</p>
-</div><!-- /max-w -->
+</div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────────────────────
-let isAdj = false;
-let activeScenario = 'A';
-let scenarios = {
-  A: { name:'Scenario A', extraExp:0, lumpsum:0, extraInc:0 },
-  B: { name:'Scenario B', extraExp:0, lumpsum:0, extraInc:0 }
-};
-let milestones = [];
-
-const EXP_CATEGORIES = [
-  {id:'rent',    label:'Rent / EMI',    icon:'🏠', val:0},
-  {id:'food',    label:'Food & Dining', icon:'🍽', val:0},
-  {id:'travel',  label:'Travel & Fuel', icon:'🚗', val:0},
-  {id:'health',  label:'Health & Med',  icon:'💊', val:0},
-  {id:'kids',    label:'Kids / School', icon:'👶', val:0},
-  {id:'leisure', label:'Leisure',       icon:'🎬', val:0},
-  {id:'savings', label:'LIC / Insurance',icon:'🛡', val:0},
-  {id:'other',   label:'Other',         icon:'📦', val:0},
+let isAdj=false,expInflOn=false,activeSC='A';
+let SC={A:{name:'Scenario A',extraExp:0,lumpsum:0,extraInc:0},B:{name:'Scenario B',extraExp:0,lumpsum:0,extraInc:0}};
+let MS=[],EMIS=[];
+let EXPS=[
+  {id:'rent',label:'Rent / EMI',icon:'🏠',val:0,sYr:null,eYr:null,infl:true},
+  {id:'food',label:'Food & Dining',icon:'🍽',val:0,sYr:null,eYr:null,infl:true},
+  {id:'travel',label:'Travel & Fuel',icon:'🚗',val:0,sYr:null,eYr:null,infl:true},
+  {id:'health',label:'Health & Med',icon:'💊',val:0,sYr:null,eYr:null,infl:true},
+  {id:'kids',label:'Kids / School',icon:'👶',val:0,sYr:null,eYr:null,infl:true},
+  {id:'leisure',label:'Leisure',icon:'🎬',val:0,sYr:null,eYr:null,infl:true},
+  {id:'ins',label:'LIC / Insurance',icon:'🛡',val:0,sYr:null,eYr:null,infl:false},
+  {id:'other',label:'Other',icon:'📦',val:0,sYr:null,eYr:null,infl:true},
 ];
-let expCategories = JSON.parse(JSON.stringify(EXP_CATEGORIES));
 
-// ── TABS ───────────────────────────────────────────────────────────────
-function switchTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
-  if (name === 'scenarios') renderComparison();
-  if (name === 'insights')  renderInsights();
-  if (name === 'forecast')  renderForecast();
+function switchTab(name,btn){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tp-'+name).classList.add('on');
+  if(btn)btn.classList.add('on');
+  if(name==='forecast'){rFC();rMS();}
+  if(name==='insights')rIns();
+  if(name==='scenarios')rSC();
 }
 
-// ── EXPENSE CATEGORIES ─────────────────────────────────────────────────
-function renderExpenses() {
-  const grid = document.getElementById('expenseGrid');
-  grid.innerHTML = '';
-  expCategories.forEach((cat, i) => {
-    const div = document.createElement('div');
-    div.className = 'inset p-4 flex items-center gap-3';
-    div.innerHTML = `
-      <span style="font-size:1.4rem">${cat.icon}</span>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium truncate">${cat.label}</p>
-        <div class="flex items-center gap-1 mt-1">
-          <span class="text-xs" style="color:var(--faint)">₹</span>
-          <input type="text" value="${cat.val.toLocaleString('en-IN')}"
-            class="bg-transparent mono text-sm font-medium outline-none w-full border-b"
-            style="border-color:var(--border)"
-            oninput="handleInput(this); expCategories[${i}].val=parseFloat(this.value.replace(/,/g,''))||0; sumExpenses(); recalc(); saveToLocal()"
-          >
-          <span class="text-xs shrink-0" style="color:var(--faint)">/mo</span>
-        </div>
-      </div>
-      <button onclick="expCategories.splice(${i},1); renderExpenses(); sumExpenses(); recalc(); saveToLocal()"
-        class="text-lg no-print" style="color:var(--faint)"
-        onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">×</button>
-    `;
-    grid.appendChild(div);
-  });
-  sumExpenses();
+function hi(el){const r=el.value.replace(/,/g,'');if(!r||isNaN(r)){el.value='0';return;}el.value=parseFloat(r).toLocaleString('en-IN');}
+function fmt(n){return '₹'+Math.round(n).toLocaleString('en-IN');}
+function fmtCr(n){return '₹'+(n/10000000).toFixed(2)+' Cr';}
+function gv(id){return parseFloat((document.getElementById(id)?.value||'0').replace(/,/g,''))||0;}
+function gn(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function gi(id){return parseInt(document.getElementById(id)?.value)||0;}
+function setT(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+
+function vs(src){
+  let fd=gi('fdRng'),sip=gi('sipRng');
+  if(src==='fd'){sip=100-fd;document.getElementById('sipRng').value=sip;}
+  else{fd=100-sip;document.getElementById('fdRng').value=fd;}
+  document.getElementById('fdLbl').textContent=fd+'%';
+  document.getElementById('sipLbl').textContent=sip+'%';
+  const tr=(id,c,v)=>{document.getElementById(id).style.background=`linear-gradient(to right,${c} ${v}%,var(--border) ${v}%)`;};
+  tr('fdRng','var(--indigo)',fd);tr('sipRng','var(--teal)',sip);
+}
+function togAdj(){
+  isAdj=!isAdj;
+  document.getElementById('adjBtn').classList.toggle('on',isAdj);
+  document.getElementById('adjNote').textContent=isAdj
+    ?'Inflation-adjusted (real) values · salary growth · time-bound expenses modelled'
+    :'Nominal · salary growth · time-bound expenses & EMIs modelled';
+  rFC();sv();
+}
+function toggleExpInfl(){
+  expInflOn=!expInflOn;
+  const btn=document.getElementById('eiBtn');
+  btn.classList.toggle('on',expInflOn);
+  btn.textContent=expInflOn?'📈 Inflation On':'📈 Inflation Off';
+  rc();sv();
 }
 
-function addExpenseCategory() {
-  expCategories.push({id:'custom'+Date.now(), label:'Custom', icon:'📌', val:0});
-  renderExpenses(); saveToLocal();
+function calcTax(income,isSal){
+  let t=(isSal&&income>0)?Math.max(0,income-75000):income;
+  if(t<=1200000)return 0;
+  let x=0;
+  [{f:0,to:400000,r:0},{f:400000,to:800000,r:.05},{f:800000,to:1200000,r:.10},
+   {f:1200000,to:1600000,r:.15},{f:1600000,to:2000000,r:.20},{f:2000000,to:2400000,r:.25},{f:2400000,to:Infinity,r:.30}]
+  .forEach(s=>{if(t>s.f)x+=(Math.min(t,s.to===Infinity?t:s.to)-s.f)*s.r;});
+  return x*1.04;
 }
 
-function sumExpenses() {
-  const monthly = expCategories.reduce((s,c)=>s+(c.val||0),0);
-  document.getElementById('expMonthlyTotal').textContent = '₹'+Math.round(monthly).toLocaleString('en-IN');
-  document.getElementById('expTotal').value = Math.round(monthly*12).toLocaleString('en-IN');
+function expForYear(cat,yr){
+  const start=cat.sYr===null?0:cat.sYr,end=cat.eYr===null?Infinity:cat.eYr;
+  if(yr<start||yr>end)return 0;
+  if(!expInflOn||!cat.infl)return cat.val;
+  return cat.val*Math.pow(1+gn('infR')/100,yr);
+}
+function totalExpMo(yr){
+  let t=EXPS.reduce((s,c)=>s+expForYear(c,yr),0);
+  EMIS.forEach(e=>{const es=e.sYr||0,ee=es+(e.yrs||0)-1;if(yr>=es&&yr<=ee)t+=e.emi||0;});
+  return t;
+}
+function sumExp(){
+  const m=EXPS.reduce((s,c)=>s+(c.val||0),0)+EMIS.reduce((s,e)=>s+(e.emi||0),0);
+  setT('expMTot',fmt(m));setT('expDisp',fmt(m*12));return m*12;
 }
 
-// ── UTILS ──────────────────────────────────────────────────────────────
-function handleInput(el) {
-  const raw = el.value.replace(/,/g,'');
-  if (!raw || isNaN(raw)) { el.value='0'; return; }
-  el.value = parseFloat(raw).toLocaleString('en-IN');
-}
-
-function updateSliderTrack(id, color, val) {
-  document.getElementById(id).style.background =
-    `linear-gradient(to right,${color} ${val}%,var(--border) ${val}%)`;
-}
-
-function validateSplit(source) {
-  let fd  = parseInt(document.getElementById('fdRangeInput').value);
-  let sip = parseInt(document.getElementById('sipRangeInput').value);
-  if (source==='fd')  { sip=100-fd;  document.getElementById('sipRangeInput').value=sip; }
-  else                { fd =100-sip; document.getElementById('fdRangeInput').value=fd; }
-  document.getElementById('fdLabel').textContent  = fd+'%';
-  document.getElementById('sipLabel').textContent = sip+'%';
-  updateSliderTrack('fdRangeInput','var(--indigo)',fd);
-  updateSliderTrack('sipRangeInput','var(--teal)',sip);
-}
-
-function toggleAdj() {
-  isAdj = !isAdj;
-  document.getElementById('adjToggleBtn').classList.toggle('on',isAdj);
-  document.getElementById('adjNote').textContent = isAdj
-    ? 'Showing inflation-adjusted (real) values · includes salary growth'
-    : 'Showing nominal values · includes salary growth';
-  renderForecast(); saveToLocal();
-}
-
-function fmt(n) { return '₹'+Math.round(n).toLocaleString('en-IN'); }
-
-// ── TAX ────────────────────────────────────────────────────────────────
-function calculateTax(income, isSalaried) {
-  let taxable = (isSalaried&&income>0) ? Math.max(0,income-75000) : income;
-  if (taxable<=1200000) return 0;
-  let tax=0;
-  [{from:0,to:400000,rate:0},{from:400000,to:800000,rate:.05},
-   {from:800000,to:1200000,rate:.10},{from:1200000,to:1600000,rate:.15},
-   {from:1600000,to:2000000,rate:.20},{from:2000000,to:2400000,rate:.25},
-   {from:2400000,to:Infinity,rate:.30}]
-  .forEach(s=>{ if(taxable>s.from) tax+=(Math.min(taxable,s.to===Infinity?taxable:s.to)-s.from)*s.rate; });
-  return tax*1.04;
-}
-
-// ── ASSET TABLE ────────────────────────────────────────────────────────
-function addCategorizedRow() {
-  const sel=document.getElementById('categorySelector');
-  addRow(sel.options[sel.selectedIndex].text.split('(')[0].replace(/—.*/,'').trim(),0,parseFloat(sel.value));
-  saveToLocal();
-}
-
-function addRow(name='Asset',p=0,y=0,o='1',isTaxFree=false) {
-  const tr=document.createElement('tr');
-  tr.className='asset-row';
-  tr.innerHTML=`
-    <td><input type="text" value="${name}" class="name_in bg-transparent text-sm outline-none w-28 italic" style="color:var(--muted)" onchange="saveToLocal()"></td>
-    <td><input type="text" value="${p.toLocaleString('en-IN')}" class="p_in bg-transparent border-b mono text-sm font-medium w-32 outline-none" style="border-color:var(--border)" oninput="handleInput(this);recalc();saveToLocal()"></td>
-    <td class="text-center"><input type="number" value="${y}" class="y_in bg-transparent border-b mono text-sm font-medium w-12 outline-none text-center" style="border-color:var(--border);color:var(--teal)" oninput="validateROI(this);recalc();saveToLocal()"></td>
-    <td><select class="o_in text-sm rounded-lg px-2 py-1 border outline-none" style="background:var(--bg);border-color:var(--border)" onchange="recalc();saveToLocal()">
-      <option value="1" ${o==='1'?'selected':''}>Spouse 1</option>
-      <option value="2" ${o==='2'?'selected':''}>Spouse 2</option>
-    </select></td>
-    <td class="text-center"><input type="checkbox" class="tf_in w-4 h-4 cursor-pointer" style="accent-color:var(--teal)" ${isTaxFree?'checked':''} onchange="recalc();saveToLocal()"></td>
-    <td class="text-right no-print"><button onclick="this.closest('tr').remove();recalc();saveToLocal()" style="color:var(--faint);font-size:1rem" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕</button></td>`;
-  document.getElementById('assetBody').appendChild(tr);
-  recalc();
-}
-
-function validateROI(el) {
-  const v=parseFloat(el.value)||0;
-  el.style.color=v>30?'var(--amber)':'var(--teal)';
-  document.getElementById('roiWarning').classList.toggle('hidden',
-    !Array.from(document.querySelectorAll('.y_in')).some(i=>(parseFloat(i.value)||0)>30));
-}
-
-// ── MILESTONES ─────────────────────────────────────────────────────────
-function addMilestone() {
-  milestones.push({label:'Goal', year:10, amount:0});
-  renderMilestoneList(); renderForecast(); saveToLocal();
-}
-
-function renderMilestoneList() {
-  const list=document.getElementById('milestoneList');
-  const none=document.getElementById('milestoneNone');
-  none.style.display=milestones.length?'none':'block';
+function rExp(){
+  const focused=document.activeElement;
+  const focIdx=focused?.dataset?.ei,focFld=focused?.dataset?.ef,focPos=focused?.selectionStart;
+  const list=document.getElementById('expList');
   list.innerHTML='';
-  milestones.forEach((m,i)=>{
+  EXPS.forEach((cat,i)=>{
+    const timed=cat.sYr!==null||cat.eYr!==null;
+    let st=`<span class="pill" style="background:var(--green-lt);color:var(--green)">● Ongoing</span>`;
+    if(cat.sYr!==null&&cat.eYr!==null)st=`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">Yr ${cat.sYr}–${cat.eYr}</span>`;
+    else if(cat.eYr!==null)st=`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">Ends yr ${cat.eYr}</span>`;
+    else if(cat.sYr!==null&&cat.sYr>0)st=`<span class="pill" style="background:var(--indigo-lt);color:var(--indigo)">Starts yr ${cat.sYr}</span>`;
     const div=document.createElement('div');
-    div.className='inset p-3 flex items-center gap-3';
-    div.innerHTML=`
-      <div class="milestone-dot"></div>
-      <div class="flex-1 grid grid-cols-3 gap-2">
-        <input type="text" value="${m.label}" class="small-input text-sm col-span-1" style="padding:5px 8px" oninput="milestones[${i}].label=this.value;renderForecast();saveToLocal()">
-        <input type="number" value="${m.year}" min="1" max="30" class="small-input mono text-sm" style="padding:5px 8px" oninput="milestones[${i}].year=parseInt(this.value)||1;renderForecast();saveToLocal()">
-        <input type="text" value="${m.amount?m.amount.toLocaleString('en-IN'):''}" placeholder="₹ Target" class="small-input mono text-sm" style="padding:5px 8px" oninput="handleInput(this);milestones[${i}].amount=parseFloat(this.value.replace(/,/g,''))||0;renderForecast();saveToLocal()">
+    div.className='ec'+(timed?' timed':'');
+    div.innerHTML=`<div class="grid items-center" style="grid-template-columns:1.8fr 1.1fr 0.55fr 0.55fr 0.4fr 0.9fr 26px;gap:8px">
+      <div class="flex items-center gap-2 min-w-0">
+        <span style="font-size:1.1rem;flex-shrink:0">${cat.icon}</span>
+        <input type="text" value="${cat.label}" data-ei="${i}" data-ef="label" class="bg-transparent text-sm font-medium outline-none min-w-0 w-full border-b" style="border-color:var(--border)" onchange="EXPS[${i}].label=this.value;sv()">
       </div>
-      <button onclick="milestones.splice(${i},1);renderMilestoneList();renderForecast();saveToLocal()" style="color:var(--faint)" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕</button>`;
+      <div class="flex items-center gap-1">
+        <span class="text-xs shrink-0" style="color:var(--faint)">₹</span>
+        <input type="text" value="${cat.val?cat.val.toLocaleString('en-IN'):''}" placeholder="0" data-ei="${i}" data-ef="val" class="bg-transparent mono text-sm font-medium outline-none w-full border-b" style="border-color:var(--border)" oninput="EXPS[${i}].val=parseFloat(this.value.replace(/,/g,''))||0;sumExp();rc();sv()">
+      </div>
+      <input type="number" value="${cat.sYr===null?'':cat.sYr}" placeholder="Now" min="0" max="30" class="si mono text-xs text-center" style="padding:4px 5px" onchange="EXPS[${i}].sYr=this.value===''?null:parseInt(this.value);rExp();rc();sv()">
+      <input type="number" value="${cat.eYr===null?'':cat.eYr}" placeholder="∞" min="1" max="30" class="si mono text-xs text-center" style="padding:4px 5px" onchange="EXPS[${i}].eYr=this.value===''?null:parseInt(this.value);rExp();rc();sv()">
+      <div class="flex justify-center"><input type="checkbox" class="w-4 h-4 cursor-pointer" style="accent-color:var(--orange)" ${cat.infl?'checked':''} onchange="EXPS[${i}].infl=this.checked;rc();sv()" title="Apply inflation"></div>
+      <div>${st}</div>
+      <button onclick="EXPS.splice(${i},1);rExp();sumExp();rc();sv()" style="color:var(--faint);font-size:1.1rem;line-height:1" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">×</button>
+    </div>`;
+    list.appendChild(div);
+  });
+  sumExp();
+  if(focIdx!==undefined&&focFld==='val'){
+    const t=list.querySelector(`[data-ei="${focIdx}"][data-ef="val"]`);
+    if(t){t.focus();try{t.setSelectionRange(focPos,focPos);}catch(e){}}
+  }
+}
+function addExp(){EXPS.push({id:'c'+Date.now(),label:'New Category',icon:'📌',val:0,sYr:null,eYr:null,infl:true});rExp();sv();}
+
+function addEMI(){EMIS.push({id:'e'+Date.now(),label:'Home Loan',emi:0,sYr:0,yrs:20});rEMI();sv();}
+function rEMI(){
+  const c=document.getElementById('emiList'),none=document.getElementById('emiNone');
+  none.style.display=EMIS.length?'none':'block';c.innerHTML='';
+  EMIS.forEach((e,i)=>{
+    const div=document.createElement('div');div.className='inset p-4';
+    const endYr=(e.sYr||0)+(e.yrs||0);
+    div.innerHTML=`<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Loan Name</p><input type="text" value="${e.label}" class="si text-sm" oninput="EMIS[${i}].label=this.value;sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Monthly EMI (₹)</p><input type="text" value="${e.emi?e.emi.toLocaleString('en-IN'):''}" placeholder="0" class="si mono text-sm" oninput="hi(this);EMIS[${i}].emi=parseFloat(this.value.replace(/,/g,''))||0;sumExp();rc();sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Starts (yr from now)</p><input type="number" value="${e.sYr||0}" min="0" max="30" class="si mono text-sm" oninput="EMIS[${i}].sYr=parseInt(this.value)||0;rc();sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Duration (years)</p><input type="number" value="${e.yrs||20}" min="1" max="30" class="si mono text-sm" oninput="EMIS[${i}].yrs=parseInt(this.value)||1;rc();sv()"></div>
+    </div>
+    <div class="flex justify-between items-center mt-3">
+      <span class="text-xs" style="color:var(--faint)">Ends year ${endYr} · Total paid: ${fmt((e.emi||0)*(e.yrs||0)*12)}
+        <span class="pill ml-2" style="background:var(--green-lt);color:var(--green)">✓ Surplus ↑ after yr ${endYr}</span>
+      </span>
+      <button onclick="EMIS.splice(${i},1);rEMI();sumExp();rc();sv()" class="text-sm font-semibold" style="color:var(--rose)">Remove</button>
+    </div>`;
+    c.appendChild(div);
+  });
+  setT('emiTot',fmt(EMIS.reduce((s,e)=>s+(e.emi||0),0)));
+}
+
+function addAssetRow(){
+  const sel=document.getElementById('catSel');
+  addARow(sel.options[sel.selectedIndex].text.split('(')[0].replace(/—.*/,'').trim(),0,parseFloat(sel.value));sv();
+}
+function addARow(name='Asset',p=0,y=0,o='1',tf=false){
+  const tr=document.createElement('tr');tr.className='ar';
+  tr.innerHTML=`<td><input type="text" value="${name}" class="nm bg-transparent text-sm outline-none w-24 italic" style="color:var(--muted)" onchange="sv()"></td>
+    <td><input type="text" value="${p.toLocaleString('en-IN')}" class="pv bg-transparent border-b mono text-sm font-medium w-28 outline-none" style="border-color:var(--border)" oninput="hi(this);rc();sv()"></td>
+    <td class="text-center"><input type="number" value="${y}" class="yv bg-transparent border-b mono text-sm font-medium w-12 outline-none text-center" style="border-color:var(--border);color:var(--teal)" oninput="chkROI(this);rc();sv()"></td>
+    <td><select class="ov si text-sm" style="width:auto;padding:5px 8px" onchange="rc();sv()">
+      <option value="1" ${o==='1'?'selected':''}>Spouse 1</option><option value="2" ${o==='2'?'selected':''}>Spouse 2</option>
+    </select></td>
+    <td class="text-center"><input type="checkbox" class="tv w-4 h-4 cursor-pointer" style="accent-color:var(--teal)" ${tf?'checked':''} onchange="rc();sv()"></td>
+    <td class="text-right np"><button onclick="this.closest('tr').remove();rc();sv()" style="color:var(--faint)" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕</button></td>`;
+  document.getElementById('aBody').appendChild(tr);rc();
+}
+function chkROI(el){el.style.color=(parseFloat(el.value)||0)>30?'var(--amber)':'var(--teal)';
+  document.getElementById('roiW').classList.toggle('hidden',![...document.querySelectorAll('.yv')].some(i=>(parseFloat(i.value)||0)>30));}
+function getAssets(s1b,s2b){
+  let totP=0,s1G=s1b,s2G=s2b,ty=0;
+  document.querySelectorAll('.ar').forEach(r=>{
+    const p=parseFloat(r.querySelector('.pv').value.replace(/,/g,''))||0;
+    const y=parseFloat(r.querySelector('.yv').value)||0;
+    const o=r.querySelector('.ov').value,tf=r.querySelector('.tv').checked;
+    const ya=(p*y)/100;totP+=p;ty+=ya;
+    if(!tf){if(o==='1')s1G+=ya;else s2G+=ya;}
+  });
+  return{totP,s1G,s2G,ty};
+}
+
+function calcEPF(){
+  const mc=(gv('e1b')+gv('e2b'))*0.24/12,r=gn('epfR')/100;
+  setT('epfM',fmt(mc));
+  let c=gv('epfB');for(let i=0;i<30;i++)c=(c+mc*12)*(1+r);
+  setT('epfC30',fmtCr(c));return{mc,c30:c};
+}
+
+function addMS(){MS.push({label:'Goal',year:10,amount:0});rMS();rFC();sv();}
+function rMS(){
+  const list=document.getElementById('msList');
+  document.getElementById('msNone').style.display=MS.length?'none':'block';
+  list.innerHTML='';
+  MS.forEach((m,i)=>{
+    const div=document.createElement('div');div.className='inset p-3 flex items-center gap-3';
+    div.innerHTML=`<div style="width:10px;height:10px;border-radius:99px;background:var(--amber);border:2px solid #fff;box-shadow:0 0 0 2px var(--amber);flex-shrink:0"></div>
+      <div class="flex-1 grid grid-cols-3 gap-2">
+        <input type="text" value="${m.label}" class="si text-sm" style="padding:5px 8px" oninput="MS[${i}].label=this.value;rFC();sv()">
+        <input type="number" value="${m.year}" min="1" max="30" class="si mono text-sm" style="padding:5px 8px" oninput="MS[${i}].year=parseInt(this.value)||1;rFC();sv()">
+        <input type="text" value="${m.amount?m.amount.toLocaleString('en-IN'):''}" placeholder="₹ Target" class="si mono text-sm" style="padding:5px 8px" oninput="hi(this);MS[${i}].amount=parseFloat(this.value.replace(/,/g,''))||0;rFC();sv()">
+      </div>
+      <button onclick="MS.splice(${i},1);rMS();rFC();sv()" style="color:var(--faint)" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕</button>`;
     list.appendChild(div);
   });
 }
 
-// ── CORE RECALC ────────────────────────────────────────────────────────
-function getBaseInputs() {
-  const b1  = parseFloat(document.getElementById('b1').value.replace(/,/g,''))  ||0;
-  const b2  = parseFloat(document.getElementById('b2').value.replace(/,/g,''))  ||0;
-  const g1  = (parseFloat(document.getElementById('g1').value)||0)/100;
-  const g2  = (parseFloat(document.getElementById('g2').value)||0)/100;
-  const exp = parseFloat(document.getElementById('expTotal').value.replace(/,/g,''))||0;
-  const fdSplitPct  = parseInt(document.getElementById('fdRangeInput').value)/100;
-  const sipSplitPct = parseInt(document.getElementById('sipRangeInput').value)/100;
-  const sipR = (parseFloat(document.getElementById('sipRet').value)||12)/100;
-  const fdR  = (parseFloat(document.getElementById('fdRate').value)||7)/100;
-  const inf  = (parseFloat(document.getElementById('infRet').value)||5)/100;
-  return {b1,b2,g1,g2,exp,fdSplitPct,sipSplitPct,sipR,fdR,inf};
+function rc(){
+  const b1=gv('b1'),b2=gv('b2'),fdP=gi('fdRng')/100,sipP=gi('sipRng')/100,sipRt=gn('sipRet')/100;
+  const{totP,s1G,s2G,ty}=getAssets(b1,b2);
+  const t1=calcTax(s1G,b1>0),t2=calcTax(s2G,b2>0);
+  setT('s1g',fmt(s1G));setT('s1t',fmt(t1));setT('s1n',fmt(s1G-t1));setT('s1r',s1G>0?((t1/s1G)*100).toFixed(1)+'%':'0%');
+  setT('s2g',fmt(s2G));setT('s2t',fmt(t2));setT('s2n',fmt(s2G-t2));setT('s2r',s2G>0?((t2/s2G)*100).toFixed(1)+'%':'0%');
+  const expMo=totalExpMo(0),ann=b1+b2+ty-t1-t2-(expMo*12),mo=ann/12,def=mo<0,abs=Math.abs(Math.round(mo));
+  const card=document.getElementById('sCard');
+  card.className=(def?'hero-d':'hero-s')+' p-6 flex flex-col justify-between text-white';
+  setT('sLbl',def?'Monthly Deficit ⚠':'Monthly Surplus');
+  setT('sDisp',(def?'−₹':'₹')+abs.toLocaleString('en-IN'));
+  setT('saDisp',(def?'−₹':'₹')+Math.abs(Math.round(ann)).toLocaleString('en-IN')+' / year');
+  const mFD=def?0:mo*fdP,mSIP=def?0:mo*sipP;
+  setT('fdV',fmt(mFD));setT('sipV',fmt(mSIP));setT('totP',fmt(totP));setT('bROI',totP>0?((ty/totP)*100).toFixed(2)+'%':'—');
+  calcEPF();
+  const gc=gv('gC'),gy=gi('gY');
+  if(gc>0){const r=sipRt/12,n=gy*12,req=r===0?gc/n:gc*r/(Math.pow(1+r,n)-1);
+    setT('gSIP',fmt(req));const ok=!def&&req<=mSIP;
+    document.getElementById('gFeas').textContent=ok?'✓ Achievable with current surplus':`⚠ Needs ${fmt(Math.max(0,req-mSIP))} more/month`;
+    document.getElementById('gFeas').style.color=ok?'var(--green)':'var(--rose)';
+  }else{setT('gSIP','₹0');document.getElementById('gFeas').textContent='';}
+  const dc=gv('ddC'),dw=gv('ddW'),dr=gn('ddRt')/100,di=gn('ddI')/100;
+  if(dc>0&&dw>0){let c=dc,yr=0;while(c>0&&yr<100){c=(c-dw*Math.pow(1+di,yr))*(1+dr);yr++;}
+    setT('ddRes',yr>=100?'100+ years':yr+' years');setT('ddNote',yr>=100?'Corpus outlasts 100-year horizon 🎉':`Depleted ~${yr} years after retirement`);
+  }else{setT('ddRes','—');setT('ddNote','');}
+  if(document.getElementById('tp-forecast').classList.contains('on'))rFC();
+  if(document.getElementById('tp-insights').classList.contains('on'))rIns();
+  if(document.getElementById('tp-scenarios').classList.contains('on'))rSC();
+  document.getElementById('audit').textContent=`b1=${b1.toLocaleString()}·b2=${b2.toLocaleString()}·t1=${Math.round(t1).toLocaleString()}·t2=${Math.round(t2).toLocaleString()}·yield=${Math.round(ty).toLocaleString()}·${def?'deficit':'surplus'}/mo=${abs.toLocaleString()}`;
 }
 
-function getAssetTotals(s1Base, s2Base) {
-  let totP=0, s1G=s1Base, s2G=s2Base, totalYield=0;
-  document.querySelectorAll('.asset-row').forEach(row=>{
-    const p=parseFloat(row.querySelector('.p_in').value.replace(/,/g,''))||0;
-    const y=parseFloat(row.querySelector('.y_in').value)||0;
-    const o=row.querySelector('.o_in').value;
-    const isTF=row.querySelector('.tf_in').checked;
-    const yAmt=(p*y)/100;
-    totP+=p; totalYield+=yAmt;
-    if(!isTF){if(o==='1')s1G+=yAmt;else s2G+=yAmt;}
-  });
-  return {totP,s1G,s2G,totalYield};
-}
-
-function recalc() {
-  const {b1,b2,g1,g2,exp,fdSplitPct,sipSplitPct,sipR,fdR,inf} = getBaseInputs();
-  const {totP,s1G,s2G,totalYield} = getAssetTotals(b1,b2);
-
-  const t1=calculateTax(s1G,b1>0), t2=calculateTax(s2G,b2>0);
-  document.getElementById('s1_gross').textContent=fmt(s1G);
-  document.getElementById('s1_tax').textContent=fmt(t1);
-  document.getElementById('s1_net').textContent=fmt(s1G-t1);
-  document.getElementById('s1_rate').textContent=s1G>0?((t1/s1G)*100).toFixed(1)+'%':'0%';
-  document.getElementById('s2_gross').textContent=fmt(s2G);
-  document.getElementById('s2_tax').textContent=fmt(t2);
-  document.getElementById('s2_net').textContent=fmt(s2G-t2);
-  document.getElementById('s2_rate').textContent=s2G>0?((t2/s2G)*100).toFixed(1)+'%':'0%';
-
-  const annualSurplus=b1+b2+totalYield-t1-t2-exp;
-  const netMonthly=annualSurplus/12;
-  const isDeficit=netMonthly<0;
-  const displayAbs=Math.abs(Math.round(netMonthly));
-
-  const card=document.getElementById('surplusCard');
-  card.className=(isDeficit?'hero-deficit':'hero-surplus')+' p-6 flex flex-col justify-between text-white';
-  document.getElementById('surplusLabel').textContent=isDeficit?'Monthly Deficit ⚠':'Monthly Surplus';
-  document.getElementById('monthlySurplusDisplay').textContent=(isDeficit?'−₹':'₹')+displayAbs.toLocaleString('en-IN');
-  document.getElementById('annualSurplusDisplay').textContent=(isDeficit?'−₹':'₹')+Math.abs(Math.round(annualSurplus)).toLocaleString('en-IN')+' / year';
-
-  const mFD=isDeficit?0:netMonthly*fdSplitPct;
-  const mSIP=isDeficit?0:netMonthly*sipSplitPct;
-  document.getElementById('fdVal').textContent=fmt(mFD);
-  document.getElementById('sipVal').textContent=fmt(mSIP);
-  document.getElementById('totalPrincipal').textContent=fmt(totP);
-  document.getElementById('blendedROI').textContent=totP>0?((totalYield/totP)*100).toFixed(2)+'%':'—';
-
-  // only re-render forecast if that tab is visible
-  if (document.getElementById('tab-forecast').classList.contains('active')) renderForecast();
-  if (document.getElementById('tab-insights').classList.contains('active')) renderInsights();
-  if (document.getElementById('tab-scenarios').classList.contains('active')) renderComparison();
-
-  // Goal planner
-  const goalCorpus=parseFloat(document.getElementById('goalCorpus').value.replace(/,/g,''))||0;
-  const goalYears=parseInt(document.getElementById('goalYears').value)||20;
-  const feasEl=document.getElementById('goalFeasibility');
-  if(goalCorpus>0){
-    const r=sipR/12, n=goalYears*12;
-    const reqSIP=r===0?goalCorpus/n:goalCorpus*r/(Math.pow(1+r,n)-1);
-    const avail=isDeficit?0:mSIP;
-    const feasible=!isDeficit&&reqSIP<=avail;
-    document.getElementById('goalSIP').textContent=fmt(reqSIP);
-    feasEl.textContent=feasible?'✓ Achievable with current surplus':`⚠ Needs ₹${Math.round(reqSIP-avail).toLocaleString('en-IN')} more/month`;
-    feasEl.style.color=feasible?'var(--green)':'var(--rose)';
-  } else { document.getElementById('goalSIP').textContent='₹0'; feasEl.textContent=''; }
-
-  // Drawdown
-  const ddC=parseFloat(document.getElementById('ddCorpus').value.replace(/,/g,''))||0;
-  const ddW=parseFloat(document.getElementById('ddWithdraw').value.replace(/,/g,''))||0;
-  const ddR=(parseFloat(document.getElementById('ddReturn').value)||8)/100;
-  const ddI=(parseFloat(document.getElementById('ddInflation').value)||5)/100;
-  if(ddC>0&&ddW>0){
-    let corpus=ddC, yr=0, maxYr=100;
-    while(corpus>0&&yr<maxYr){
-      const withdraw=ddW*Math.pow(1+ddI,yr);
-      corpus=(corpus-withdraw)*(1+ddR);
-      yr++;
-    }
-    document.getElementById('ddResult').textContent=yr>=maxYr?'100+ years':yr+' years';
-    document.getElementById('ddNote').textContent=yr>=maxYr?'Your corpus outlasts a 100-year horizon 🎉':`Depleted at age ~${yr} from retirement · real withdrawal grows with inflation`;
-  } else { document.getElementById('ddResult').textContent='—'; document.getElementById('ddNote').textContent=''; }
-
-  document.getElementById('audit').textContent=
-    `b1=${b1.toLocaleString()} · b2=${b2.toLocaleString()} · t1=${Math.round(t1).toLocaleString()} · t2=${Math.round(t2).toLocaleString()} · yield=${Math.round(totalYield).toLocaleString()} · ${isDeficit?'deficit':'surplus'}/mo=${displayAbs.toLocaleString()}`;
-}
-
-// ── FORECAST (with salary growth + milestones) ─────────────────────────
-function renderForecast() {
-  const {b1,b2,g1,g2,exp,fdSplitPct,sipSplitPct,sipR,fdR,inf} = getBaseInputs();
-  const {totP,totalYield} = getAssetTotals(b1,b2);
-
-  // Pre-simulate 30 years to get maxTotal for bar scaling
-  function simulate(years, extraExpMo=0, lumpsumAdd=0, extraIncMo=0) {
-    let cFD=totP+lumpsumAdd, cSIP=0;
-    let salary1=b1, salary2=b2, annualExp=exp;
-    for(let yr=1;yr<=years;yr++){
-      salary1*=(1+g1); salary2*=(1+g2);
-      annualExp*=(1+inf);
-      const s1G=salary1+totalYield/2; const s2G=salary2+totalYield/2;
-      const t1=calculateTax(s1G,true), t2=calculateTax(s2G,true);
-      const surplus=(salary1+salary2+totalYield-t1-t2-annualExp)/12+(extraIncMo-extraExpMo);
-      const mFD=Math.max(0,surplus)*fdSplitPct;
-      const mSIP=Math.max(0,surplus)*sipSplitPct;
-      cFD=(cFD+mFD*12)*(1+fdR);
-      cSIP=(cSIP+mSIP*12)*(1+sipR);
-    }
-    return cFD+cSIP;
+function sim(years,xE=0,lump=0,xI=0){
+  const b1=gv('b1'),b2=gv('b2'),g1=gn('g1')/100,g2=gn('g2')/100;
+  const fdP=gi('fdRng')/100,sipP=gi('sipRng')/100,sipRt=gn('sipRet')/100,fdRt=gn('fdRt')/100,epfR=gn('epfR')/100;
+  const epfMo=(gv('e1b')+gv('e2b'))*0.24/12;
+  const{totP,ty}=getAssets(b1,b2);
+  let cFD=totP+lump,cSIP=0,epfC=gv('epfB'),s1=b1,s2=b2;
+  for(let yr=1;yr<=years;yr++){
+    s1*=(1+g1);s2*=(1+g2);
+    const{s1G,s2G}=getAssets(s1,s2);
+    const t1=calcTax(s1G,true),t2=calcTax(s2G,true);
+    const expMo=totalExpMo(yr);
+    const surplus=(s1+s2+ty-t1-t2-(expMo*12))/12+(xI-xE);
+    const mFD=Math.max(0,surplus)*fdP,mSIP=Math.max(0,surplus)*sipP;
+    cFD=(cFD+mFD*12)*(1+fdRt);cSIP=(cSIP+mSIP*12)*(1+sipRt);epfC=(epfC+epfMo*12)*(1+epfR);
   }
+  return{total:cFD+cSIP+epfC};
+}
 
-  const max30=simulate(30)||1;
-  let fHtml='';
-
+function rFC(){
+  const inf=gn('infR')/100,max30=sim(30).total||1;
+  const expEnds=new Set();
+  EXPS.forEach(c=>{if(c.eYr!==null)expEnds.add(c.eYr);});
+  EMIS.forEach(e=>expEnds.add((e.sYr||0)+(e.yrs||0)));
+  let html='';
   [5,10,15,20,25,30].forEach(yr=>{
-    let total=simulate(yr);
-    if(isAdj) total=total/Math.pow(1+inf,yr);
-    const crore=(total/10000000).toFixed(2);
-    const barWidth=Math.min(97,Math.max(3,(simulate(yr)/max30)*100));
-
-    // Find milestones at this year
-    const mMarkers=milestones.filter(m=>m.year===yr);
-    const mHtml=mMarkers.map(m=>`
-      <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full" style="background:var(--amber-lt);color:var(--amber)">
-        🎯 ${m.label}${m.amount?` · ${fmt(m.amount)}`:''}
-      </span>`).join('');
-
-    fHtml+=`
-      <div class="forecast-row ${mMarkers.length?'':''}">
-        <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
-        <div class="flex-1">
-          <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:${mMarkers.length?'4px':'0'}">
-            <div style="height:100%;width:${barWidth}%;border-radius:99px;background:linear-gradient(to right,var(--teal),var(--indigo));transition:width .5s ease"></div>
-          </div>
-          ${mHtml}
+    let{total}=sim(yr);let disp=isAdj?total/Math.pow(1+inf,yr):total;
+    const cr=(disp/10000000).toFixed(2),bw=Math.min(97,Math.max(3,(total/max30)*100));
+    const mP=MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}${m.amount?' · '+fmt(m.amount):''}</span>`);
+    const eP=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
+    const pills=[...mP,...eP].join(' ');
+    html+=`<div class="fr"><span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
+      <div class="flex-1 min-w-0">
+        <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden${pills?';margin-bottom:5px':''}">
+          <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--teal),var(--indigo));transition:width .5s ease"></div>
         </div>
-        <span class="mono text-base font-bold w-24 text-right shrink-0" style="color:var(--teal-dk)">₹${crore} Cr</span>
-      </div>`;
+        ${pills?`<div class="flex flex-wrap gap-1">${pills}</div>`:''}
+      </div>
+      <span class="mono text-base font-bold w-24 text-right shrink-0" style="color:var(--teal-dk)">₹${cr} Cr</span></div>`;
   });
-  document.getElementById('forecastTable').innerHTML=fHtml;
+  document.getElementById('fcTbl').innerHTML=html;
 }
 
-// ── SCENARIO COMPARISON ────────────────────────────────────────────────
-function switchScenario(sc) {
-  activeScenario=sc;
-  ['A','B'].forEach(s=>document.getElementById('scTab_'+s).classList.toggle('active',s===sc));
-  const cur=scenarios[sc];
-  document.getElementById('sc_name').value=cur.name;
-  document.getElementById('sc_extraExp').value=cur.extraExp?cur.extraExp.toLocaleString('en-IN'):'0';
-  document.getElementById('sc_lumpsum').value=cur.lumpsum?cur.lumpsum.toLocaleString('en-IN'):'0';
-  document.getElementById('sc_extraInc').value=cur.extraInc?cur.extraInc.toLocaleString('en-IN'):'0';
+function swSC(s){
+  activeSC=s;['A','B'].forEach(x=>document.getElementById('st'+x).classList.toggle('on',x===s));
+  const c=SC[s];document.getElementById('scN').value=c.name;
+  document.getElementById('scE').value=c.extraExp?c.extraExp.toLocaleString('en-IN'):'0';
+  document.getElementById('scL').value=c.lumpsum?c.lumpsum.toLocaleString('en-IN'):'0';
+  document.getElementById('scI').value=c.extraInc?c.extraInc.toLocaleString('en-IN'):'0';
+  rSC();
 }
-
-function saveScenario() {
-  scenarios[activeScenario].name=document.getElementById('sc_name').value||('Scenario '+activeScenario);
-  scenarios[activeScenario].extraExp=parseFloat(document.getElementById('sc_extraExp').value.replace(/,/g,''))||0;
-  scenarios[activeScenario].lumpsum=parseFloat(document.getElementById('sc_lumpsum').value.replace(/,/g,''))||0;
-  scenarios[activeScenario].extraInc=parseFloat(document.getElementById('sc_extraInc').value.replace(/,/g,''))||0;
-  renderComparison(); saveToLocal();
+function saveSC(){
+  const s=activeSC;SC[s].name=document.getElementById('scN').value||('Scenario '+s);
+  SC[s].extraExp=parseFloat(document.getElementById('scE').value.replace(/,/g,''))||0;
+  SC[s].lumpsum=parseFloat(document.getElementById('scL').value.replace(/,/g,''))||0;
+  SC[s].extraInc=parseFloat(document.getElementById('scI').value.replace(/,/g,''))||0;
+  rSC();sv();
 }
-
-function renderComparison() {
-  const {b1,b2,g1,g2,exp,fdSplitPct,sipSplitPct,sipR,fdR,inf}=getBaseInputs();
-  const {totP,totalYield}=getAssetTotals(b1,b2);
-
-  function simScenario(sc, years){
-    const {extraExp,lumpsum,extraInc}=scenarios[sc];
-    let cFD=totP+lumpsum, cSIP=0;
-    let s1=b1, s2=b2, annExp=exp;
-    for(let yr=1;yr<=years;yr++){
-      s1*=(1+g1); s2*=(1+g2); annExp*=(1+inf);
-      const t1=calculateTax(s1+totalYield/2,true), t2=calculateTax(s2+totalYield/2,true);
-      const surplus=(s1+s2+totalYield-t1-t2-annExp)/12+(extraInc-extraExp);
-      const mFD=Math.max(0,surplus)*fdSplitPct;
-      const mSIP=Math.max(0,surplus)*sipSplitPct;
-      cFD=(cFD+mFD*12)*(1+fdR);
-      cSIP=(cSIP+mSIP*12)*(1+sipR);
-    }
-    return cFD+cSIP;
-  }
-
-  const years=[10,20,30];
-  const rows=years.map(yr=>{
-    const a=simScenario('A',yr), b_val=simScenario('B',yr);
-    const diff=b_val-a;
-    const better=diff>0?'B':'A';
-    return `<tr style="border-bottom:1px solid var(--border)">
+function rSC(){
+  const rows=[10,20,30].map(yr=>{
+    const a=sim(yr,SC.A.extraExp,SC.A.lumpsum,SC.A.extraInc).total;
+    const b=sim(yr,SC.B.extraExp,SC.B.lumpsum,SC.B.extraInc).total;
+    const d=b-a;
+    return`<tr style="border-bottom:1px solid var(--border)">
       <td class="py-3 mono text-sm font-semibold" style="color:var(--muted)">${yr} Yrs</td>
-      <td class="py-3 mono text-sm font-bold" style="color:var(--indigo)">${fmt(a)}</td>
-      <td class="py-3 mono text-sm font-bold" style="color:var(--purple)">${fmt(b_val)}</td>
-      <td class="py-3 mono text-sm font-bold ${diff>=0?'':''}">
-        <span style="color:${diff>=0?'var(--green)':'var(--rose)'}">${diff>=0?'+':''}${fmt(Math.abs(diff))}</span>
-        <span class="text-xs font-normal ml-1" style="color:var(--faint)">→ ${better} wins</span>
-      </td>
+      <td class="py-3 mono text-sm font-bold" style="color:var(--indigo)">${fmtCr(a)}</td>
+      <td class="py-3 mono text-sm font-bold" style="color:var(--purple)">${fmtCr(b)}</td>
+      <td class="py-3"><span class="mono text-sm font-bold" style="color:${d>=0?'var(--green)':'var(--rose)'}">${d>=0?'+':'−'}${fmtCr(Math.abs(d))}</span>
+        <span class="text-xs ml-1" style="color:var(--faint)">→ ${d>=0?SC.B.name:SC.A.name} wins</span></td>
     </tr>`;
   }).join('');
-
-  document.getElementById('scenarioComparison').innerHTML=`
-    <table class="w-full text-left">
-      <thead style="border-bottom:2px solid var(--border)">
-        <tr>
-          <th class="pb-2 text-xs font-semibold uppercase tracking-wider" style="color:var(--faint)">Horizon</th>
-          <th class="pb-2 text-xs font-semibold uppercase tracking-wider" style="color:var(--indigo)">${scenarios.A.name}</th>
-          <th class="pb-2 text-xs font-semibold uppercase tracking-wider" style="color:var(--purple)">${scenarios.B.name}</th>
-          <th class="pb-2 text-xs font-semibold uppercase tracking-wider" style="color:var(--faint)">Difference</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+  document.getElementById('scComp').innerHTML=`<table class="w-full text-left">
+    <thead style="border-bottom:2px solid var(--border)"><tr>
+      <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint)">Horizon</th>
+      <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--indigo)">${SC.A.name}</th>
+      <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--purple)">${SC.B.name}</th>
+      <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint)">Difference</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-// ── INSIGHTS ───────────────────────────────────────────────────────────
-function renderInsights() {
-  const {b1,b2}=getBaseInputs();
-  const {s1G,s2G,totalYield,totP}=getAssetTotals(b1,b2);
-  const t1=calculateTax(s1G,b1>0), t2=calculateTax(s2G,b2>0);
-  const insights=[];
-
-  // 1. Tax split suggestion
-  if(s1G>1600000 && s2G<800000 && totalYield>0){
-    const saving=calculateTax(s1G,b1>0)-calculateTax(s1G-totalYield*0.5,b1>0);
-    insights.push({type:'tip',icon:'💡',title:'Tax Optimisation — Asset Ownership Split',
-      body:`Spouse 1 is in a higher tax bracket (>₹16L gross). Moving taxable investment income to Spouse 2 could save up to ${fmt(saving)} in tax annually.`});
+function rIns(){
+  const b1=gv('b1'),b2=gv('b2');
+  const{s1G,s2G,ty,totP}=getAssets(b1,b2);
+  const t1=calcTax(s1G,b1>0),t2=calcTax(s2G,b2>0);
+  const expMo=totalExpMo(0),surplus=b1+b2+ty-t1-t2-(expMo*12);
+  const ins=[];
+  if(s1G>1600000&&s2G<800000&&ty>0){
+    const sav=calcTax(s1G,b1>0)-calcTax(s1G-ty*0.5,b1>0);
+    ins.push({t:'tip',i:'💡',h:'Move investment income to Spouse 2',b:`Spouse 1 is in a higher bracket. Shifting yield assets could save up to ${fmt(sav)}/year in tax.`});
   }
-
-  // 2. Slab boundary warning
-  [400000,800000,1200000,1600000,2000000,2400000].forEach(boundary=>{
-    const gap1=boundary-s1G;
-    if(gap1>0&&gap1<50000)
-      insights.push({type:'warn',icon:'⚠️',title:`Spouse 1 is ₹${Math.round(gap1).toLocaleString('en-IN')} below the ₹${(boundary/100000).toFixed(0)}L tax slab`,
-        body:`Small income additions (like interest or bonus) could push into the next slab. Consider channelling extra income to Spouse 2 or tax-free instruments.`});
-    const gap2=boundary-s2G;
-    if(gap2>0&&gap2<50000)
-      insights.push({type:'warn',icon:'⚠️',title:`Spouse 2 is ₹${Math.round(gap2).toLocaleString('en-IN')} below the ₹${(boundary/100000).toFixed(0)}L tax slab`,
-        body:`Small income additions could push into the next slab. Consider parking yield in tax-free instruments.`});
+  [400000,800000,1200000,1600000,2000000,2400000].forEach(bnd=>{
+    const lbl='₹'+(bnd/100000).toFixed(0)+'L';
+    const g1=bnd-s1G;if(g1>0&&g1<50000)ins.push({t:'warn',i:'⚠️',h:`Spouse 1 is ${fmt(g1)} below ${lbl} slab`,b:'Small additions could push into the next bracket. Consider routing to tax-free instruments.'});
+    const g2=bnd-s2G;if(g2>0&&g2<50000)ins.push({t:'warn',i:'⚠️',h:`Spouse 2 is ${fmt(g2)} below ${lbl} slab`,b:'Consider parking additional income in tax-free instruments.'});
   });
-
-  // 3. Low equity warning
   if(totP>0){
-    const rows=[...document.querySelectorAll('.asset-row')];
-    const fdP=rows.filter(r=>r.querySelector('.name_in').value.toLowerCase().includes('fd')||r.querySelector('.y_in').value<9)
-               .reduce((s,r)=>s+(parseFloat(r.querySelector('.p_in').value.replace(/,/g,''))||0),0);
-    if(fdP/totP>0.7)
-      insights.push({type:'info',icon:'📊',title:'Portfolio is heavily fixed-income (>70% FD)',
-        body:`Over long horizons, equity (SIP/MF) typically outperforms FDs significantly after inflation. Consider shifting some allocation to equity if your timeline is 10+ years.`});
+    const fdP=[...document.querySelectorAll('.ar')].filter(r=>(parseFloat(r.querySelector('.yv').value)||0)<9).reduce((s,r)=>s+(parseFloat(r.querySelector('.pv').value.replace(/,/g,''))||0),0);
+    if(fdP/totP>0.7)ins.push({t:'info',i:'📊',h:'Portfolio is >70% fixed-income',b:'Equity (SIP/MF) outperforms FDs after inflation over 10+ year horizons. Consider rebalancing.'});
   }
-
-  // 4. No tax-free assets
-  const hasTaxFree=[...document.querySelectorAll('.tf_in')].some(el=>el.checked);
-  if(totP>0&&!hasTaxFree)
-    insights.push({type:'tip',icon:'💡',title:'No tax-free assets in your portfolio',
-      body:`PPF, ELSS (lock-in 3yr), and Sukanya Samriddhi Yojana offer tax-free returns. Adding even one can reduce your overall tax burden.`});
-
-  // 5. Good surplus
-  const surplus=(b1+b2+totalYield-t1-t2-(parseFloat(document.getElementById('expTotal').value.replace(/,/g,''))||0));
+  if(totP>0&&![...document.querySelectorAll('.tv')].some(el=>el.checked))
+    ins.push({t:'tip',i:'💡',h:'No tax-free assets in portfolio',b:'PPF, ELSS, and Sukanya Samriddhi offer tax-free returns and reduce your tax burden.'});
   if(surplus>0&&surplus/(b1+b2||1)>0.3)
-    insights.push({type:'tip',icon:'🌟',title:'Strong savings rate — above 30%',
-      body:`Your household saves over 30% of income — well above the recommended 20%. Keep compounding this advantage through regular SIP increases each year.`});
-
-  if(!insights.length){
-    insights.push({type:'info',icon:'ℹ️',title:'Fill in your data to see personalised insights',
-      body:'Add income, assets, and expenses across the other tabs and come back here.'});
-  }
-
-  const typeMap={tip:'insight-tip',warn:'insight-warn',info:'insight-info'};
-  document.getElementById('insightsPanel').innerHTML=insights.map(i=>`
-    <div class="insight-card ${typeMap[i.type]}">
-      <div class="flex items-start gap-3">
-        <span style="font-size:1.3rem;flex-shrink:0">${i.icon}</span>
-        <div>
-          <p class="font-semibold text-sm mb-1">${i.title}</p>
-          <p class="text-sm opacity-80">${i.body}</p>
-        </div>
-      </div>
-    </div>`).join('');
+    ins.push({t:'tip',i:'🌟',h:'Excellent savings rate — above 30%',b:'You save over 30% of household income. Increasing your SIP by 5% each year will compound significantly.'});
+  const timed=EXPS.filter(c=>c.eYr!==null);
+  if(timed.length){const freed=timed.reduce((s,c)=>s+(c.val||0),0);
+    ins.push({t:'info',i:'⏳',h:`${timed.length} time-bound expense(s) will free up ${fmt(freed)}/month`,b:timed.map(c=>`${c.icon} ${c.label} ends year ${c.eYr}`).join(' · ')});}
+  if(EMIS.length){const et=EMIS.reduce((s,e)=>s+(e.emi||0),0);
+    ins.push({t:'info',i:'🏦',h:`${EMIS.length} loan(s) totalling ${fmt(et)}/month`,b:EMIS.map(e=>`${e.label} ends year ${(e.sYr||0)+(e.yrs||0)}`).join(' · ')});}
+  if(!ins.length)ins.push({t:'info',i:'ℹ️',h:'Add your data to see insights',b:'Fill income, assets, and expenses on the other tabs.'});
+  const cm={tip:'ic-tip',warn:'ic-warn',info:'ic-info'};
+  document.getElementById('insP').innerHTML=ins.map(x=>`<div class="ic ${cm[x.t]}"><div class="flex items-start gap-3"><span style="font-size:1.3rem;flex-shrink:0">${x.i}</span><div><p class="font-semibold text-sm mb-1">${x.h}</p><p class="text-sm opacity-80">${x.b}</p></div></div></div>`).join('');
 }
 
-// ── PERSISTENCE ────────────────────────────────────────────────────────
-function saveToLocal() {
-  const data={
-    b1:document.getElementById('b1').value, b2:document.getElementById('b2').value,
-    g1:document.getElementById('g1').value, g2:document.getElementById('g2').value,
-    fdRange:document.getElementById('fdRangeInput').value,
-    sipRange:document.getElementById('sipRangeInput').value,
-    sipRet:document.getElementById('sipRet').value, fdRate:document.getElementById('fdRate').value,
-    infRet:document.getElementById('infRet').value, adj:isAdj,
-    goalCorpus:document.getElementById('goalCorpus').value,
-    goalYears:document.getElementById('goalYears').value,
-    ddCorpus:document.getElementById('ddCorpus').value,
-    ddWithdraw:document.getElementById('ddWithdraw').value,
-    ddReturn:document.getElementById('ddReturn').value,
-    ddInflation:document.getElementById('ddInflation').value,
-    expCategories:expCategories, milestones, scenarios,
-    assets:[]
-  };
-  document.querySelectorAll('.asset-row').forEach(row=>{
-    data.assets.push({n:row.querySelector('.name_in').value, p:row.querySelector('.p_in').value,
-      y:row.querySelector('.y_in').value, o:row.querySelector('.o_in').value, tf:row.querySelector('.tf_in').checked});
-  });
-  try{localStorage.setItem('master_plan_v3',JSON.stringify(data));}catch(e){}
+function sv(){
+  const g=id=>document.getElementById(id)?.value||'';
+  const d={b1:g('b1'),b2:g('b2'),g1:g('g1'),g2:g('g2'),fdRng:g('fdRng'),sipRng:g('sipRng'),
+    sipRet:g('sipRet'),fdRt:g('fdRt'),infR:g('infR'),isAdj,expInflOn,
+    gC:g('gC'),gY:g('gY'),ddC:g('ddC'),ddW:g('ddW'),ddRt:g('ddRt'),ddI:g('ddI'),
+    e1b:g('e1b'),e2b:g('e2b'),epfR:g('epfR'),epfB:g('epfB'),
+    EXPS,EMIS,MS,SC,assets:[]};
+  document.querySelectorAll('.ar').forEach(r=>{d.assets.push({n:r.querySelector('.nm').value,p:r.querySelector('.pv').value,y:r.querySelector('.yv').value,o:r.querySelector('.ov').value,tf:r.querySelector('.tv').checked});});
+  try{localStorage.setItem('mpv4',JSON.stringify(d));}catch(e){}
 }
-
-function loadFromLocal() {
-  let saved; try{saved=localStorage.getItem('master_plan_v3');}catch(e){}
-  renderExpenses(); // always render expense grid first
-  if(!saved){validateSplit('fd');recalc();return;}
+function exportData(){
+  const s=localStorage.getItem('mpv4');if(!s){alert('No data to export yet.');return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'application/json'}));
+  a.download='master-plan-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+function importData(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{try{localStorage.setItem('mpv4',ev.target.result);loadData();alert('Restored successfully!');}catch{alert('Invalid backup file.');}};
+  r.readAsText(f);e.target.value='';
+}
+function loadData(){
+  let saved;try{saved=localStorage.getItem('mpv4');}catch(e){}
+  rExp();rEMI();rMS();
+  if(!saved){vs('fd');rc();return;}
   const d=JSON.parse(saved);
-  document.getElementById('b1').value=d.b1||'0';
-  document.getElementById('b2').value=d.b2||'0';
-  document.getElementById('g1').value=d.g1||'8';
-  document.getElementById('g2').value=d.g2||'8';
-  document.getElementById('fdRangeInput').value=d.fdRange||'50';
-  document.getElementById('sipRangeInput').value=d.sipRange||'50';
-  document.getElementById('sipRet').value=d.sipRet||'12';
-  document.getElementById('fdRate').value=d.fdRate||'7';
-  document.getElementById('infRet').value=d.infRet||'5';
-  document.getElementById('goalCorpus').value=d.goalCorpus||'0';
-  document.getElementById('goalYears').value=d.goalYears||'20';
-  document.getElementById('ddCorpus').value=d.ddCorpus||'0';
-  document.getElementById('ddWithdraw').value=d.ddWithdraw||'0';
-  document.getElementById('ddReturn').value=d.ddReturn||'8';
-  document.getElementById('ddInflation').value=d.ddInflation||'5';
-  if(d.expCategories){expCategories=d.expCategories; renderExpenses();}
-  if(d.milestones){milestones=d.milestones; renderMilestoneList();}
-  if(d.scenarios){scenarios=d.scenarios; switchScenario('A');}
-  if(d.adj){isAdj=true;document.getElementById('adjToggleBtn').classList.add('on');
-    document.getElementById('adjNote').textContent='Showing inflation-adjusted (real) values · includes salary growth';}
-  document.getElementById('assetBody').innerHTML='';
-  (d.assets||[]).forEach(a=>addRow(a.n,parseFloat((a.p||'0').replace(/,/g,'')),parseFloat(a.y),a.o,a.tf));
-  validateSplit('fd'); recalc();
+  const sv2=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+  sv2('b1',d.b1);sv2('b2',d.b2);sv2('g1',d.g1||'8');sv2('g2',d.g2||'8');
+  sv2('fdRng',d.fdRng||'50');sv2('sipRng',d.sipRng||'50');
+  sv2('sipRet',d.sipRet||'12');sv2('fdRt',d.fdRt||'7');sv2('infR',d.infR||'5');
+  sv2('gC',d.gC||'0');sv2('gY',d.gY||'20');sv2('ddC',d.ddC||'0');sv2('ddW',d.ddW||'0');sv2('ddRt',d.ddRt||'8');sv2('ddI',d.ddI||'5');
+  sv2('e1b',d.e1b||'0');sv2('e2b',d.e2b||'0');sv2('epfR',d.epfR||'8.25');sv2('epfB',d.epfB||'0');
+  if(d.isAdj){isAdj=true;document.getElementById('adjBtn').classList.add('on');
+    document.getElementById('adjNote').textContent='Inflation-adjusted (real) values · salary growth · time-bound expenses modelled';}
+  if(d.expInflOn){expInflOn=true;const btn=document.getElementById('eiBtn');btn.classList.add('on');btn.textContent='📈 Inflation On';}
+  if(d.EXPS){EXPS=d.EXPS;rExp();}if(d.EMIS){EMIS=d.EMIS;rEMI();}if(d.MS){MS=d.MS;rMS();}
+  if(d.SC){SC=d.SC;swSC('A');}
+  document.getElementById('aBody').innerHTML='';
+  (d.assets||[]).forEach(a=>addARow(a.n,parseFloat((a.p||'0').replace(/,/g,'')),parseFloat(a.y),a.o,a.tf));
+  vs('fd');rc();
 }
-
-function resetToZero() {
-  if(!confirm('Clear all data and start fresh?')) return;
-  try{localStorage.removeItem('master_plan_v3');}catch(e){}
-  location.reload();
-}
-
-window.onload=loadFromLocal;
+function resetAll(){if(!confirm('Clear all data and start fresh?'))return;try{localStorage.removeItem('mpv4');}catch(e){}location.reload();}
+window.onload=loadData;
 </script>
 </body>
 </html>
