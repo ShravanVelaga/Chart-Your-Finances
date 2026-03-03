@@ -83,7 +83,9 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 @keyframes fu { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .anim { animation:fu .4s ease both; }
 
-/* Landing page */
+/* Expense row grid */
+.exp-grid { display:grid; grid-template-columns:1.8fr 1.1fr 0.55fr 0.55fr 0.4fr 0.9fr 26px; gap:8px; align-items:center; }
+
 #landing { display:flex; }
 .dashboard { display:none; }
 .dashboard.active { display:block; }
@@ -101,6 +103,54 @@ flex:1; max-width:340px;
 .fi { font-size:1.1rem; }
 .hm { display:none !important; }
 .country-card { padding:28px 24px; }
+
+/* Tab bar — wrap on mobile */
+.tab-bar { flex-wrap:wrap; gap:3px; padding:3px; }
+.tb { flex:1 1 calc(33% - 4px); padding:7px 4px; font-size:11px; white-space:nowrap; min-width:0; }
+
+/* Tax audit panels — stack */
+.audit-grid { grid-template-columns:1fr !important; }
+
+/* Modal — full width safe margins */
+.ded-modal-inner {
+width:calc(100vw - 32px) !important;
+max-width:calc(100vw - 32px) !important;
+margin:0 !important;
+padding:20px !important;
+}
+
+/* Expense rows — 2-row mobile layout */
+.exp-grid {
+grid-template-columns:1fr auto 26px !important;
+grid-template-rows:auto auto;
+gap:6px !important;
+}
+.exp-grid > *:nth-child(1) { grid-column:1; grid-row:1; }  /* name */
+.exp-grid > *:nth-child(2) { grid-column:2; grid-row:1; }  /* amount */
+.exp-grid > *:nth-child(3) { font-size:10px; padding:3px !important; }  /* start yr */
+.exp-grid > *:nth-child(4) { font-size:10px; padding:3px !important; }  /* end yr */
+.exp-grid > *:nth-child(5) { }  /* infl checkbox */
+.exp-grid > *:nth-child(6) { }  /* status pill */
+.exp-grid > *:nth-child(7) { grid-column:3; grid-row:1; }  /* remove btn */
+/* row 2: start/end/checkbox/status span full width */
+.exp-grid > *:nth-child(3),
+.exp-grid > *:nth-child(4),
+.exp-grid > *:nth-child(5),
+.exp-grid > *:nth-child(6) { grid-row:2; }
+.exp-grid > *:nth-child(3) { grid-column:1; }
+.exp-grid > *:nth-child(4) { grid-column:2; }
+.exp-grid > *:nth-child(5) { grid-column:3; }
+.exp-grid > *:nth-child(6) { grid-column:1 / span 3; grid-row:3; }
+
+/* Surplus card */
+.hero-s { padding:20px 16px !important; }
+
+/* Hide dev audit bar */
+#us_audit, #in_audit { display:none !important; }
+
+/* Tighten cards */
+.card { padding:16px !important; border-radius:12px !important; }
+.inset { padding:12px !important; }
 }
 @media print { .np { display:none !important; } }
 </style>
@@ -180,7 +230,7 @@ flex:1; max-width:340px;
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--indigo)">Spouse 1 · Annual ₹</p>
-        <input type="text" id="in_b1" value="0" oninput="IN_hi(this);IN_rc();IN_sv()" class="fi mono">
+        <input type="text" id="in_b1" value="0" oninput="IN_hi(this);IN_rcD();IN_sv()" class="fi mono">
         <div class="flex gap-2 mt-2 items-center">
           <span class="text-xs" style="color:var(--faint)">Growth %/yr</span>
           <input type="number" id="in_g1" value="8" min="0" max="30" oninput="IN_rc();IN_sv()" class="si mono" style="width:60px;padding:4px 8px;font-size:.8rem">
@@ -196,7 +246,7 @@ flex:1; max-width:340px;
       </div>
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--teal)">Spouse 2 · Annual ₹</p>
-        <input type="text" id="in_b2" value="0" oninput="IN_hi(this);IN_rc();IN_sv()" class="fi mono">
+        <input type="text" id="in_b2" value="0" oninput="IN_hi(this);IN_rcD();IN_sv()" class="fi mono">
         <div class="flex gap-2 mt-2 items-center">
           <span class="text-xs" style="color:var(--faint)">Growth %/yr</span>
           <input type="number" id="in_g2" value="8" min="0" max="30" oninput="IN_rc();IN_sv()" class="si mono" style="width:60px;padding:4px 8px;font-size:.8rem">
@@ -216,7 +266,7 @@ flex:1; max-width:340px;
         <p class="text-xs mt-2" style="color:var(--faint)">← auto-summed from categories</p>
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-3 pt-1">
+    <div class="grid grid-cols-2 gap-3 pt-1 audit-grid">
       <div class="inset p-3">
         <p class="text-xs font-semibold mb-2" style="color:var(--indigo)">Spouse 1 · Net In-Hand</p>
         <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="in_s1g">₹0</span></div>
@@ -389,7 +439,7 @@ flex:1; max-width:340px;
     <div class="card p-6 space-y-4">
       <div><p class="sl">Goal Planner</p><p class="text-sm mt-1" style="color:var(--muted)">How much to invest monthly to hit a target corpus?</p></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Target Corpus (₹)</p><input type="text" id="in_gC" value="0" oninput="IN_hi(this);IN_rc();IN_sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Target Corpus (₹)</p><input type="text" id="in_gC" value="0" oninput="IN_hi(this);IN_rcD();IN_sv()" class="si mono"></div>
         <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">In (years)</p><input type="number" id="in_gY" value="20" min="1" max="40" oninput="IN_rc();IN_sv()" class="si mono"></div>
       </div>
       <div class="inset p-4 text-center">
@@ -401,8 +451,8 @@ flex:1; max-width:340px;
     <div class="card p-6 space-y-4">
       <div><p class="sl">Corpus Drawdown Simulator</p><p class="text-sm mt-1" style="color:var(--muted)">If you retire with a corpus, how long does it last?</p></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Retirement Corpus (₹)</p><input type="text" id="in_ddC" value="0" oninput="IN_hi(this);IN_rc();IN_sv()" class="si mono"></div>
-        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Annual Withdrawal (₹)</p><input type="text" id="in_ddW" value="0" oninput="IN_hi(this);IN_rc();IN_sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Retirement Corpus (₹)</p><input type="text" id="in_ddC" value="0" oninput="IN_hi(this);IN_rcD();IN_sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Annual Withdrawal (₹)</p><input type="text" id="in_ddW" value="0" oninput="IN_hi(this);IN_rcD();IN_sv()" class="si mono"></div>
         <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Portfolio Return %</p><input type="number" id="in_ddRt" value="8" min="1" max="20" oninput="IN_rc();IN_sv()" class="si mono"></div>
         <div><p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %</p><input type="number" id="in_ddI" value="5" min="1" max="15" oninput="IN_rc();IN_sv()" class="si mono"></div>
       </div>
@@ -541,7 +591,7 @@ flex:1; max-width:340px;
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--indigo)">Spouse 1 · Annual $</p>
-        <input type="text" id="us_b1" value="0" oninput="US_hi(this);US_rc();US_sv()" class="fi mono">
+        <input type="text" id="us_b1" value="0" oninput="US_hi(this);US_rcD();US_sv()" class="fi mono">
         <div class="flex gap-2 mt-2 items-center">
           <span class="text-xs" style="color:var(--faint)">Growth %/yr</span>
           <input type="number" id="us_g1" value="5" min="0" max="30" oninput="US_rc();US_sv()" class="si mono" style="width:60px;padding:4px 8px;font-size:.8rem">
@@ -558,7 +608,7 @@ flex:1; max-width:340px;
       </div>
       <div>
         <p class="text-sm font-medium mb-2" style="color:var(--teal)">Spouse 2 · Annual $</p>
-        <input type="text" id="us_b2" value="0" oninput="US_hi(this);US_rc();US_sv()" class="fi mono">
+        <input type="text" id="us_b2" value="0" oninput="US_hi(this);US_rcD();US_sv()" class="fi mono">
         <div class="flex gap-2 mt-2 items-center">
           <span class="text-xs" style="color:var(--faint)">Growth %/yr</span>
           <input type="number" id="us_g2" value="5" min="0" max="30" oninput="US_rc();US_sv()" class="si mono" style="width:60px;padding:4px 8px;font-size:.8rem">
@@ -604,7 +654,7 @@ flex:1; max-width:340px;
       </div>
     </div>
     <!-- Tax audit -->
-    <div class="grid grid-cols-2 gap-3 pt-1">
+    <div class="grid grid-cols-2 gap-3 pt-1 audit-grid">
       <div class="inset p-3">
         <p class="text-xs font-semibold mb-2" style="color:var(--indigo)">Spouse 1 · Net Take-Home</p>
         <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="us_s1g">$0</span></div>
@@ -791,7 +841,7 @@ flex:1; max-width:340px;
     <div class="card p-6 space-y-4">
       <div><p class="sl">Goal Planner</p><p class="text-sm mt-1" style="color:var(--muted)">How much to invest monthly to hit a target?</p></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Target Amount ($)</p><input type="text" id="us_gC" value="0" oninput="US_hi(this);US_rc();US_sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Target Amount ($)</p><input type="text" id="us_gC" value="0" oninput="US_hi(this);US_rcD();US_sv()" class="si mono"></div>
         <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">In (years)</p><input type="number" id="us_gY" value="20" min="1" max="40" oninput="US_rc();US_sv()" class="si mono"></div>
       </div>
       <div class="inset p-4 text-center">
@@ -803,8 +853,8 @@ flex:1; max-width:340px;
     <div class="card p-6 space-y-4">
       <div><p class="sl">Portfolio Drawdown Simulator</p><p class="text-sm mt-1" style="color:var(--muted)">How long does your retirement portfolio last?</p></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Retirement Portfolio ($)</p><input type="text" id="us_ddC" value="0" oninput="US_hi(this);US_rc();US_sv()" class="si mono"></div>
-        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Annual Withdrawal ($)</p><input type="text" id="us_ddW" value="0" oninput="US_hi(this);US_rc();US_sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Retirement Portfolio ($)</p><input type="text" id="us_ddC" value="0" oninput="US_hi(this);US_rcD();US_sv()" class="si mono"></div>
+        <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Annual Withdrawal ($)</p><input type="text" id="us_ddW" value="0" oninput="US_hi(this);US_rcD();US_sv()" class="si mono"></div>
         <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Portfolio Return %</p><input type="number" id="us_ddRt" value="7" min="1" max="20" oninput="US_rc();US_sv()" class="si mono"></div>
         <div><p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %</p><input type="number" id="us_ddI" value="3" min="1" max="15" oninput="US_rc();US_sv()" class="si mono"></div>
       </div>
@@ -851,7 +901,7 @@ flex:1; max-width:340px;
 <!-- ═══ DEDUCTION MODAL ═══ -->
 
 <div id="us_dedModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background:rgba(0,0,0,.45)" onclick="if(event.target===this)US_mClose()">
-  <div class="card p-6 w-full max-w-sm mx-4 space-y-4" style="box-shadow:0 20px 60px rgba(0,0,0,.25)">
+  <div class="card ded-modal-inner p-6 w-full max-w-sm mx-4 space-y-4" style="box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto">
     <h3 class="text-base font-bold">Add Pre-Tax Deduction</h3>
     <div>
       <label class="sl mb-1 block">Name</label>
@@ -1043,7 +1093,7 @@ function IN_rExp(){
     else if(cat.eYr!==null) sH=`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">Ends yr ${cat.eYr}</span>`;
     else if(cat.sYr!==null&&cat.sYr>0) sH=`<span class="pill" style="background:var(--indigo-lt);color:var(--indigo)">Starts yr ${cat.sYr}</span>`;
     const div=document.createElement('div'); div.className='ec'+(timed?' timed':'');
-    div.innerHTML=`<div class="grid items-center" style="grid-template-columns:1.8fr 1.1fr 0.55fr 0.55fr 0.4fr 0.9fr 26px;gap:8px">
+    div.innerHTML=`<div class="exp-grid items-center">
       <div class="flex items-center gap-2 min-w-0"><span style="font-size:1.1rem;flex-shrink:0">${cat.icon}</span>
         <input type="text" value="${cat.label}" class="bg-transparent text-sm font-medium outline-none min-w-0 w-full border-b" style="border-color:var(--border)" onchange="IN_EXPS[${i}].label=this.value;IN_sv()"></div>
       <div class="flex items-center gap-1"><span class="text-xs shrink-0" style="color:var(--faint)">₹</span>
@@ -1088,7 +1138,7 @@ function IN_addAssetRow(){ const sel=document.getElementById('in_catSel'); IN_ad
 function IN_addARow(name='Asset',p=0,y=0,o='1',tf=false){
   const tr=document.createElement('tr'); tr.className='in_ar';
   tr.innerHTML=`<td><input type="text" value="${name}" class="in_nm bg-transparent text-sm outline-none w-24 italic" style="color:var(--muted)" onchange="IN_sv()"></td>
-    <td><input type="text" value="${p.toLocaleString('en-IN')}" class="in_pv bg-transparent border-b mono text-sm font-medium w-28 outline-none" style="border-color:var(--border)" oninput="IN_hi(this);IN_rc();IN_sv()"></td>
+    <td><input type="text" value="${p.toLocaleString('en-IN')}" class="in_pv bg-transparent border-b mono text-sm font-medium w-28 outline-none" style="border-color:var(--border)" oninput="IN_hi(this);IN_rcD();IN_sv()"></td>
     <td class="text-center"><input type="number" value="${y}" class="in_yv bg-transparent border-b mono text-sm font-medium w-12 outline-none text-center" style="border-color:var(--border);color:var(--teal)" oninput="IN_chkROI(this);IN_rc();IN_sv()"></td>
     <td><select class="in_ov si text-sm" style="width:auto;padding:5px 8px" onchange="IN_rc();IN_sv()"><option value="1" ${o==='1'?'selected':''}>Spouse 1</option><option value="2" ${o==='2'?'selected':''}>Spouse 2</option></select></td>
     <td class="text-center"><input type="checkbox" class="in_tv w-4 h-4 cursor-pointer" style="accent-color:var(--teal)" ${tf?'checked':''} onchange="IN_rc();IN_sv()"></td>
@@ -1547,7 +1597,7 @@ function US_rExp(){
     else if(cat.eYr!==null) sH=`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">Ends yr ${cat.eYr}</span>`;
     else if(cat.sYr!==null&&cat.sYr>0) sH=`<span class="pill" style="background:var(--indigo-lt);color:var(--indigo)">Starts yr ${cat.sYr}</span>`;
     const div=document.createElement('div'); div.className='ec'+(timed?' timed':'');
-    div.innerHTML=`<div class="grid items-center" style="grid-template-columns:1.8fr 1.1fr 0.55fr 0.55fr 0.4fr 0.9fr 26px;gap:8px">
+    div.innerHTML=`<div class="exp-grid items-center">
       <div class="flex items-center gap-2 min-w-0"><span style="font-size:1.1rem;flex-shrink:0">${cat.icon}</span>
         <input type="text" value="${cat.label}" class="bg-transparent text-sm font-medium outline-none min-w-0 w-full border-b" style="border-color:var(--border)" onchange="US_EXPS[${i}].label=this.value;US_sv()"></div>
       <div class="flex items-center gap-1"><span class="text-xs shrink-0" style="color:var(--faint)">$</span>
@@ -1592,7 +1642,7 @@ function US_addAssetRow(){const sel=document.getElementById('us_catSel');US_addA
 function US_addARow(name='Asset',p=0,y=0,o='1',tf=false){
   const tr=document.createElement('tr'); tr.className='us_ar';
   tr.innerHTML=`<td><input type="text" value="${name}" class="us_nm bg-transparent text-sm outline-none w-24 italic" style="color:var(--muted)" onchange="US_sv()"></td>
-    <td><input type="text" value="${p.toLocaleString('en-US')}" class="us_pv bg-transparent border-b mono text-sm font-medium w-28 outline-none" style="border-color:var(--border)" oninput="US_hi(this);US_rc();US_sv()"></td>
+    <td><input type="text" value="${p.toLocaleString('en-US')}" class="us_pv bg-transparent border-b mono text-sm font-medium w-28 outline-none" style="border-color:var(--border)" oninput="US_hi(this);US_rcD();US_sv()"></td>
     <td class="text-center"><input type="number" value="${y}" class="us_yv bg-transparent border-b mono text-sm font-medium w-12 outline-none text-center" style="border-color:var(--border);color:var(--teal)" oninput="US_chkROI(this);US_rc();US_sv()"></td>
     <td><select class="us_ov si text-sm" style="width:auto;padding:5px 8px" onchange="US_rc();US_sv()"><option value="1" ${o==='1'?'selected':''}>Spouse 1</option><option value="2" ${o==='2'?'selected':''}>Spouse 2</option></select></td>
     <td class="text-center"><input type="checkbox" class="us_tv w-4 h-4 cursor-pointer" style="accent-color:var(--blue)" ${tf?'checked':''} onchange="US_rc();US_sv()"></td>
@@ -1808,7 +1858,10 @@ function US_sim(years,xE=0,lump=0,xI=0){
   const ss1Ex=document.getElementById('us_ss1Exempt').checked;
   const ss2Ex=document.getElementById('us_ss2Exempt').checked;
   const {totP,ty}=US_getAssets(b1,b2);
-  let cFD=totP+lump,cSIP=0,s1=b1,s2=b2;
+  // Track contributions separately from growth
+  let cFD=totP+lump, cSIP=0;
+  let totalFDContrib=0, totalSIPContrib=0;
+  let s1=b1,s2=b2;
   for(let yr=1;yr<=years;yr++){
     s1*=(1+g1); s2*=(1+g2);
     const {s1G,s2G}=US_getAssets(s1,s2);
@@ -1825,29 +1878,120 @@ function US_sim(years,xE=0,lump=0,xI=0){
     const expMo=US_totExpMo(yr);
     const surplus=(s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12))/12+(xI-xE);
     const mFD=Math.max(0,surplus)*fdP, mSIP=Math.max(0,surplus)*sipP;
+    totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=(cFD+mFD*12)*(1+fdRt); cSIP=(cSIP+mSIP*12)*(1+sipRt);
   }
-  // Add retirement plan corpus at this horizon
   const retCorpus=US_retTotalAt(years);
-  return{total:cFD+cSIP+retCorpus};
+  return{
+    total:cFD+cSIP+retCorpus,
+    cFD, cSIP, retCorpus,
+    fdPrincipal:totP+lump, fdContrib:totalFDContrib,
+    sipContrib:totalSIPContrib,
+    fdRt, sipRt, totP,
+    assetYield:ty
+  };
 }
 
 function US_rFC(){
   const infRate=gn('us_infR')/100, max30=US_sim(30).total||1;
+  const fdRtPct=gn('us_fdRt'), sipRtPct=gn('us_sipRet');
+  const fdP=gi('us_fdRng'), sipP=gi('us_sipRng');
   const expEnds=new Set();
   US_EXPS.forEach(c=>{if(c.eYr!==null)expEnds.add(c.eYr);});
   US_EMIS.forEach(e=>expEnds.add((e.sYr||0)+(e.yrs||0)));
   let html='';
   [5,10,15,20,25,30].forEach(yr=>{
-    let{total}=US_sim(yr);
-    let disp=US_isAdj?total/Math.pow(1+infRate,yr):total;
-    const m=(disp/1000000).toFixed(2), bw=Math.min(97,Math.max(3,(total/max30)*100));
-    const mPills=US_MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}${m.amount?' · '+US_fmt(m.amount):''}</span>`);
+    const sim=US_sim(yr);
+    const {cFD,cSIP,retCorpus,fdPrincipal,fdContrib,sipContrib,totP,assetYield}=sim;
+    let disp=US_isAdj?sim.total/Math.pow(1+infRate,yr):sim.total;
+    const m=(disp/1000000).toFixed(2);
+    const bw=Math.min(97,Math.max(3,(sim.total/max30)*100));
+    const mPills=US_MS.filter(ms=>ms.year===yr).map(ms=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${ms.label}${ms.amount?' · '+US_fmt(ms.amount):''}</span>`);
     const ePills=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
     const pills=[...mPills,...ePills].join(' ');
-    html+=`<div class="fr"><span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
-      <div class="flex-1 min-w-0"><div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden${pills?';margin-bottom:5px':''}"><div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--blue),var(--purple));transition:width .5s ease"></div></div>${pills?`<div class="flex flex-wrap gap-1">${pills}</div>`:''}</div>
-      <span class="mono text-base font-bold w-24 text-right shrink-0" style="color:var(--blue-dk)">$${m}M</span></div>`;
+    const uid='fc'+yr;
+
+    // Build itemized rows
+    const fdGain=cFD-(fdPrincipal+fdContrib);
+    const sipGain=cSIP-sipContrib;
+    // per-plan retirement breakdown
+    const retRows=US_RET.map(p=>{
+      const pCorpus=US_retCorpusAt(p,yr);
+      const pSal=(p.owner==='1'?gv('us_b1'):gv('us_b2'));
+      const pEmpAnn=pSal*(p.empPct/100)*yr;
+      const pMatchAnn=pSal*(p.matchPct/100)*yr;
+      const pContrib=p.balance+pEmpAnn+pMatchAnn;
+      const pGain=pCorpus-pContrib;
+      return `<tr style="border-bottom:1px dashed var(--border)">
+        <td class="py-1.5 pl-4 text-xs" style="color:var(--muted)">🏛 ${p.name} <span style="color:var(--faint)">(${p.owner==='1'?'Spouse 1':'Spouse 2'})</span></td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(p.balance)}<span style="color:var(--faint);font-size:10px"> bal + ${p.empPct+p.matchPct}% contrib</span></td>
+        <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--purple)">${US_fmtM(pCorpus)}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--green)">+${US_fmtM(Math.max(0,pGain))}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${p.returnPct}% <span style="font-size:10px">cmpd mthly</span></td>
+      </tr>`;
+    }).join('');
+
+    // Asset matrix row (investment portfolio yield growth)
+    const assetRow=totP>0?`<tr style="border-bottom:1px dashed var(--border)">
+      <td class="py-1.5 pl-4 text-xs" style="color:var(--muted)">📊 Investment Portfolio</td>
+      <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(totP)}</td>
+      <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--blue)">${US_fmt(assetYield)}<span style="color:var(--faint);font-size:10px"> /yr yield</span></td>
+      <td class="py-1.5 mono text-xs text-right" style="color:var(--green)">—</td>
+      <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${totP>0?((assetYield/totP)*100).toFixed(1):'0'}% <span style="font-size:10px">blended</span></td>
+    </tr>`:'';
+
+    const detailTable=`
+    <div id="${uid}" class="hidden overflow-x-auto" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
+      <table class="w-full text-left" style="min-width:480px">
+        <thead><tr style="border-bottom:1px solid var(--border)">
+          <th class="pb-1.5 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.06em">Bucket</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Principal / Base</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Grew To</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Gain</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">ROI</th>
+        </tr></thead>
+        <tbody>
+          ${fdP>0?`<tr style="border-bottom:1px dashed var(--border)">
+            <td class="py-1.5 pl-4 text-xs" style="color:var(--muted)">🏦 Brokerage / HYSA <span style="color:var(--faint)">(${fdP}% of surplus)</span></td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(fdPrincipal)}<span style="color:var(--faint);font-size:10px"> + ${US_fmt(fdContrib)} contrib</span></td>
+            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--blue)">${US_fmtM(cFD)}</td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--green)">+${US_fmtM(Math.max(0,fdGain))}</td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}% /yr</td>
+          </tr>`:''}
+          ${sipP>0?`<tr style="border-bottom:1px dashed var(--border)">
+            <td class="py-1.5 pl-4 text-xs" style="color:var(--muted)">📈 Index Fund <span style="color:var(--faint)">(${sipP}% of surplus)</span></td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">$0<span style="color:var(--faint);font-size:10px"> + ${US_fmt(sipContrib)} contrib</span></td>
+            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--purple)">${US_fmtM(cSIP)}</td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--green)">+${US_fmtM(Math.max(0,sipGain))}</td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}% /yr</td>
+          </tr>`:''}
+          ${retRows}
+          ${assetRow}
+          <tr style="border-top:2px solid var(--border)">
+            <td class="pt-2 text-xs font-bold">Total${US_isAdj?' (inflation-adj.)':''}</td>
+            <td class="pt-2"></td>
+            <td class="pt-2 mono text-sm font-black text-right" style="color:var(--blue-dk)">$${m}M</td>
+            <td class="pt-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,disp-((fdPrincipal+fdContrib)+sipContrib+US_RET.reduce((s,p)=>{const pSal=(p.owner==='1'?gv('us_b1'):gv('us_b2'));return s+p.balance+pSal*(p.empPct/100)*yr+pSal*(p.matchPct/100)*yr;},0))))}</td>
+            <td class="pt-2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`;
+
+    html+=`<div class="fr" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0">
+      <div class="flex items-center gap-3" style="cursor:pointer" onclick="const el=document.getElementById('${uid}');el.classList.toggle('hidden');this.querySelector('.fc-arr').textContent=el.classList.contains('hidden')?'▸':'▾'">
+        <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
+        <div class="flex-1 min-w-0">
+          <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden${pills?';margin-bottom:5px':''}">
+            <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--blue),var(--purple));transition:width .5s ease"></div>
+          </div>
+          ${pills?`<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`:''}
+        </div>
+        <span class="mono text-base font-bold w-24 text-right shrink-0" style="color:var(--blue-dk)">$${m}M</span>
+        <span class="fc-arr text-xs shrink-0" style="color:var(--faint);width:12px">▸</span>
+      </div>
+      ${detailTable}
+    </div>`;
   });
   document.getElementById('us_fcTbl').innerHTML=html;
 }
@@ -1981,6 +2125,11 @@ function US_resetAll(){if(!confirm('Clear all USA data?'))return;try{localStorag
 // ═══════════════════════════════════════════════════════════════════
 //  INIT — return to last used country
 // ═══════════════════════════════════════════════════════════════════
+// ── Debounce utility ──
+function debounce(fn, ms){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a),ms); }; }
+const US_rcD = debounce(US_rc, 280);
+const IN_rcD = debounce(IN_rc, 280);
+
 // ── Modal keyboard + backdrop ──
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') US_mClose(); });
 
