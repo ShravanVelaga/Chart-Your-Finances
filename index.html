@@ -11,8 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#F7F4EF; --surface:#FFFFFF; --border:#E8E2D9;
-  --text:#1C1917; --muted:#78716C; --faint:#A8A29E;
+  --bg:#EDE8DF; --surface:#FFFFFF; --border:#D6CEC2; --border-strong:#C4BAB0;
+  --text:#1C1917; --muted:#6B6560; --faint:#9C948E;
   --teal:#0D9488; --teal-lt:#CCFBF1; --teal-dk:#0F766E;
   --amber:#D97706; --amber-lt:#FEF3C7;
   --rose:#E11D48; --rose-lt:#FFE4E6;
@@ -26,14 +26,29 @@
 .mono { font-family:'DM Mono',monospace; }
 body { background:var(--bg); color:var(--text); min-height:100vh; }
 
-.card  { background:var(–surface); border:1px solid var(–border); border-radius:16px; }
-.inset { background:var(–bg); border:1px solid var(–border); border-radius:12px; }
+.card  { background:var(–surface); border:1.5px solid var(–border); border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); }
+.card.accent-teal   { border-left:4px solid var(–teal); }
+.card.accent-indigo { border-left:4px solid var(–indigo); }
+.card.accent-blue   { border-left:4px solid var(–blue); }
+.card.accent-amber  { border-left:4px solid var(–amber); }
+.card.accent-purple { border-left:4px solid var(–purple); }
+.card.accent-orange { border-left:4px solid var(–orange); }
+.card.accent-rose   { border-left:4px solid var(–rose); }
+.card.accent-green  { border-left:4px solid var(–green); }
+.inset { background:#F5F1EC; border:1.5px solid var(–border); border-radius:12px; }
 .sl    { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(–faint); }
+
+/* Section header tint strips — give each card’s header a light color anchor */
+.card-header-teal  { background:linear-gradient(to right, #F0FDFB, #FFFFFF); border-bottom:1px solid var(–border); border-radius:14px 14px 0 0; padding:16px 20px; margin:-1px -1px 0 -1px; }
+.card-header-indigo { background:linear-gradient(to right, #F5F3FF, #FFFFFF); border-bottom:1px solid var(–border); border-radius:14px 14px 0 0; padding:16px 20px; margin:-1px -1px 0 -1px; }
+.card-header-blue  { background:linear-gradient(to right, #EFF6FF, #FFFFFF); border-bottom:1px solid var(–border); border-radius:14px 14px 0 0; padding:16px 20px; margin:-1px -1px 0 -1px; }
+.card-header-amber { background:linear-gradient(to right, #FFFBEB, #FFFFFF); border-bottom:1px solid var(–border); border-radius:14px 14px 0 0; padding:16px 20px; margin:-1px -1px 0 -1px; }
+.card-header-purple{ background:linear-gradient(to right, #FAF5FF, #FFFFFF); border-bottom:1px solid var(–border); border-radius:14px 14px 0 0; padding:16px 20px; margin:-1px -1px 0 -1px; }
 
 .fi { width:100%; background:transparent; border:none; border-bottom:2px solid var(–border); font-family:‘DM Mono’,monospace; font-size:1.3rem; font-weight:500; color:var(–text); outline:none; padding-bottom:4px; transition:border-color .2s; }
 .fi:focus { border-color:var(–teal); }
-.si { width:100%; background:var(–bg); border:1.5px solid var(–border); border-radius:8px; font-family:‘DM Mono’,monospace; font-size:.9rem; font-weight:500; color:var(–text); outline:none; padding:7px 10px; transition:border-color .2s; }
-.si:focus { border-color:var(–teal); }
+.si { width:100%; background:#FAF8F5; border:1.5px solid var(–border); border-radius:8px; font-family:‘DM Mono’,monospace; font-size:.9rem; font-weight:500; color:var(–text); outline:none; padding:7px 10px; transition:border-color .2s; }
+.si:focus { border-color:var(–teal); border-color:var(–teal); box-shadow:0 0 0 3px rgba(13,148,136,.1); }
 select.si { font-family:‘DM Sans’,sans-serif; }
 
 input[type=range] { -webkit-appearance:none; height:5px; border-radius:99px; outline:none; cursor:pointer; }
@@ -43,10 +58,10 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 .hero-s { background:linear-gradient(135deg,#0F766E,#0D9488,#14B8A6); border-radius:16px; }
 .hero-d { background:linear-gradient(135deg,#9F1239,#E11D48,#FB7185); border-radius:16px; }
 
-/* Tabs — flex:1 so they fill full width */
-.tab-bar { display:flex; gap:4px; background:var(–bg); border:1px solid var(–border); border-radius:12px; padding:4px; }
+/* Tabs */
+.tab-bar { display:flex; gap:4px; background:#E5DFD6; border:1.5px solid var(–border-strong); border-radius:12px; padding:4px; }
 .tb { flex:1; padding:8px 14px; border-radius:9px; border:none; background:transparent; font-size:13px; font-weight:600; color:var(–muted); cursor:pointer; transition:all .2s; white-space:nowrap; text-align:center; }
-.tb.on { background:var(–surface); color:var(–text); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.tb.on { background:var(–surface); color:var(–text); box-shadow:0 1px 5px rgba(0,0,0,.12); }
 .tp { display:none; } .tp.on { display:block; }
 
 .sr { display:flex; justify-content:space-between; align-items:center; padding:6px 0; }
@@ -317,7 +332,7 @@ gap:6px !important;
 <!-- TAB: EXPENSES -->
 
 <div id="in_tp-expenses" class="tp on space-y-4">
-  <div class="card p-6">
+  <div class="card p-6 accent-rose">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
       <div>
         <p class="sl">Monthly Expense Categories</p>
@@ -344,7 +359,7 @@ gap:6px !important;
 
 <div id="in_tp-investments" class="tp space-y-5">
   <!-- EMI -->
-  <div class="card p-6">
+  <div class="card p-6 accent-orange">
     <div class="flex justify-between items-center mb-3">
       <p class="sl">EMI / Loan Tracker</p>
       <button onclick="IN_addEMI()" class="text-sm font-semibold px-4 py-2 rounded-lg border np" style="border-color:var(--border);color:var(--muted)">+ Add Loan</button>
@@ -358,7 +373,7 @@ gap:6px !important;
     </div>
   </div>
   <!-- Investment Matrix -->
-  <div class="card p-6">
+  <div class="card p-6 accent-indigo">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
       <div><p class="sl">Investment Matrix</p><p class="text-sm mt-1" style="color:var(--muted)">Yield from non-tax-free assets is added to each spouse's taxable gross</p></div>
       <div class="flex gap-2 np">
@@ -391,7 +406,7 @@ gap:6px !important;
     </div>
   </div>
   <!-- Reinvestment Strategy -->
-  <div class="card p-6">
+  <div class="card p-6 accent-teal">
     <p class="sl mb-5">Reinvestment Strategy</p>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">SIP Returns %/yr</p><input type="number" id="in_sipRet" value="12" min="1" max="30" oninput="IN_rc();IN_sv()" class="si mono"></div>
@@ -416,7 +431,7 @@ gap:6px !important;
 
 <div id="in_tp-forecast" class="tp space-y-5">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-    <div class="card p-6">
+    <div class="card p-6 accent-blue">
       <div class="flex justify-between items-center mb-4">
         <p class="sl">30-Year Wealth Path</p>
         <button id="in_adjBtn" onclick="IN_togAdj()" class="ab np">Inflation Adj.</button>
@@ -709,7 +724,7 @@ gap:6px !important;
 <!-- TAB: EXPENSES -->
 
 <div id="us_tp-expenses" class="tp on space-y-4">
-  <div class="card p-6">
+  <div class="card p-6 accent-rose">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
       <div>
         <p class="sl">Monthly Expense Categories</p>
@@ -735,7 +750,7 @@ gap:6px !important;
 <!-- TAB: INVESTMENTS -->
 
 <div id="us_tp-investments" class="tp space-y-5">
-  <div class="card p-6">
+  <div class="card p-6 accent-orange">
     <div class="flex justify-between items-center mb-3">
       <p class="sl">Loan / Mortgage Tracker</p>
       <button onclick="US_addEMI()" class="text-sm font-semibold px-4 py-2 rounded-lg border np" style="border-color:var(--border);color:var(--muted)">+ Add Loan</button>
@@ -748,7 +763,7 @@ gap:6px !important;
       <span class="mono text-lg font-bold" style="color:var(--orange)" id="us_emiTot">$0</span>
     </div>
   </div>
-  <div class="card p-6">
+  <div class="card p-6 accent-indigo">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
       <div><p class="sl">Investment Matrix</p><p class="text-sm mt-1" style="color:var(--muted)">Yield from taxable assets is added to each spouse's income</p></div>
       <div class="flex gap-2 np">
@@ -781,7 +796,7 @@ gap:6px !important;
     </div>
   </div>
   <!-- Retirement Plan Tracker (SURS / 401k / Pension) -->
-  <div class="card p-6">
+  <div class="card p-6 accent-purple">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
       <div>
         <p class="sl">Retirement Plan Tracker</p>
@@ -793,7 +808,7 @@ gap:6px !important;
     <div id="us_retNone" class="text-center py-4" style="color:var(--faint)"><p class="text-sm">No plans added yet. Add SURS, 401k, 403b, or any pension plan.</p></div>
   </div>
 
-  <div class="card p-6">
+  <div class="card p-6 accent-teal">
     <p class="sl mb-5">Reinvestment Strategy</p>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Index Fund Returns %/yr</p><input type="number" id="us_sipRet" value="10" min="1" max="30" oninput="US_rc();US_sv()" class="si mono"></div>
@@ -818,7 +833,7 @@ gap:6px !important;
 
 <div id="us_tp-forecast" class="tp space-y-5">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-    <div class="card p-6">
+    <div class="card p-6 accent-blue">
       <div class="flex justify-between items-center mb-4">
         <p class="sl">30-Year Wealth Path</p>
         <button id="us_adjBtn" onclick="US_togAdj()" class="ab np">Inflation Adj.</button>
