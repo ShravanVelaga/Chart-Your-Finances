@@ -1698,15 +1698,11 @@ function IN_rFC(){
     const ePills=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
     const pills=[...mPills,...ePills].join(' ');
     const uid='infc'+yr;
-    // Cumulative life event deductions through this year — add back to show true growth
+    // Life event deductions accumulated through this year (for display only)
     const leCumDed=IN_LE.filter(e=>e.deduct&&e.year>0&&e.year<=yr).reduce((s,e)=>s+(e.amount||0),0);
-    // Restore deducted amount proportionally to FD/SIP for gain calculation
-    const fdSipRaw=cFD+cSIP+leCumDed;
-    const fdShare=(cFD+cSIP)>0?cFD/(cFD+cSIP):0.5;
-    const cFD_pre=cFD+leCumDed*fdShare;
-    const cSIP_pre=cSIP+leCumDed*(1-fdShare);
-    const fdGain=cFD_pre-(fdPrincipal+fdContrib);
-    const sipGain=cSIP_pre-sipContrib;
+    // Growth = actual corpus minus what was contributed (net of spending — honest figure)
+    const fdGain=cFD-(fdPrincipal+fdContrib);
+    const sipGain=cSIP-sipContrib;
     const totalPrincipal=(fdPrincipal+fdContrib)+sipContrib;
     const totalGain=Math.max(0,disp-totalPrincipal);
     const totalDedsAnn=IN_DEDS[1].reduce((s,d)=>s+gv('in_b1')*(d.pct/100),0)+IN_DEDS[2].reduce((s,d)=>s+gv('in_b2')*(d.pct/100),0);
@@ -1750,15 +1746,15 @@ function IN_rFC(){
           ${fdPct>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-2 pl-2 text-xs" style="color:var(--muted)">🏦 FD / Savings <span style="color:var(--faint)">(${fdPct}% surplus)</span></td>
             <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${IN_fmt(fdPrincipal)} start + ${IN_fmt(fdContrib)} added</span></td>
-            <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,fdGain))}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">before spending</span>':''}</td>
-            <td class="py-2 mono text-xs text-right font-bold" style="color:var(--indigo)">${IN_fmtCr(cFD)}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">after life events</span>':''}</td>
+            <td class="py-2 mono text-xs text-right font-semibold" style="color:${fdGain>=0?'var(--green)':'var(--rose)'}">+${IN_fmtCr(Math.max(0,fdGain))}${leCumDed>0?'<br><span style="font-size:10px;color:var(--rose)">net of life events</span>':''}</td>
+            <td class="py-2 mono text-xs text-right font-bold" style="color:var(--indigo)">${IN_fmtCr(cFD)}</td>
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}%/yr</td>
           </tr>`:''}
           ${sipPct>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-2 pl-2 text-xs" style="color:var(--muted)">📈 SIP / Equity <span style="color:var(--faint)">(${sipPct}% surplus)</span></td>
             <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">₹0 start + ${IN_fmt(sipContrib)} added</span></td>
-            <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,sipGain))}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">before spending</span>':''}</td>
-            <td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">${IN_fmtCr(cSIP)}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">after life events</span>':''}</td>
+            <td class="py-2 mono text-xs text-right font-semibold" style="color:${sipGain>=0?'var(--green)':'var(--rose)'}">+${IN_fmtCr(Math.max(0,sipGain))}${leCumDed>0?'<br><span style="font-size:10px;color:var(--rose)">net of life events</span>':''}</td>
+            <td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">${IN_fmtCr(cSIP)}</td>
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}%/yr</td>
           </tr>`:''}
           ${retRows}
@@ -3096,13 +3092,11 @@ function US_rFC(){
     const uid='fc'+yr;
 
     // Build itemized rows
-    // Cumulative life event deductions through this year — add back to show true growth
+    // Life event deductions accumulated through this year (for display only)
     const leCumDed=US_LE.filter(e=>e.deduct&&e.year>0&&e.year<=yr).reduce((s,e)=>s+(e.amount||0),0);
-    const fdShare=(cFD+cSIP)>0?cFD/(cFD+cSIP):0.5;
-    const cFD_pre=cFD+leCumDed*fdShare;
-    const cSIP_pre=cSIP+leCumDed*(1-fdShare);
-    const fdGain=cFD_pre-(fdPrincipal+fdContrib);
-    const sipGain=cSIP_pre-sipContrib;
+    // Growth = actual corpus minus what was contributed (net of spending — honest figure)
+    const fdGain=cFD-(fdPrincipal+fdContrib);
+    const sipGain=cSIP-sipContrib;
     // per-plan retirement breakdown
     const retRows=US_RET.map(p=>{
       const pCorpus=US_retCorpusAt(p,yr);
@@ -3168,15 +3162,15 @@ function US_rFC(){
           ${fdP>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🏦 Brokerage / HYSA <span style="color:var(--faint)">(${fdP}% surplus)</span></td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${US_fmt(fdPrincipal)} start + ${US_fmt(fdContrib)} added</span></td>
-            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,fdGain))}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">before spending</span>':''}</td>
-            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--blue)">${US_fmtM(cFD)}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">after life events</span>':''}</td>
+            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:${fdGain>=0?'var(--green)':'var(--rose)'}">+${US_fmtM(Math.max(0,fdGain))}${leCumDed>0?'<br><span style="font-size:10px;color:var(--rose)">net of life events</span>':''}</td>
+            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--blue)">${US_fmtM(cFD)}</td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}%/yr</td>
           </tr>`:''}
           ${sipP>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">📈 Index Fund <span style="color:var(--faint)">(${sipP}% surplus)</span></td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">$0 start + ${US_fmt(sipContrib)} added</span></td>
-            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,sipGain))}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">before spending</span>':''}</td>
-            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--purple)">${US_fmtM(cSIP)}${leCumDed>0?'<br><span style="color:var(--rose);font-size:10px">after life events</span>':''}</td>
+            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:${sipGain>=0?'var(--green)':'var(--rose)'}">+${US_fmtM(Math.max(0,sipGain))}${leCumDed>0?'<br><span style="font-size:10px;color:var(--rose)">net of life events</span>':''}</td>
+            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--purple)">${US_fmtM(cSIP)}</td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}%/yr</td>
           </tr>`:''}
           ${retRows}
