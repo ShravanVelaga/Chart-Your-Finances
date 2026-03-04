@@ -59,12 +59,38 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 .hero-d { background:linear-gradient(135deg,#9F1239,#E11D48,#FB7185); border-radius:16px; }
 
 /* Tabs */
-.tab-bar { display:flex; gap:4px; background:#E5DFD6; border:1.5px solid var(--border-strong); border-radius:12px; padding:4px; }
-.tb { flex:1; padding:8px 14px; border-radius:9px; border:none; background:transparent; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; transition:all .2s; white-space:nowrap; text-align:center; }
-.tb.on { background:var(--surface); color:var(--text); box-shadow:0 1px 5px rgba(0,0,0,.12); }
-.tp { display:none; } .tp.on { display:block; }
+.tab-bar {
+  display:flex; gap:6px;
+  background:var(--surface);
+  border:1.5px solid var(--border-strong);
+  border-radius:14px; padding:5px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+.tb {
+  flex:1; padding:9px 14px; border-radius:10px; border:none;
+  background:transparent; font-size:12px; font-weight:700;
+  color:var(--muted); cursor:pointer; transition:all .2s;
+  white-space:nowrap; text-align:center; letter-spacing:.01em;
+}
+.tb:hover:not(.on) { background:var(--border); color:var(--text); }
+.tb.on { background:var(--text); color:var(--surface); box-shadow:0 1px 6px rgba(0,0,0,.18); }
+.tb .tab-step {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:18px; height:18px; border-radius:99px; font-size:10px;
+  font-weight:900; margin-right:5px;
+  background:rgba(255,255,255,.18); color:inherit;
+  vertical-align:middle;
+}
+.tb:not(.on) .tab-step { background:var(--border-strong); color:var(--muted); }
+.tab-sticky {
+  position:sticky; top:0; z-index:50;
+  background:var(--bg); padding:10px 0 6px;
+  margin:0 0 4px;
+  border-bottom:1px solid var(--border);
+}
 
-.sr { display:flex; justify-content:space-between; align-items:center; padding:6px 0; }
+.tp { display:none; } .tp.on { display:block; }
+.sr { display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
 .sr + .sr { border-top:1px solid var(--border); }
 
 .fr { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
@@ -188,6 +214,12 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
   .card { padding:16px !important; border-radius:12px !important; }
   .inset { padding:12px !important; }
 }
+/* Persistent scrollbar for forecast tables */
+#in_fcTbl::-webkit-scrollbar, #us_fcTbl::-webkit-scrollbar { width:6px; }
+#in_fcTbl::-webkit-scrollbar-track, #us_fcTbl::-webkit-scrollbar-track { background:var(--border); border-radius:99px; }
+#in_fcTbl::-webkit-scrollbar-thumb, #us_fcTbl::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:99px; }
+#in_fcTbl::-webkit-scrollbar-thumb:hover, #us_fcTbl::-webkit-scrollbar-thumb:hover { background:var(--muted); }
+
 @media print { .np { display:none !important; } }
 </style>
 </head>
@@ -317,21 +349,21 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
       </div>
     </div>
     <div class="grid grid-cols-2 gap-3 pt-1 audit-grid">
-      <div class="inset p-3">
-        <p class="text-xs font-semibold mb-2" style="color:var(--indigo)">Spouse 1 · Net In-Hand</p>
-        <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="in_s1g">₹0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Tax</span><span class="mono text-xs" style="color:var(--rose)" id="in_s1t">₹0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--amber)">Deductions</span><span class="mono text-xs" style="color:var(--amber)" id="in_s1d">₹0</span></div>
-        <div class="sr"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="in_s1n">₹0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="in_s1r">0%</span></div>
+      <div class="inset p-4">
+        <p class="text-sm font-bold mb-3" style="color:var(--indigo)">Spouse 1 · Net In-Hand</p>
+        <div class="sr"><span class="text-sm" style="color:var(--muted)">Gross</span><span class="mono text-sm font-semibold" id="in_s1g">₹0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="in_s1t">₹0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--amber)">Deductions</span><span class="mono text-sm font-semibold" style="color:var(--amber)" id="in_s1d">₹0</span></div>
+        <div class="sr" style="border-top:1.5px solid var(--border);margin-top:4px;padding-top:6px"><span class="text-base font-black">Net</span><span class="mono text-base font-black" id="in_s1n">₹0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs font-semibold" id="in_s1r">0%</span></div>
       </div>
-      <div class="inset p-3">
-        <p class="text-xs font-semibold mb-2" style="color:var(--teal)">Spouse 2 · Net In-Hand</p>
-        <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="in_s2g">₹0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Tax</span><span class="mono text-xs" style="color:var(--rose)" id="in_s2t">₹0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--amber)">Deductions</span><span class="mono text-xs" style="color:var(--amber)" id="in_s2d">₹0</span></div>
-        <div class="sr"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="in_s2n">₹0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="in_s2r">0%</span></div>
+      <div class="inset p-4">
+        <p class="text-sm font-bold mb-3" style="color:var(--teal)">Spouse 2 · Net In-Hand</p>
+        <div class="sr"><span class="text-sm" style="color:var(--muted)">Gross</span><span class="mono text-sm font-semibold" id="in_s2g">₹0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="in_s2t">₹0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--amber)">Deductions</span><span class="mono text-sm font-semibold" style="color:var(--amber)" id="in_s2d">₹0</span></div>
+        <div class="sr" style="border-top:1.5px solid var(--border);margin-top:4px;padding-top:6px"><span class="text-base font-black">Net</span><span class="mono text-base font-black" id="in_s2n">₹0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs font-semibold" id="in_s2r">0%</span></div>
       </div>
     </div>
   </div>
@@ -361,14 +393,19 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 </div>
 
 <!-- TAB BAR -->
-<div class="tab-bar np">
-  <button class="tb on" onclick="IN_tab('expenses',this)"><span class="tab-step">1</span> 💸 Expenses</button>
-  <button class="tb" onclick="IN_tab('investments',this)"><span class="tab-step">2</span> 📈 Investments</button>
-  <button class="tb" onclick="IN_tab('forecast',this)"><span class="tab-step">3</span> 🔭 Forecast</button>
-  <button class="tb" onclick="IN_tab('scenarios',this)">⚖️ What-If</button>
-  <button class="tb" onclick="IN_tab('insights',this)">💡 Insights</button>
+<div class="tab-sticky np" style="margin-left:calc(-1rem);margin-right:calc(-1rem);padding-left:1rem;padding-right:1rem">
+  <div class="tab-bar">
+    <button class="tb on" onclick="IN_tab('expenses',this)"><span class="tab-step">1</span> 💸 Expenses</button>
+    <button class="tb" onclick="IN_tab('investments',this)"><span class="tab-step">2</span> 📈 Investments</button>
+    <button class="tb" onclick="IN_tab('forecast',this)"><span class="tab-step">3</span> 🔭 Forecast</button>
+    <button class="tb" onclick="IN_tab('scenarios',this)">⚖️ What-If</button>
+    <button class="tb" onclick="IN_tab('insights',this)">💡 Insights</button>
+  </div>
+  <p class="text-xs text-center" style="color:var(--faint);margin-top:5px">Follow steps <strong style="color:var(--muted)">1 → 2 → 3</strong> to get started · hover <span style="background:var(--border);padding:1px 6px;border-radius:4px;font-size:10px">ⓘ</span> on any section for guidance</p>
 </div>
-<p class="text-xs text-center np" style="color:var(--faint);margin-top:4px">Follow steps <strong style="color:var(--muted)">1 → 2 → 3</strong> to get started · hover <span style="background:var(--border);padding:1px 6px;border-radius:4px;font-size:10px">ⓘ</span> on any section for guidance</p>
+
+<!-- TAB CONTENT -->
+<div>
 
 <!-- TAB: EXPENSES -->
 <div id="in_tp-expenses" class="tp on space-y-4">
@@ -468,7 +505,10 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
       </table>
     </div>
   </div>
-  <!-- Reinvestment Strategy -->
+</div>
+
+<!-- TAB: FORECAST -->
+<div id="in_tp-forecast" class="tp space-y-5">
   <div class="card p-6 accent-teal">
     <p class="sl tip-wrap mb-5">Reinvestment Strategy<span class="tip-icon">ⓘ</span><span class="tip-box">This controls where your monthly surplus goes. Drag the sliders to split it between FD (safer, lower return) and SIP (market-linked, higher return). Both grow your wealth — the split reflects your risk preference.</span></p>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
@@ -488,10 +528,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     </div>
     <p class="text-xs mt-3 text-center" style="color:var(--faint)">Sliders always sum to 100%</p>
   </div>
-</div>
-
-<!-- TAB: FORECAST -->
-<div id="in_tp-forecast" class="tp space-y-5">
   <div class="card p-6 accent-blue">
     <div class="flex justify-between items-center mb-4">
       <p class="sl tip-wrap">Wealth Forecast<span class="tip-icon">ⓘ</span><span class="tip-box">Short Term: month-by-month detail for years 1–10, grouped by year. Long Term: 5-year interval snapshots up to 30 years with full bucket breakdown. Toggle Inflation Adj. for today's purchasing power equivalent.</span></p>
@@ -501,7 +537,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
       <button id="in_fcShortBtn" onclick="IN_setFcMode('short')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style="border-color:var(--border);color:var(--muted)">📅 Short Term <span style="color:var(--faint);font-weight:400">(monthly · 10yr)</span></button>
       <button id="in_fcLongBtn" onclick="IN_setFcMode('long')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all on" style="border-color:var(--teal);color:var(--teal);background:var(--teal-lt)">📈 Long Term <span style="font-weight:400">(5yr steps · 30yr)</span></button>
     </div>
-    <div id="in_fcTbl"></div>
+    <div id="in_fcTbl" style="height:520px;overflow-y:scroll;overflow-x:hidden;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--border)"></div>
     <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="in_adjNote">Nominal · includes salary growth, time-bound expenses &amp; EMIs</p>
   </div>
   <div class="card p-6">
@@ -591,6 +627,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     <div id="in_insP"><p class="text-sm" style="color:var(--faint)">Fill in your data to see personalised insights.</p></div>
   </div>
 </div>
+
+</div><!-- /tab-content -->
 
 <p id="in_audit" class="mono text-xs text-center pb-4" style="color:var(--faint)">Audit: Ready</p>
 </div><!-- /max-w -->
@@ -767,25 +805,25 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     </div>
     <!-- Tax audit -->
     <div class="grid grid-cols-2 gap-3 pt-1 audit-grid">
-      <div class="inset p-3">
-        <p class="text-xs font-semibold mb-2" style="color:var(--indigo)">Spouse 1 · Net Take-Home</p>
-        <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="us_s1g">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Pre-tax Ded.</span><span class="mono text-xs" style="color:var(--amber)" id="us_s1d">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Federal Tax</span><span class="mono text-xs" style="color:var(--rose)" id="us_s1ft">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">State Tax</span><span class="mono text-xs" style="color:var(--rose)" id="us_s1st">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">FICA</span><span class="mono text-xs" style="color:var(--rose)" id="us_s1fi">$0</span></div>
-        <div class="sr"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="us_s1n">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="us_s1r">0%</span></div>
+      <div class="inset p-4">
+        <p class="text-sm font-bold mb-3" style="color:var(--indigo)">Spouse 1 · Net Take-Home</p>
+        <div class="sr"><span class="text-sm" style="color:var(--muted)">Gross</span><span class="mono text-sm font-semibold" id="us_s1g">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">Pre-tax Ded.</span><span class="mono text-sm font-semibold" style="color:var(--amber)" id="us_s1d">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">Federal Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s1ft">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">State Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s1st">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">FICA</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s1fi">$0</span></div>
+        <div class="sr" style="border-top:1.5px solid var(--border);margin-top:4px;padding-top:6px"><span class="text-base font-black">Net</span><span class="mono text-base font-black" id="us_s1n">$0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs font-semibold" id="us_s1r">0%</span></div>
       </div>
-      <div class="inset p-3">
-        <p class="text-xs font-semibold mb-2" style="color:var(--teal)">Spouse 2 · Net Take-Home</p>
-        <div class="sr"><span class="text-xs" style="color:var(--muted)">Gross</span><span class="mono text-xs" id="us_s2g">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Pre-tax Ded.</span><span class="mono text-xs" style="color:var(--amber)" id="us_s2d">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Federal Tax</span><span class="mono text-xs" style="color:var(--rose)" id="us_s2ft">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">State Tax</span><span class="mono text-xs" style="color:var(--rose)" id="us_s2st">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">FICA</span><span class="mono text-xs" style="color:var(--rose)" id="us_s2fi">$0</span></div>
-        <div class="sr"><span class="text-sm font-bold">Net</span><span class="mono text-sm font-bold" id="us_s2n">$0</span></div>
-        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs" id="us_s2r">0%</span></div>
+      <div class="inset p-4">
+        <p class="text-sm font-bold mb-3" style="color:var(--teal)">Spouse 2 · Net Take-Home</p>
+        <div class="sr"><span class="text-sm" style="color:var(--muted)">Gross</span><span class="mono text-sm font-semibold" id="us_s2g">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">Pre-tax Ded.</span><span class="mono text-sm font-semibold" style="color:var(--amber)" id="us_s2d">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">Federal Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s2ft">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">State Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s2st">$0</span></div>
+        <div class="sr"><span class="text-sm" style="color:var(--faint)">FICA</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s2fi">$0</span></div>
+        <div class="sr" style="border-top:1.5px solid var(--border);margin-top:4px;padding-top:6px"><span class="text-base font-black">Net</span><span class="mono text-base font-black" id="us_s2n">$0</span></div>
+        <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs font-semibold" id="us_s2r">0%</span></div>
       </div>
     </div>
   </div>
@@ -815,14 +853,19 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 </div>
 
 <!-- US TAB BAR -->
-<div class="tab-bar np">
-  <button class="tb on" onclick="US_tab('expenses',this)"><span class="tab-step">1</span> 💸 Expenses</button>
-  <button class="tb" onclick="US_tab('investments',this)"><span class="tab-step">2</span> 📈 Investments</button>
-  <button class="tb" onclick="US_tab('forecast',this)"><span class="tab-step">3</span> 🔭 Forecast</button>
-  <button class="tb" onclick="US_tab('scenarios',this)">⚖️ What-If</button>
-  <button class="tb" onclick="US_tab('insights',this)">💡 Insights</button>
+<div class="tab-sticky np" style="margin-left:calc(-1rem);margin-right:calc(-1rem);padding-left:1rem;padding-right:1rem">
+  <div class="tab-bar">
+    <button class="tb on" onclick="US_tab('expenses',this)"><span class="tab-step">1</span> 💸 Expenses</button>
+    <button class="tb" onclick="US_tab('investments',this)"><span class="tab-step">2</span> 📈 Investments</button>
+    <button class="tb" onclick="US_tab('forecast',this)"><span class="tab-step">3</span> 🔭 Forecast</button>
+    <button class="tb" onclick="US_tab('scenarios',this)">⚖️ What-If</button>
+    <button class="tb" onclick="US_tab('insights',this)">💡 Insights</button>
+  </div>
+  <p class="text-xs text-center" style="color:var(--faint);margin-top:5px">Follow steps <strong style="color:var(--muted)">1 → 2 → 3</strong> to get started · hover <span style="background:var(--border);padding:1px 6px;border-radius:4px;font-size:10px">ⓘ</span> on any section for guidance</p>
 </div>
-<p class="text-xs text-center np" style="color:var(--faint);margin-top:4px">Follow steps <strong style="color:var(--muted)">1 → 2 → 3</strong> to get started · hover <span style="background:var(--border);padding:1px 6px;border-radius:4px;font-size:10px">ⓘ</span> on any section for guidance</p>
+<!-- TAB CONTENT -->
+<div>
+
 <div id="us_tp-expenses" class="tp on space-y-4">
   <div class="card p-6 accent-rose">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
@@ -932,6 +975,11 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     <div id="us_retNone" class="text-center py-5" style="color:var(--faint)"><p class="text-2xl mb-1">🏛</p><p class="text-sm font-medium">No retirement plans added yet</p><p class="text-xs mt-1" style="max-width:300px;margin:4px auto 0">Add SURS, 401k, 403b, or any defined-contribution pension. Enter your current balance, contribution %, employer match %, and return rate. The projected corpus is included in your 30-year forecast.</p></div>
   </div>
 
+  </div>
+</div>
+
+<!-- TAB: FORECAST -->
+<div id="us_tp-forecast" class="tp space-y-5">
   <div class="card p-6 accent-teal">
     <p class="sl tip-wrap mb-5">Reinvestment Strategy<span class="tip-icon">ⓘ</span><span class="tip-box">This controls where your monthly surplus goes. Split it between Brokerage (HYSA/bonds, safer) and Index Fund (S&P 500 etc, higher long-term return). The sliders always sum to 100% of the surplus allocated to investing.</span></p>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
@@ -951,10 +999,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     </div>
     <p class="text-xs mt-3 text-center" style="color:var(--faint)">Sliders always sum to 100%</p>
   </div>
-</div>
-
-<!-- TAB: FORECAST -->
-<div id="us_tp-forecast" class="tp space-y-5">
   <div class="card p-6 accent-blue">
     <div class="flex justify-between items-center mb-4">
       <p class="sl tip-wrap">Wealth Forecast<span class="tip-icon">ⓘ</span><span class="tip-box">Short Term: month-by-month detail for years 1–10, grouped by year. Long Term: 5-year interval snapshots up to 30 years with full bucket breakdown. Toggle Inflation Adj. for today's dollar equivalent.</span></p>
@@ -964,7 +1008,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
       <button id="us_fcShortBtn" onclick="US_setFcMode('short')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style="border-color:var(--border);color:var(--muted)">📅 Short Term <span style="color:var(--faint);font-weight:400">(monthly · 10yr)</span></button>
       <button id="us_fcLongBtn" onclick="US_setFcMode('long')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all on" style="border-color:var(--blue);color:var(--blue);background:var(--blue-lt)">📈 Long Term <span style="font-weight:400">(5yr steps · 30yr)</span></button>
     </div>
-    <div id="us_fcTbl"></div>
+    <div id="us_fcTbl" style="height:520px;overflow-y:scroll;overflow-x:hidden;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--border)"></div>
     <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="us_adjNote">Nominal · includes salary growth &amp; time-bound expenses</p>
   </div>
   <div class="card p-6">
@@ -1062,6 +1106,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     <div id="us_insP"><p class="text-sm" style="color:var(--faint)">Fill in your data to see personalised insights.</p></div>
   </div>
 </div>
+
+</div><!-- /tab-content -->
 
 <p id="us_audit" class="mono text-xs text-center pb-4" style="color:var(--faint)">Audit: Ready</p>
 </div><!-- /max-w -->
@@ -1700,7 +1746,7 @@ function IN_rFC(){
         </tfoot>
       </table>
     </div>`;
-    html+=`<div class="fr" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0">
+    html+=`<div class="fr" style="flex-direction:column;align-items:stretch;gap:0;padding:14px 0">
       <div class="flex items-center gap-3" style="cursor:pointer" onclick="const el=document.getElementById('${uid}');el.classList.toggle('hidden');this.querySelector('.fc-arr').textContent=el.classList.contains('hidden')?'▸':'▾'">
         <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
         <div class="flex-1 min-w-0">
@@ -1764,22 +1810,22 @@ function IN_rFC_short(){
     const bw=Math.min(97,Math.max(2,(yrTotal/max10)*100));
     const msPills=IN_MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}</span>`).join(' ');
     html+=`<div style="border-bottom:1px solid var(--border)">
-      <div class="flex items-center gap-4 py-3 px-1" style="cursor:pointer" onclick="const el=document.getElementById('insh${yr}');const open=!el.classList.contains('hidden');el.classList.toggle('hidden');this.querySelector('.sh-arr').textContent=open?'▸':'▾';this.querySelector('.sh-hint').textContent=open?'expand months':'collapse'">
-        <div class="shrink-0 text-center" style="width:72px">
-          <span class="text-xs font-black uppercase tracking-widest" style="color:var(--faint)">Year</span>
-          <p class="mono text-2xl font-black leading-none mt-0.5" style="color:var(--text)">${yr}</p>
+      <div class="flex items-center gap-3 py-2 px-1" style="cursor:pointer" onclick="const el=document.getElementById('insh${yr}');const open=!el.classList.contains('hidden');el.classList.toggle('hidden');this.querySelector('.sh-arr').textContent=open?'▸':'▾';this.querySelector('.sh-hint').textContent=open?'expand months':'collapse'">
+        <div class="shrink-0 text-center" style="width:52px">
+          <span class="text-xs font-black uppercase tracking-widest" style="color:var(--faint);font-size:9px">Year</span>
+          <p class="mono text-xl font-black leading-none" style="color:var(--text)">${yr}</p>
         </div>
-        <div class="flex-1 min-w-0 space-y-1.5">
-          <div style="height:7px;background:var(--border);border-radius:99px;overflow:hidden">
-            <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--teal),var(--indigo));transition:width .4s ease"></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <div style="flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden">
+              <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--teal),var(--indigo));transition:width .4s ease"></div>
+            </div>
+            <span class="text-xs font-semibold shrink-0" style="color:var(--green)">+${IN_fmtCr(growth)}</span>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="text-xs font-semibold" style="color:var(--green)">+${IN_fmtCr(growth)} this year</span>
-            ${msPills}
-          </div>
+          ${msPills?`<div class="flex flex-wrap gap-1">${msPills}</div>`:''}
         </div>
-        <div class="shrink-0 text-right" style="min-width:110px">
-          <p class="mono text-xl font-black" style="color:var(--teal-dk)">${IN_fmtCr(yrTotal)}${IN_isAdj?` <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);vertical-align:middle">adj</span>`:''}</p>
+        <div class="shrink-0 text-right" style="min-width:100px">
+          <p class="mono text-base font-black" style="color:var(--teal-dk)">${IN_fmtCr(yrTotal)}${IN_isAdj?` <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);vertical-align:middle">adj</span>`:''}</p>
           <span class="sh-hint text-xs" style="color:var(--faint)">expand months</span>
         </div>
         <span class="sh-arr text-sm shrink-0" style="color:var(--faint)">▸</span>
@@ -2904,26 +2950,27 @@ function US_rFC_short(){
     const max10yr=US_sim(10).total||1;
     const bw=Math.min(97,Math.max(2,(totalYr/max10yr)*100));
     html+=`<div style="border-bottom:1px solid var(--border)">
-      <div class="flex items-center gap-4 py-3 px-1" style="cursor:pointer" onclick="const t=document.getElementById('${uid}');const open=!t.classList.contains('hidden');t.classList.toggle('hidden');this.querySelector('.fca').textContent=open?'▸':'▾';this.querySelector('.fca-hint').textContent=open?'expand months':'collapse'">
-        <div class="shrink-0 text-center" style="width:72px">
-          <span class="text-xs font-black uppercase tracking-widest" style="color:var(--faint)">Year</span>
-          <p class="mono text-2xl font-black leading-none mt-0.5" style="color:var(--text)">${yr}</p>
+      <div class="flex items-center gap-3 py-2 px-1" style="cursor:pointer" onclick="const t=document.getElementById('${uid}');const open=!t.classList.contains('hidden');t.classList.toggle('hidden');this.querySelector('.fca').textContent=open?'▸':'▾';this.querySelector('.fca-hint').textContent=open?'expand months':'collapse'">
+        <div class="shrink-0 text-center" style="width:52px">
+          <span style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)">Year</span>
+          <p class="mono text-xl font-black leading-none" style="color:var(--text)">${yr}</p>
         </div>
-        <div class="flex-1 min-w-0 space-y-1.5">
-          <div style="height:7px;background:var(--border);border-radius:99px;overflow:hidden">
-            <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--blue),var(--purple));transition:width .4s ease"></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <div style="flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden">
+              <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--blue),var(--purple));transition:width .4s ease"></div>
+            </div>
+            <span class="text-xs font-semibold shrink-0" style="color:var(--green)">+${US_fmtM(yrGrowth)}</span>
           </div>
-          <div class="flex items-center gap-3 flex-wrap" style="font-size:11px">
-            <span style="color:var(--green)">+${US_fmtM(yrGrowth)} this year</span>
-            <span style="color:var(--faint)">·</span>
+          <div class="flex items-center gap-2 flex-wrap" style="font-size:10px">
             <span style="color:var(--blue)">Surplus <strong>${surplusMo>=0?'':'-'}${US_fmt(Math.abs(Math.round(surplusMo)))}/mo</strong></span>
-            ${retCorpusYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--teal)">Ret <strong>${US_fmtM(retCorpusYr)}</strong></span>`:''}
-            ${homeEquityYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--orange)">Home Eq <strong>${US_fmtM(homeEquityYr)}</strong></span>`:''}
+            ${retCorpusYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--teal)">Ret ${US_fmtM(retCorpusYr)}</span>`:''}
+            ${homeEquityYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--orange)">Eq ${US_fmtM(homeEquityYr)}</span>`:''}
             ${pills?`<span style="color:var(--faint)">·</span>${pills}`:''}
           </div>
         </div>
-        <div class="shrink-0 text-right" style="min-width:110px">
-          <p class="mono text-xl font-black" style="color:var(--blue-dk)">${US_fmtM(dispYr)}${US_isAdj?` <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);vertical-align:middle">adj</span>`:''}</p>
+        <div class="shrink-0 text-right" style="min-width:100px">
+          <p class="mono text-base font-black" style="color:var(--blue-dk)">${US_fmtM(dispYr)}${US_isAdj?` <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);vertical-align:middle">adj</span>`:''}</p>
           <span class="fca-hint text-xs" style="color:var(--faint)">expand months</span>
         </div>
         <span class="fca text-sm shrink-0" style="color:var(--faint)">▸</span>
@@ -3067,7 +3114,7 @@ function US_rFC(){
       </table>
     </div>`;
 
-    html+=`<div class="fr" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0">
+    html+=`<div class="fr" style="flex-direction:column;align-items:stretch;gap:0;padding:14px 0">
       <div class="flex items-center gap-3" style="cursor:pointer" onclick="const el=document.getElementById('${uid}');el.classList.toggle('hidden');this.querySelector('.fc-arr').textContent=el.classList.contains('hidden')?'▸':'▾'">
         <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
         <div class="flex-1 min-w-0">
