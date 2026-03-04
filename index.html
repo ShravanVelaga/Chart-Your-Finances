@@ -1647,7 +1647,12 @@ let US_dedOpen={1:false,2:false};
 // ── US utils ──
 function US_hi(el){const r=el.value.replace(/,/g,'');if(!r||isNaN(r)){el.value='0';return;}el.value=parseFloat(r).toLocaleString('en-US');}
 function US_fmt(n){return '$'+Math.round(n).toLocaleString('en-US');}
-function US_fmtM(n){return '$'+(n/1000000).toFixed(2)+'M';}
+function US_fmtM(n){
+  const abs=Math.abs(n);
+  if(abs>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(abs>=1000) return '$'+Math.round(n/1000)+'k';
+  return '$'+Math.round(n).toLocaleString('en-US');
+}
 
 function US_tab(name,btn){
   document.querySelectorAll('#dashboard-usa .tp').forEach(p=>p.classList.remove('on'));
