@@ -1618,7 +1618,7 @@ function IN_rc(){
 }
 
 // ── India simulation engine ──
-function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentry=100){
+function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentry=100,skipLE=false){
   const b1base=gv('in_b1'),b2base=gv('in_b2'),g1=gn('in_g1')/100,g2=gn('in_g2')/100;
   const fdP=gi('in_fdRng')/100,sipP=gi('in_sipRng')/100;
   const sipRt=gn('in_sipRet')/100,fdRt=gn('in_fdRt')/100;
@@ -1658,8 +1658,8 @@ function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentr
     cFD=cFD+fdNetInterest+mFD*12;
     cSIP=(cSIP+mSIP*12)*(1+sipRt);
     // Apply life event deductions at this year (deduct proportionally from FD+SIP)
-    const leDed=IN_LE.filter(e=>e.deduct&&e.year===yr).reduce((s,e)=>s+(e.amount||0),0);
-    if(leDed>0){const tot=cFD+cSIP;if(tot>0){const r=Math.min(1,leDed/tot);cFD=Math.max(0,cFD-cFD*r);cSIP=Math.max(0,cSIP-cSIP*r);}}
+    if(!skipLE){const leDed=IN_LE.filter(e=>e.deduct&&e.year===yr).reduce((s,e)=>s+(e.amount||0),0);
+    if(leDed>0){const tot=cFD+cSIP;if(tot>0){const r=Math.min(1,leDed/tot);cFD=Math.max(0,cFD-cFD*r);cSIP=Math.max(0,cSIP-cSIP*r);}}}
     // EPF/NPS: total deduction % on each salary, compounded monthly at retRt
     const retContrib1=(aff1&&inLoss)?0:d1;
     const retContrib2=(aff2&&inLoss)?0:d2;
@@ -1698,11 +1698,13 @@ function IN_rFC(){
     const ePills=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
     const pills=[...mPills,...ePills].join(' ');
     const uid='infc'+yr;
-    // Life event deductions accumulated through this year (for display only)
-    const leCumDed=IN_LE.filter(e=>e.deduct&&e.year>0&&e.year<=yr).reduce((s,e)=>s+(e.amount||0),0);
-    // Growth = actual corpus minus what was contributed (net of spending — honest figure)
-    const fdGain=cFD-(fdPrincipal+fdContrib);
-    const sipGain=cSIP-sipContrib;
+    // True compound growth: run sim without life event deductions to isolate earnings from spending
+    const simClean=IN_sim(yr,0,0,0,'none',1,100,true/*skipLE*/);
+    const fdGain=simClean.cFD-(fdPrincipal+fdContrib);
+    const sipGain=simClean.cSIP-sipContrib;
+    // Life events in this 5-year window only (for deduction section)
+    const leWindow=IN_LE.filter(e=>e.deduct&&e.year>prevYr&&e.year<=yr);
+    const leCumDed=leWindow.reduce((s,e)=>s+(e.amount||0),0);
     const totalPrincipal=(fdPrincipal+fdContrib)+sipContrib;
     const totalGain=Math.max(0,disp-totalPrincipal);
     const totalDedsAnn=IN_DEDS[1].reduce((s,d)=>s+gv('in_b1')*(d.pct/100),0)+IN_DEDS[2].reduce((s,d)=>s+gv('in_b2')*(d.pct/100),0);
@@ -1766,7 +1768,7 @@ function IN_rFC(){
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${(assetRate*100).toFixed(1)}%/yr yield</td>
           </tr>`:''}
           ${homeRows}
-          ${(()=>{const evts=IN_LE.filter(e=>e.deduct&&e.year>0&&e.year<=yr);if(!evts.length)return'';const totalDed=evts.reduce((s,e)=>s+(e.amount||0),0);return'<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Life Event Deductions (cumulative through Yr '+yr+')</td></tr>'+evts.map(e=>{const t=IN_LE_TYPES.find(x=>x.val===e.type)||{icon:"📌"};return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint)">(Yr '+e.year+')</span></td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+IN_fmtCr(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+IN_fmtCr(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">one-time</td></tr>';}).join('')+'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Total deducted</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+IN_fmtCr(totalDed)+'</td><td></td></tr>';})()}
+          ${(()=>{if(!leWindow.length)return'';const totalDed=leCumDed;return'<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Life Events — Yr '+(prevYr+1)+' to '+yr+'</td></tr>'+leWindow.map(e=>{const t=IN_LE_TYPES.find(x=>x.val===e.type)||{icon:"📌"};return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint)">(Yr '+e.year+')</span></td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+IN_fmtCr(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+IN_fmtCr(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">one-time</td></tr>';}).join('')+(leWindow.length>1?'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Subtotal this period</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+IN_fmtCr(totalDed)+'</td><td></td></tr>':'');})()}
         </tbody>
         <tfoot>
           <tr style="border-top:2px solid var(--border);background:var(--bg)">
@@ -2822,7 +2824,7 @@ function US_totalHomeEquityAt(yr){
 }
 
 // ── US simulation engine ──
-function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentry=100){
+function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentry=100,skipLE=false){
   const b1=gv('us_b1'),b2=gv('us_b2'),g1=gn('us_g1')/100,g2=gn('us_g2')/100;
   const fdP=gi('us_fdRng')/100,sipP=gi('us_sipRng')/100;
   const sipRt=gn('us_sipRet')/100,fdRt=gn('us_fdRt')/100;
@@ -2875,8 +2877,8 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
     cFD=cFD+fdNetInterest+mFD*12;
     cSIP=(cSIP+mSIP*12)*(1+sipRt);
     // Apply life event deductions at this year (proportional from HYSA+index fund)
-    const leDed=US_LE.filter(e=>e.deduct&&e.year===yr).reduce((s,e)=>s+(e.amount||0),0);
-    if(leDed>0){const tot=cFD+cSIP;if(tot>0){const r=Math.min(1,leDed/tot);cFD=Math.max(0,cFD-cFD*r);cSIP=Math.max(0,cSIP-cSIP*r);}}
+    if(!skipLE){const leDed=US_LE.filter(e=>e.deduct&&e.year===yr).reduce((s,e)=>s+(e.amount||0),0);
+    if(leDed>0){const tot=cFD+cSIP;if(tot>0){const r=Math.min(1,leDed/tot);cFD=Math.max(0,cFD-cFD*r);cSIP=Math.max(0,cSIP-cSIP*r);}}}
   }
   const retCorpus=US_retTotalAt(years);
   const assetRate=totP>0?(ty/totP):0;
@@ -3092,11 +3094,13 @@ function US_rFC(){
     const uid='fc'+yr;
 
     // Build itemized rows
-    // Life event deductions accumulated through this year (for display only)
-    const leCumDed=US_LE.filter(e=>e.deduct&&e.year>0&&e.year<=yr).reduce((s,e)=>s+(e.amount||0),0);
-    // Growth = actual corpus minus what was contributed (net of spending — honest figure)
-    const fdGain=cFD-(fdPrincipal+fdContrib);
-    const sipGain=cSIP-sipContrib;
+    // True growth: run clean sim (no LE deductions) to separate compound earnings from spending
+    const simCleanUS=US_sim(yr,0,0,0,'none',0,100,true/*skipLE*/);
+    const fdGain=simCleanUS.cFD-(fdPrincipal+fdContrib);
+    const sipGain=simCleanUS.cSIP-sipContrib;
+    // Life events in this 5-year window only
+    const leWindow=US_LE.filter(e=>e.deduct&&e.year>prevYrUS&&e.year<=yr);
+    const leCumDed=leWindow.reduce((s,e)=>s+(e.amount||0),0);
     // per-plan retirement breakdown
     const retRows=US_RET.map(p=>{
       const pCorpus=US_retCorpusAt(p,yr);
@@ -3176,7 +3180,7 @@ function US_rFC(){
           ${retRows}
           ${assetRow}
           ${homeRows}
-          ${(()=>{const evts=US_LE.filter(e=>e.deduct&&e.year>0&&e.year<=yr);if(!evts.length)return'';const totalDed=evts.reduce((s,e)=>s+(e.amount||0),0);return'<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Life Event Deductions (cumulative through Yr '+yr+')</td></tr>'+evts.map(e=>{const t=US_LE_TYPES.find(x=>x.val===e.type)||{icon:"📌"};return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint)">(Yr '+e.year+')</span></td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">one-time</td></tr>';}).join('')+'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Total deducted</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+US_fmtM(totalDed)+'</td><td></td></tr>';})()}
+          ${(()=>{if(!leWindow.length)return'';const totalDed=leCumDed;return'<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Life Events — Yr '+(prevYrUS+1)+' to '+yr+'</td></tr>'+leWindow.map(e=>{const t=US_LE_TYPES.find(x=>x.val===e.type)||{icon:"📌"};return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint)">(Yr '+e.year+')</span></td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">one-time</td></tr>';}).join('')+(leWindow.length>1?'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Subtotal this period</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+US_fmtM(totalDed)+'</td><td></td></tr>':'');})()}
         </tbody>
         <tfoot>
           <tr style="border-top:2px solid var(--border);background:var(--bg)">
