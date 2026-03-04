@@ -24,6 +24,7 @@
 *, *::before, *::after { font-family:'DM Sans',sans-serif; box-sizing:border-box; margin:0; padding:0; }
 .mono { font-family:'DM Mono',monospace; }
 body { background:var(--bg); color:var(--text); min-height:100vh; }
+.dashboard.active { background:var(--bg); min-height:100vh; }
 
 .card  { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); }
 .card.accent-teal   { border-left:4px solid var(--teal); }
@@ -196,31 +197,38 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 <!--  LANDING PAGE                                          -->
 <!-- ═══════════════════════════════════════════════════════ -->
 <div id="landing" class="min-h-screen flex flex-col items-center justify-center p-6">
-  <div class="text-center mb-12 anim">
-    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-3">Chart Your <span style="color:var(--teal)">Finances</span></h1>
-    <p class="text-lg" style="color:var(--muted)">Tax · Investments · Forecast · Goals · What-If Scenarios</p>
-    <p class="text-sm mt-2" style="color:var(--faint)">Choose your financial context to get started</p>
+  <div class="text-center anim" style="margin-bottom:40px">
+    <h1 style="font-size:2.8rem;font-weight:900;letter-spacing:-.03em;line-height:1.1;color:var(--text)">Chart Your <span style="color:var(--teal)">Finances</span></h1>
+    <p style="font-size:14px;color:var(--faint);margin-top:10px;font-family:'DM Mono',monospace;letter-spacing:.04em">Tax · Wealth · Forecast · Scenarios</p>
   </div>
-  <div class="flex flex-col sm:flex-row gap-6 anim" style="animation-delay:.1s">
-    <div class="country-card india" onclick="openDashboard('india')">
-      <div style="font-size:3.5rem;margin-bottom:16px">🇮🇳</div>
-      <h2 class="text-2xl font-bold mb-2">India</h2>
-      <p class="text-sm mb-4" style="color:var(--muted)">New Tax Regime · FY 2024–25</p>
-      <div class="flex flex-wrap gap-2 justify-center">
-        <span class="tag" style="background:var(--teal-lt);color:var(--teal-dk)">₹ INR</span>
-        <span class="tag" style="background:var(--indigo-lt);color:var(--indigo)">EPF / SIP / FD</span>
-      </div>
-      <div class="mt-6 text-sm font-semibold px-6 py-2 rounded-xl text-white inline-block" style="background:var(--teal)">Open Dashboard →</div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:700px;animation-delay:.1s">
+    <!-- India -->
+    <div onclick="openDashboard('india')" style="padding:36px 36px;cursor:pointer;border-radius:18px;position:relative;transition:all .2s;background:var(--surface);border:1.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 28px rgba(0,0,0,.1)';this.style.borderColor='var(--teal)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)';this.style.borderColor='var(--border)'">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);border-radius:18px 18px 0 0;opacity:.9"></div>
+      <div style="font-size:2.8rem;font-weight:900;line-height:1;color:var(--teal);font-family:'DM Mono',monospace;margin-bottom:16px;letter-spacing:-.04em">₹</div>
+      <p style="font-size:1.7rem;font-weight:800;color:var(--text);margin-bottom:4px">India</p>
+      <p style="font-size:13px;color:var(--faint);font-family:'DM Mono',monospace;margin-bottom:20px">New Tax Regime · FY 2024–25</p>
+      <ul style="list-style:none;margin-bottom:24px">
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--teal);font-family:'DM Mono',monospace;font-weight:700">→</span>Salary tax with ₹75k deduction</li>
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--teal);font-family:'DM Mono',monospace;font-weight:700">→</span>EPF / NPS corpus tracking</li>
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--teal);font-family:'DM Mono',monospace;font-weight:700">→</span>SIP · FD · PPF investments</li>
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--teal);font-family:'DM Mono',monospace;font-weight:700">→</span>30-year wealth forecast</li>
+      </ul>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:8px 18px;border-radius:8px;border:1.5px solid var(--teal);color:var(--teal);letter-spacing:.04em;text-transform:uppercase;transition:all .2s;background:transparent" onmouseover="this.style.background='var(--teal)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--teal)'">Enter India →</span>
     </div>
-    <div class="country-card usa" onclick="openDashboard('usa')">
-      <div style="font-size:3.5rem;margin-bottom:16px">🇺🇸</div>
-      <h2 class="text-2xl font-bold mb-2">USA</h2>
-      <p class="text-sm mb-4" style="color:var(--muted)">Federal + State Tax · 2024</p>
-      <div class="flex flex-wrap gap-2 justify-center">
-        <span class="tag" style="background:var(--blue-lt);color:var(--blue-dk)">$ USD</span>
-        <span class="tag" style="background:var(--purple-lt);color:var(--purple)">401k / Index / Brokerage</span>
-      </div>
-      <div class="mt-6 text-sm font-semibold px-6 py-2 rounded-xl text-white inline-block" style="background:var(--blue)">Open Dashboard →</div>
+    <!-- USA -->
+    <div onclick="openDashboard('usa')" style="padding:36px 36px;cursor:pointer;border-radius:18px;position:relative;transition:all .2s;background:var(--surface);border:1.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06)" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 28px rgba(0,0,0,.1)';this.style.borderColor='var(--blue)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)';this.style.borderColor='var(--border)'">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);border-radius:18px 18px 0 0;opacity:.9"></div>
+      <div style="font-size:2.8rem;font-weight:900;line-height:1;color:var(--blue);font-family:'DM Mono',monospace;margin-bottom:16px;letter-spacing:-.04em">$</div>
+      <p style="font-size:1.7rem;font-weight:800;color:var(--text);margin-bottom:4px">USA</p>
+      <p style="font-size:13px;color:var(--faint);font-family:'DM Mono',monospace;margin-bottom:20px">Federal + State Tax · 2024</p>
+      <ul style="list-style:none;margin-bottom:24px">
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--blue);font-family:'DM Mono',monospace;font-weight:700">→</span>Federal + FICA + state taxes</li>
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--blue);font-family:'DM Mono',monospace;font-weight:700">→</span>401k retirement planning</li>
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--blue);font-family:'DM Mono',monospace;font-weight:700">→</span>HYSA · Index Fund · Brokerage</li>
+        <li style="font-size:13px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:8px"><span style="color:var(--blue);font-family:'DM Mono',monospace;font-weight:700">→</span>Home equity tracking</li>
+      </ul>
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:8px 18px;border-radius:8px;border:1.5px solid var(--blue);color:var(--blue);letter-spacing:.04em;text-transform:uppercase;transition:all .2s;background:transparent" onmouseover="this.style.background='var(--blue)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--blue)'">Enter USA →</span>
     </div>
   </div>
 </div>
@@ -1562,14 +1570,14 @@ function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentr
     if(aff2) sal2=inLoss?0:b2base*(1+g2)*yr*(jobLossReentry/100);
     s1=aff1?sal1:s1*(1+g1); s2=aff2?sal2:s2*(1+g2);
     const {s1G,s2G}=IN_getAssets(s1,s2);
-    const fdYield=cFD*fdRt;
-    const totalSal=s1+s2||1;
-    const fy1=fdYield*(s1/totalSal), fy2=fdYield*(s2/totalSal);
-    const t1=IN_calcTax(s1G+fy1,true),t2=IN_calcTax(s2G+fy2,true);
+    // Reinvestment bucket (FD/SIP) returns are NOT added to taxable income —
+    // the bucket choice shouldn't change surplus or tax. Only salary + Investment
+    // Matrix yields affect taxable income.
+    const t1=IN_calcTax(s1G,true),t2=IN_calcTax(s2G,true);
     const d1=IN_DEDS[1].reduce((a,d)=>a+s1*(d.pct/100),0);
     const d2=IN_DEDS[2].reduce((a,d)=>a+s2*(d.pct/100),0);
     const expMo=IN_totExpMo(yr);
-    const surplus=(s1+s2+ty+fdYield-t1-t2-d1-d2-(expMo*12))/12+(xI-xE);
+    const surplus=(s1+s2+ty-t1-t2-d1-d2-(expMo*12))/12+(xI-xE);
     const mFD=Math.max(0,surplus)*fdP, mSIP=Math.max(0,surplus)*sipP;
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=(cFD+mFD*12)*(1+fdRt); cSIP=(cSIP+mSIP*12)*(1+sipRt);
@@ -1719,48 +1727,67 @@ function IN_rFC_short(){
   const snapshots={};
   for(let yr=0;yr<=10;yr++) snapshots[yr]=IN_sim(yr);
   let html='';
-  html+=`<p class="text-xs mb-3" style="color:var(--faint)">Month-by-month projection · click any year to expand</p>`;
+  const max10=snapshots[10].total||1;
   for(let yr=1;yr<=10;yr++){
     const simPrev=snapshots[yr-1], simCurr=snapshots[yr];
     const retPrev=simPrev.retCorpus||0, retCurr=simCurr.retCorpus||0;
     const heqPrev=simPrev.homeEquity||0, heqCurr=simCurr.homeEquity||0;
     let cFD_mo=simPrev.cFD, cSIP_mo=simPrev.cSIP;
-    const monthlyFDGrowth=((simCurr.cFD-simPrev.cFD)/12);
-    const monthlySIPGrowth=((simCurr.cSIP-simPrev.cSIP)/12);
+    const monthlyFDGrowth=(simCurr.cFD-simPrev.cFD)/12;
+    const monthlySIPGrowth=(simCurr.cSIP-simPrev.cSIP)/12;
     let yrRows='';
     for(let mo=1;mo<=12;mo++){
       cFD_mo+=monthlyFDGrowth; cSIP_mo+=monthlySIPGrowth;
       const retMo=retPrev+(retCurr-retPrev)*(mo/12);
       const heqMo=heqPrev+(heqCurr-heqPrev)*(mo/12);
       const dispMo=IN_isAdj?(cFD_mo+cSIP_mo+totP+retMo+heqMo)/Math.pow(1+infRate,yr-1+mo/12):(cFD_mo+cSIP_mo+totP+retMo+heqMo);
-      const cal=new Date().getFullYear()+(yr-1); const calMo=mo;
+      const cal=new Date().getFullYear()+(yr-1);
       const moName=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo-1];
-      yrRows+=`<tr style="border-bottom:1px dashed var(--border)">
-        <td class="py-1 text-xs" style="color:var(--faint)">${moName} ${cal}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--indigo)">${IN_fmtCr(cFD_mo)}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--purple)">${IN_fmtCr(cSIP_mo)}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--teal)">${IN_fmtCr(retMo)}</td>
-        <td class="py-1 mono text-xs text-right font-bold" style="color:var(--teal-dk)">${IN_fmtCr(dispMo)}</td>
+      const isQ=mo===3||mo===6||mo===9||mo===12;
+      yrRows+=`<tr style="border-bottom:1px dashed var(--border);${isQ?'background:var(--bg)':''}">
+        <td class="py-1.5 text-xs font-medium" style="color:${isQ?'var(--muted)':'var(--faint)'}">${moName} ${cal}</td>
+        ${fdP>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--indigo)">${IN_fmtCr(cFD_mo)}</td>`:''}
+        ${sipP>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--purple)">${IN_fmtCr(cSIP_mo)}</td>`:''}
+        ${totP>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--teal-dk)">${IN_fmtCr(totP)}</td>`:''}
+        ${retCurr>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--teal)">${IN_fmtCr(retMo)}</td>`:''}
+        <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal-dk)">${IN_fmtCr(dispMo)}</td>
       </tr>`;
     }
     const yrTotal=IN_isAdj?simCurr.total/Math.pow(1+infRate,yr):simCurr.total;
+    const prevTotal=IN_isAdj?simPrev.total/Math.pow(1+infRate,Math.max(0,yr-1)):simPrev.total;
+    const growth=yrTotal-prevTotal;
+    const bw=Math.min(97,Math.max(2,(yrTotal/max10)*100));
     const msPills=IN_MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}</span>`).join(' ');
-    html+=`<div style="border-bottom:1px solid var(--border);padding:8px 0">
-      <div class="flex items-center gap-3" style="cursor:pointer" onclick="const el=document.getElementById('insh${yr}');el.classList.toggle('hidden');this.querySelector('.fc-arr').textContent=el.classList.contains('hidden')?'▸':'▾'">
-        <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">Yr ${yr}</span>
-        <div class="flex-1">${msPills}</div>
-        <span class="mono text-sm font-bold" style="color:var(--teal-dk)">${IN_fmtCr(yrTotal)}</span>
-        <span class="mono text-xs" style="color:var(--green)">▸ expand</span>
-        <span class="fc-arr text-xs shrink-0" style="color:var(--faint);width:12px">▸</span>
+    html+=`<div style="border-bottom:1px solid var(--border)">
+      <div class="flex items-center gap-4 py-3 px-1" style="cursor:pointer" onclick="const el=document.getElementById('insh${yr}');const open=!el.classList.contains('hidden');el.classList.toggle('hidden');this.querySelector('.sh-arr').textContent=open?'▸':'▾';this.querySelector('.sh-hint').textContent=open?'expand months':'collapse'">
+        <div class="shrink-0 text-center" style="width:72px">
+          <span class="text-xs font-black uppercase tracking-widest" style="color:var(--faint)">Year</span>
+          <p class="mono text-2xl font-black leading-none mt-0.5" style="color:var(--text)">${yr}</p>
+        </div>
+        <div class="flex-1 min-w-0 space-y-1.5">
+          <div style="height:7px;background:var(--border);border-radius:99px;overflow:hidden">
+            <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--teal),var(--indigo));transition:width .4s ease"></div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-semibold" style="color:var(--green)">+${IN_fmtCr(growth)} this year</span>
+            ${msPills}
+          </div>
+        </div>
+        <div class="shrink-0 text-right" style="min-width:110px">
+          <p class="mono text-xl font-black" style="color:var(--teal-dk)">${IN_fmtCr(yrTotal)}</p>
+          <span class="sh-hint text-xs" style="color:var(--faint)">expand months</span>
+        </div>
+        <span class="sh-arr text-sm shrink-0" style="color:var(--faint)">▸</span>
       </div>
-      <div id="insh${yr}" class="hidden overflow-x-auto" style="margin-top:8px">
-        <table class="w-full text-left" style="min-width:400px">
+      <div id="insh${yr}" class="hidden overflow-x-auto" style="padding:0 4px 12px 4px">
+        <table class="w-full text-left">
           <thead><tr style="border-bottom:1px solid var(--border)">
-            <th class="pb-1 text-xs" style="color:var(--faint)">Month</th>
-            <th class="pb-1 text-xs text-right" style="color:var(--indigo)">FD/Savings</th>
-            <th class="pb-1 text-xs text-right" style="color:var(--purple)">SIP/Equity</th>
-            <th class="pb-1 text-xs text-right" style="color:var(--teal)">EPF/NPS</th>
-            <th class="pb-1 text-xs text-right" style="color:var(--teal-dk)">Total</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide" style="color:var(--faint)">Month</th>
+            ${fdP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--indigo)">FD / Savings</th>`:''}
+            ${sipP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">SIP / Equity</th>`:''}
+            ${totP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Investments</th>`:''}
+            ${retCurr>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">EPF / NPS</th>`:''}
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Total Wealth</th>
           </tr></thead>
           <tbody>${yrRows}</tbody>
         </table>
@@ -2697,22 +2724,19 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
     s2 = affects2 ? (inLoss ? 0 : base2*(jobLossReentry/100)) : base2;
     const {s1G,s2G}=US_getAssets(s1,s2);
     const d1=US_totDed(1,s1),d2=US_totDed(2,s2);
-    // Bond/CD/HYSA interest on current balance — taxable as ordinary income each year
-    const fdYield=cFD*fdRt;
+    // Reinvestment bucket (HYSA/Index) returns are NOT added to taxable income —
+    // bucket choice shouldn't change surplus or tax. Only salary + Investment Matrix yields do.
     let ft,st;
     if(filing==='mfj'){
-      const cg=s1G+s2G+fdYield, cd=d1+d2+stdDed, ct=Math.max(0,cg-cd);
+      const ct=Math.max(0,s1G+s2G-d1-d2-stdDed);
       ft=US_calcFedTax(ct,filing); st=US_calcStateTax(ct,filing);
     } else {
-      // Split fdYield evenly across both spouses
-      const half=fdYield/2;
-      ft=US_calcFedTax(Math.max(0,s1G+half-d1-stdDed),filing)+US_calcFedTax(Math.max(0,s2G+half-d2-stdDed),filing);
-      st=US_calcStateTax(Math.max(0,s1G+half-d1-stdDed),filing)+US_calcStateTax(Math.max(0,s2G+half-d2-stdDed),filing);
+      ft=US_calcFedTax(Math.max(0,s1G-d1-stdDed),filing)+US_calcFedTax(Math.max(0,s2G-d2-stdDed),filing);
+      st=US_calcStateTax(Math.max(0,s1G-d1-stdDed),filing)+US_calcStateTax(Math.max(0,s2G-d2-stdDed),filing);
     }
     const fi1=US_calcFICA(s1,ss1Ex),fi2=US_calcFICA(s2,ss2Ex);
     const expMo=US_totExpMo(yr);
-    // fdYield included in income; after-tax surplus drives reinvestment
-    const surplus=(s1+s2+ty+fdYield-d1-d2-ft-st-fi1-fi2-(expMo*12))/12+(xI-xE);
+    const surplus=(s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12))/12+(xI-xE);
     const mFD=Math.max(0,surplus)*fdP, mSIP=Math.max(0,surplus)*sipP;
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=(cFD+mFD*12)*(1+fdRt); cSIP=(cSIP+mSIP*12)*(1+sipRt);
@@ -2769,21 +2793,19 @@ function US_rFC_short(){
     const s1=b1*Math.pow(1+g1,yr), s2=b2*Math.pow(1+g2,yr);
     const {s1G,s2G}=US_getAssets(s1,s2);
     const d1=US_totDed(1,s1),d2=US_totDed(2,s2);
-    const fdYield=cFD*fdRt;
     let ft,st;
     if(filing==='mfj'){
-      const cg=s1G+s2G+fdYield,cd=d1+d2+stdDed,ct=Math.max(0,cg-cd);
+      const ct=Math.max(0,s1G+s2G-d1-d2-stdDed);
       ft=US_calcFedTax(ct,filing); st=US_calcStateTax(ct,filing);
     } else {
-      const half=fdYield/2;
-      ft=US_calcFedTax(Math.max(0,s1G+half-d1-stdDed),filing)+US_calcFedTax(Math.max(0,s2G+half-d2-stdDed),filing);
-      st=US_calcStateTax(Math.max(0,s1G+half-d1-stdDed),filing)+US_calcStateTax(Math.max(0,s2G+half-d2-stdDed),filing);
+      ft=US_calcFedTax(Math.max(0,s1G-d1-stdDed),filing)+US_calcFedTax(Math.max(0,s2G-d2-stdDed),filing);
+      st=US_calcStateTax(Math.max(0,s1G-d1-stdDed),filing)+US_calcStateTax(Math.max(0,s2G-d2-stdDed),filing);
     }
     const fi1=US_calcFICA(s1,ss1Ex),fi2=US_calcFICA(s2,ss2Ex);
     const expMo=US_totExpMo(yr);
     const xI=US_SC?((US_SC[US_activeSC]?.extraInc||0)):0;
     const xE=US_SC?((US_SC[US_activeSC]?.extraExp||0)):0;
-    const annualSurplus=s1+s2+ty+fdYield-d1-d2-ft-st-fi1-fi2-(expMo*12)+(xI-xE)*12;
+    const annualSurplus=s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12)+(xI-xE)*12;
     const netHomeMo=(s1+s2+ty-d1-d2-ft-st-fi1-fi2)/12;
     const surplusMo=annualSurplus/12;
     const mFD=Math.max(0,surplusMo)*fdP, mSIP=Math.max(0,surplusMo)*sipP;
@@ -2818,6 +2840,7 @@ function US_rFC_short(){
 
     let moRows='';
     let cFD_mo=cFD, cSIP_mo=cSIP;
+    const moNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     for(let mo=1;mo<=12;mo++){
       cFD_mo=(cFD_mo+mFD)*(1+fdYield_monthly);
       cSIP_mo=(cSIP_mo+mSIP)*(1+sipYield_monthly);
@@ -2832,17 +2855,19 @@ function US_rFC_short(){
       const expEndFlag=US_EXPS.some(c=>c.eYr!==null&&c.eYr===yr&&mo===12);
       const flag=loanEndFlag?'🏦 Loan paid off':expEndFlag?'✓ Expense ends':'';
       const flagHtml=flag?`<span style="font-size:10px;color:var(--green);margin-left:6px">${flag}</span>`:'';
-      moRows+=`<tr style="border-bottom:1px dashed var(--border)${loanEndFlag||expEndFlag?';background:var(--green-lt)':''}">
-        <td class="py-1 pl-4 text-xs" style="color:var(--faint)">Mo ${mo}${flagHtml}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--green)">${US_fmt(Math.max(0,netHomeMo))}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--rose)">${US_fmt(expMo)}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--orange)">${US_fmt(emiMo)}</td>
-        <td class="py-1 mono text-xs text-right font-semibold" style="color:${surplusMo>=0?'var(--blue)':'var(--rose)'}">${surplusMo>=0?'':'-'}${US_fmt(Math.abs(surplusMo))}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--muted)">${US_fmtM(cFD_mo)}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--purple)">${US_fmtM(cSIP_mo)}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--teal)">${US_fmtM(retMo)}</td>
-        <td class="py-1 mono text-xs text-right" style="color:var(--orange)">${homeMo>0?US_fmtM(homeMo):'—'}</td>
-        <td class="py-1 mono text-xs text-right font-bold" style="color:var(--blue-dk)">${US_fmtM(totalMo)}</td>
+      const isQ=mo===3||mo===6||mo===9||mo===12;
+      const cal=new Date().getFullYear()+(yr-1);
+      moRows+=`<tr style="border-bottom:1px dashed var(--border);${loanEndFlag||expEndFlag?'background:var(--green-lt)':isQ?'background:var(--bg)':''}">
+        <td class="py-1.5 text-xs font-medium" style="color:${isQ?'var(--muted)':'var(--faint)'}">${moNames[mo-1]} ${cal}${flagHtml}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--green)">${US_fmt(Math.max(0,netHomeMo))}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">${US_fmt(expMo)}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--orange)">${US_fmt(emiMo)}</td>
+        <td class="py-1.5 mono text-xs text-right font-semibold" style="color:${surplusMo>=0?'var(--blue)':'var(--rose)'}">${surplusMo>=0?'':'-'}${US_fmt(Math.abs(surplusMo))}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmtM(cFD_mo)}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--purple)">${US_fmtM(cSIP_mo)}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--teal)">${US_fmtM(retMo)}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--orange)">${homeMo>0?US_fmtM(homeMo):'—'}</td>
+        <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--blue-dk)">${US_fmtM(totalMo)}</td>
       </tr>`;
     }
 
@@ -2852,41 +2877,48 @@ function US_rFC_short(){
     const msPills=US_MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}</span>`).join('');
     const pills=loanEndPills+msPills;
 
-    html+=`<div style="border-bottom:1px solid var(--border);padding:8px 0">
-      <div style="cursor:pointer;display:flex;align-items:center;gap:10px" onclick="const t=document.getElementById('${uid}');t.classList.toggle('hidden');this.querySelector('.fca').textContent=t.classList.contains('hidden')?'▸':'▾'">
-        <span class="mono text-sm font-bold w-14 shrink-0" style="color:var(--muted)">Yr ${yr}</span>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
-            <span style="color:var(--green)">Take-home <strong>${US_fmt(Math.round(netHomeMo))}/mo</strong></span>
-            <span style="color:var(--faint)">·</span>
-            <span style="color:var(--rose)">Exp <strong>${US_fmt(expMo)}</strong></span>
-            <span style="color:var(--faint)">·</span>
-            <span style="color:${surplusMo>=0?'var(--blue)':'var(--rose)'}">Surplus <strong>${surplusMo>=0?'':'-'}${US_fmt(Math.abs(Math.round(surplusMo)))}/mo</strong></span>
-            <span style="color:var(--faint)">·</span>
-            <span style="color:var(--teal)">Ret <strong>${US_fmtM(retCorpusYr)}</strong></span>
-            ${homeEquityYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--orange)">Equity <strong>${US_fmtM(homeEquityYr)}</strong></span>`:''}
+    const prevDispYr=yr>1?(US_isAdj?US_sim(yr-1).total/Math.pow(1+infRate,yr-1):US_sim(yr-1).total):0;
+    const yrGrowth=dispYr-prevDispYr;
+    const max10yr=US_sim(10).total||1;
+    const bw=Math.min(97,Math.max(2,(totalYr/max10yr)*100));
+    html+=`<div style="border-bottom:1px solid var(--border)">
+      <div class="flex items-center gap-4 py-3 px-1" style="cursor:pointer" onclick="const t=document.getElementById('${uid}');const open=!t.classList.contains('hidden');t.classList.toggle('hidden');this.querySelector('.fca').textContent=open?'▸':'▾';this.querySelector('.fca-hint').textContent=open?'expand months':'collapse'">
+        <div class="shrink-0 text-center" style="width:72px">
+          <span class="text-xs font-black uppercase tracking-widest" style="color:var(--faint)">Year</span>
+          <p class="mono text-2xl font-black leading-none mt-0.5" style="color:var(--text)">${yr}</p>
+        </div>
+        <div class="flex-1 min-w-0 space-y-1.5">
+          <div style="height:7px;background:var(--border);border-radius:99px;overflow:hidden">
+            <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--blue),var(--purple));transition:width .4s ease"></div>
           </div>
-          ${pills?`<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`:''}
+          <div class="flex items-center gap-3 flex-wrap" style="font-size:11px">
+            <span style="color:var(--green)">+${US_fmtM(yrGrowth)} this year</span>
+            <span style="color:var(--faint)">·</span>
+            <span style="color:var(--blue)">Surplus <strong>${surplusMo>=0?'':'-'}${US_fmt(Math.abs(Math.round(surplusMo)))}/mo</strong></span>
+            ${retCorpusYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--teal)">Ret <strong>${US_fmtM(retCorpusYr)}</strong></span>`:''}
+            ${homeEquityYr>0?`<span style="color:var(--faint)">·</span><span style="color:var(--orange)">Home Eq <strong>${US_fmtM(homeEquityYr)}</strong></span>`:''}
+            ${pills?`<span style="color:var(--faint)">·</span>${pills}`:''}
+          </div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <span class="mono text-sm font-bold" style="color:var(--blue-dk)">${US_fmtM(dispYr)}</span>
-          <span class="mono text-xs block" style="color:var(--faint)">▸ monthly detail</span>
+        <div class="shrink-0 text-right" style="min-width:110px">
+          <p class="mono text-xl font-black" style="color:var(--blue-dk)">${US_fmtM(dispYr)}</p>
+          <span class="fca-hint text-xs" style="color:var(--faint)">expand months</span>
         </div>
-        <span class="fca text-xs" style="color:var(--faint);width:12px">▸</span>
+        <span class="fca text-sm shrink-0" style="color:var(--faint)">▸</span>
       </div>
-      <div id="${uid}" class="hidden" style="margin-top:6px;overflow-x:auto">
+      <div id="${uid}" class="hidden" style="padding:0 4px 12px 4px;overflow-x:auto">
         <table class="w-full text-left" style="min-width:780px">
           <thead><tr style="border-bottom:1px solid var(--border)">
-            <th class="pb-1 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.05em">Month</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--green);letter-spacing:.05em">Take-Home</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--rose);letter-spacing:.05em">− Exp</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--orange);letter-spacing:.05em">− Loans</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--blue);letter-spacing:.05em">= Surplus</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--muted);letter-spacing:.05em">HYSA</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--purple);letter-spacing:.05em">Index</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--teal);letter-spacing:.05em">Retirement</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--orange);letter-spacing:.05em">Home Eq.</th>
-            <th class="pb-1 text-xs font-semibold uppercase text-right" style="color:var(--blue-dk);letter-spacing:.05em">Total</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide" style="color:var(--faint)">Month</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--green)">Take-Home</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--rose)">− Expenses</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--orange)">− Loans</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue)">= Surplus</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--muted)">HYSA</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">Index Fund</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">Retirement</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--orange)">Home Equity</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue-dk)">Total Wealth</th>
           </tr></thead>
           <tbody>${moRows}</tbody>
         </table>
