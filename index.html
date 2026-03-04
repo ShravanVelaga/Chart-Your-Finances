@@ -484,24 +484,30 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 
 <!-- TAB: FORECAST -->
 <div id="in_tp-forecast" class="tp space-y-5">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-    <div class="card p-6 accent-blue">
-      <div class="flex justify-between items-center mb-4">
-        <p class="sl tip-wrap">30-Year Wealth Path<span class="tip-icon">ⓘ</span><span class="tip-box">Shows projected total wealth at 5-year intervals. Assumes your salary grows annually, surplus is split between FD and SIP per the sliders, and existing assets continue yielding. Click any row to see the breakdown. Toggle "Inflation Adj." to see today's purchasing power equivalent.</span></p>
-        <button id="in_adjBtn" onclick="IN_togAdj()" class="ab np">Inflation Adj.</button>
-      </div>
-      <div id="in_fcTbl"></div>
-      <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="in_adjNote">Nominal · includes salary growth, time-bound expenses &amp; EMIs</p>
+  <div class="card p-6 accent-blue">
+    <div class="flex justify-between items-center mb-4">
+      <p class="sl tip-wrap">Wealth Forecast<span class="tip-icon">ⓘ</span><span class="tip-box">Short Term: month-by-month detail for years 1–10, grouped by year. Long Term: 5-year interval snapshots up to 30 years with full bucket breakdown. Toggle Inflation Adj. for today's purchasing power equivalent.</span></p>
+      <button id="in_adjBtn" onclick="IN_togAdj()" class="ab np">Inflation Adj.</button>
     </div>
-    <div class="card p-6">
-      <div class="flex justify-between items-center mb-3">
-        <p class="sl">Milestone Markers</p>
-        <button onclick="IN_addMS()" class="text-xs font-semibold px-3 py-1.5 rounded-lg border np" style="border-color:var(--border);color:var(--muted)">+ Add</button>
+    <div class="flex gap-2 mb-4 np">
+      <button id="in_fcShortBtn" onclick="IN_setFcMode('short')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style="border-color:var(--border);color:var(--muted)">📅 Short Term <span style="color:var(--faint);font-weight:400">(monthly · 10yr)</span></button>
+      <button id="in_fcLongBtn" onclick="IN_setFcMode('long')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all on" style="border-color:var(--teal);color:var(--teal);background:var(--teal-lt)">📈 Long Term <span style="font-weight:400">(5yr steps · 30yr)</span></button>
+    </div>
+    <div id="in_fcTbl"></div>
+    <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="in_adjNote">Nominal · includes salary growth, time-bound expenses &amp; EMIs</p>
+  </div>
+  <div class="card p-6">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <p class="sl">🎯 Milestone Markers</p>
+        <p class="text-sm mt-0.5" style="color:var(--muted)">Mark meaningful moments on your wealth timeline — they appear as flags on your forecast.</p>
       </div>
-      <div id="in_msList" class="space-y-3"></div>
-      <div id="in_msNone" class="text-center py-5" style="color:var(--faint)">
-        <p class="text-2xl mb-1">🎯</p><p class="text-sm font-medium">No milestones yet</p><p class="text-xs mt-1" style="max-width:260px;margin:4px auto 0">Mark meaningful moments on your wealth timeline — "Child's college", "Home purchase", "Retirement". They appear as markers on your 30-year forecast.</p>
-      </div>
+      <button onclick="IN_addMS()" class="text-xs font-semibold px-4 py-2 rounded-lg border np" style="border-color:var(--amber);color:var(--amber)">+ Add Milestone</button>
+    </div>
+    <div id="in_msList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    <div id="in_msNone" class="text-center py-6" style="color:var(--faint)">
+      <p class="text-3xl mb-2">🎯</p><p class="text-sm font-medium">No milestones yet</p>
+      <p class="text-xs mt-1" style="color:var(--faint)">e.g. "Child's college" · "Home purchase" · "Retirement"</p>
     </div>
   </div>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -538,14 +544,33 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 <div id="in_tp-scenarios" class="tp space-y-5">
   <div class="card p-6">
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
-      <div><p class="sl tip-wrap">What-If Scenario Comparison<span class="tip-icon">ⓘ</span><span class="tip-box">Model two different financial decisions (e.g. "Buy a house" vs "Keep renting") and compare how they affect your total wealth at 10, 20, and 30 years. Add extra expense, one-time investment, or extra income per scenario.</span></p><p class="text-sm mt-1" style="color:var(--muted)">Compare two financial paths side-by-side over 10, 20, and 30 years.</p></div>
+      <div><p class="sl tip-wrap">What-If Scenario Comparison<span class="tip-icon">ⓘ</span><span class="tip-box">Model two different financial decisions (e.g. "Buy a house" vs "Keep renting") and compare how they affect your total wealth at 10, 20, and 30 years. Add extra expense, one-time investment, or extra income per scenario. You can also model job loss — temporary gap or permanent stop.</span></p><p class="text-sm mt-1" style="color:var(--muted)">Compare two financial paths side-by-side over 10, 20, and 30 years.</p></div>
       <div class="flex gap-2 np"><button class="stab on" id="in_stA" onclick="IN_swSC('A')">Scenario A</button><button class="stab" id="in_stB" onclick="IN_swSC('B')">Scenario B</button></div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Scenario Name</p><input type="text" id="in_scN" placeholder="e.g. Buy a House" class="si" oninput="IN_saveSC()"></div>
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Extra Monthly Expense (₹)</p><input type="text" id="in_scE" value="0" oninput="IN_hi(this);IN_saveSC()" class="si mono"></div>
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">One-Time Investment (₹)</p><input type="text" id="in_scL" value="0" oninput="IN_hi(this);IN_saveSC()" class="si mono"></div>
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">Extra Monthly Income (₹)</p><input type="text" id="in_scI" value="0" oninput="IN_hi(this);IN_saveSC()" class="si mono"></div>
+    </div>
+    <div class="inset p-4 mb-5 space-y-3">
+      <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="color:var(--rose)">💼 Job Loss Scenario</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Who loses job?</p>
+          <select id="in_scJL" class="si text-sm" onchange="IN_saveSC()">
+            <option value="none">None</option>
+            <option value="s1">Spouse 1 — temporary gap</option>
+            <option value="s2">Spouse 2 — temporary gap</option>
+            <option value="both">Both — temporary gap</option>
+            <option value="s1p">Spouse 1 — stops permanently</option>
+            <option value="s2p">Spouse 2 — stops permanently</option>
+            <option value="bothp">Both — stops permanently</option>
+          </select></div>
+        <div id="in_scJLYrow"><p class="text-xs font-medium mb-1" style="color:var(--muted)">Duration out (years)</p>
+          <input type="number" id="in_scJLY" value="1" min="0.5" max="10" step="0.5" class="si mono text-sm" oninput="IN_saveSC()"></div>
+        <div id="in_scJLRrow"><p class="text-xs font-medium mb-1" style="color:var(--muted)">Re-entry salary (% of original)</p>
+          <input type="number" id="in_scJLR" value="100" min="0" max="200" class="si mono text-sm" oninput="IN_saveSC()"></div>
+      </div>
     </div>
     <div id="in_scComp"></div>
   </div>
@@ -1102,7 +1127,7 @@ function setText(id, v) { const el=document.getElementById(id); if(el) el.textCo
 //  INDIA STATE
 // ═══════════════════════════════════════════════════════════════════
 let IN_isAdj=false, IN_expInflOn=false, IN_activeSC='A';
-let IN_SC = { A:{name:'Scenario A',extraExp:0,lumpsum:0,extraInc:0}, B:{name:'Scenario B',extraExp:0,lumpsum:0,extraInc:0} };
+let IN_SC = { A:{name:'Scenario A',extraExp:0,lumpsum:0,extraInc:0,jobLoss:'none',jobLossYrs:1,jobLossReentry:100}, B:{name:'Scenario B',extraExp:0,lumpsum:0,extraInc:0,jobLoss:'none',jobLossYrs:1,jobLossReentry:100} };
 let IN_MS=[], IN_EMIS=[];
 let IN_EXPS=[
   {id:'rent',   label:'Rent / EMI',     icon:'🏠',val:0,sYr:null,eYr:null,infl:true},
@@ -1120,8 +1145,23 @@ let IN_dedOpen = {1:false, 2:false};
 // ── India utils ──
 function IN_hi(el) { const r=el.value.replace(/,/g,''); if(!r||isNaN(r)){el.value='0';return;} el.value=parseFloat(r).toLocaleString('en-IN'); }
 function IN_fmt(n)   { return '₹'+Math.round(n).toLocaleString('en-IN'); }
-function IN_fmtCr(n) { return '₹'+(n/10000000).toFixed(2)+' Cr'; }
+function IN_fmtCr(n){
+  const abs=Math.abs(n);
+  if(abs>=10000000) return '₹'+(n/10000000).toFixed(2)+' Cr';
+  if(abs>=100000)   return '₹'+(n/100000).toFixed(1)+' L';
+  if(abs>=1000)     return '₹'+Math.round(n/1000)+'k';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
 
+let IN_fcMode='long';
+function IN_setFcMode(mode){
+  IN_fcMode=mode;
+  const shortBtn=document.getElementById('in_fcShortBtn');
+  const longBtn=document.getElementById('in_fcLongBtn');
+  if(shortBtn){shortBtn.classList.toggle('on',mode==='short');shortBtn.style.borderColor=mode==='short'?'var(--teal)':'var(--border)';shortBtn.style.color=mode==='short'?'var(--teal)':'var(--muted)';shortBtn.style.background=mode==='short'?'var(--teal-lt)':'';}
+  if(longBtn){longBtn.classList.toggle('on',mode==='long');longBtn.style.borderColor=mode==='long'?'var(--teal)':'var(--border)';longBtn.style.color=mode==='long'?'var(--teal)':'var(--muted)';longBtn.style.background=mode==='long'?'var(--teal-lt)':'';}
+  IN_rFC();
+}
 function IN_tab(name, btn) {
   document.querySelectorAll('#dashboard-india .tp').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('#dashboard-india .tb').forEach(b=>b.classList.remove('on'));
@@ -1219,7 +1259,13 @@ function IN_expForYear(cat,yr){
 }
 function IN_totExpMo(yr){
   let t=IN_EXPS.reduce((s,c)=>s+IN_expForYear(c,yr),0);
-  IN_EMIS.forEach(e=>{ const es=e.sYr||0,ee=es+(e.yrs||0)-1; if(yr>=es&&yr<=ee) t+=e.emi||0; });
+  const curCal=IN_emiCalYear();
+  IN_EMIS.forEach(e=>{
+    const startCal=e.startCalYear||curCal;
+    const endCal=IN_emiEndCalYear(e);
+    const forecastCal=curCal+yr-1;
+    if(forecastCal>=startCal && forecastCal<endCal) t+=e.emi||0;
+  });
   return t;
 }
 function IN_sumExp(){
@@ -1260,27 +1306,120 @@ function IN_rExp(){
 function IN_addExp(){ IN_EXPS.push({id:'c'+Date.now(),label:'New Category',icon:'📌',val:0,sYr:null,eYr:null,infl:true}); IN_rExp(); IN_sv(); }
 
 // ── India EMI ──
-function IN_addEMI(){ IN_EMIS.push({id:'e'+Date.now(),label:'Home Loan',emi:0,sYr:1,yrs:20}); IN_rEMI(); IN_sv(); }
+function IN_addEMI(){IN_EMIS.push({id:'e'+Date.now(),label:'Home Loan',emi:0,startCalYear:new Date().getFullYear(),yrs:20,isHome:false,homeVal:0,loanAmt:0,mortRate:8.5,appRate:4});IN_rEMI();IN_sumExp();IN_rc();IN_sv();}
+// ── India EMI helpers ──
+function IN_emiCalYear(){ return new Date().getFullYear(); }
+function IN_emiYearsAlreadyPaid(e){
+  const startCal=e.startCalYear||IN_emiCalYear();
+  return Math.max(0,IN_emiCalYear()-startCal);
+}
+function IN_emiEndCalYear(e){ return (e.startCalYear||IN_emiCalYear())+(e.yrs||20); }
+function IN_calcMonthlyPayment(loan,rate,yrs){
+  if(!loan||!rate) return 0;
+  const r=rate/100/12,n=yrs*12;
+  return loan*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+}
+function IN_remainingBalance(loan,rate,yrs,paidYrs){
+  if(!loan) return 0;
+  const r=rate/100/12,n=yrs*12,paid=paidYrs*12;
+  if(paid>=n) return 0;
+  return loan*(Math.pow(1+r,n)-Math.pow(1+r,paid))/(Math.pow(1+r,n)-1);
+}
+function IN_homeEquityAt(e,yr){
+  const purchaseCal=e.startCalYear||IN_emiCalYear();
+  const forecastCal=IN_emiCalYear()+yr-1;
+  const yearsOwned=Math.max(0,forecastCal-purchaseCal);
+  const hv=(e.homeVal||0)*Math.pow(1+(e.appRate||4)/100,yearsOwned);
+  const lb=IN_remainingBalance(e.loanAmt||0,e.mortRate||8.5,e.yrs||20,yearsOwned);
+  return{homeVal:hv,loanBal:lb,equity:Math.max(0,hv-lb)};
+}
+
 function IN_rEMI(){
   const c=document.getElementById('in_emiList');
   document.getElementById('in_emiNone').style.display=IN_EMIS.length?'none':'block';
   c.innerHTML='';
   IN_EMIS.forEach((e,i)=>{
-    const div=document.createElement('div'); div.className='inset p-4';
-    const endYr=(e.sYr||0)+(e.yrs||0);
-    div.innerHTML=`<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
-      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Loan Name</p><input type="text" value="${e.label}" class="si text-sm" oninput="IN_EMIS[${i}].label=this.value;IN_sv()"></div>
-      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Monthly EMI (₹)</p><input type="text" value="${e.emi?e.emi.toLocaleString('en-IN'):''}" placeholder="0" class="si mono text-sm" oninput="IN_hi(this);IN_EMIS[${i}].emi=parseFloat(this.value.replace(/,/g,''))||0;IN_sumExp();IN_rc();IN_sv()"></div>
-      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Starts yr (1=now)</p><input type="number" value="${e.sYr||1}" min="1" max="30" class="si mono text-sm" oninput="IN_EMIS[${i}].sYr=parseInt(this.value)||1;IN_rc();IN_sv()"></div>
-      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Duration (yrs)</p><input type="number" value="${e.yrs||20}" min="1" max="30" class="si mono text-sm" oninput="IN_EMIS[${i}].yrs=parseInt(this.value)||1;IN_rc();IN_sv()"></div>
+    const div=document.createElement('div'); div.className='inset p-4 space-y-3';
+    const isHome=e.isHome||false;
+    const startCal=e.startCalYear||IN_emiCalYear();
+    const endCal=IN_emiEndCalYear(e);
+    const yrsAlready=IN_emiYearsAlreadyPaid(e);
+    const yrsRemaining=Math.max(0,(e.yrs||20)-yrsAlready);
+    const mortRate=e.mortRate||8.5;
+    const calcPayment=e.loanAmt?IN_calcMonthlyPayment(e.loanAmt,mortRate,e.yrs||20):0;
+    const remBal=e.loanAmt?IN_remainingBalance(e.loanAmt,mortRate,e.yrs||20,yrsAlready):0;
+    const paymentDisplay=e.emi||(calcPayment?Math.round(calcPayment):0);
+    const startedPast=startCal<IN_emiCalYear(), startedFuture=startCal>IN_emiCalYear();
+    let statusHtml='';
+    if(startedPast) statusHtml=`<div class="grid grid-cols-3 gap-3 px-1 py-2 rounded-lg text-center" style="background:var(--bg)"><div><p class="text-xs" style="color:var(--faint)">Yrs already paid</p><p class="mono text-sm font-bold" style="color:var(--muted)">${yrsAlready} yrs</p></div><div><p class="text-xs" style="color:var(--faint)">Remaining balance</p><p class="mono text-sm font-bold" style="color:var(--orange)">${remBal?'~'+IN_fmt(Math.round(remBal)):'—'}</p></div><div><p class="text-xs" style="color:var(--faint)">Yrs remaining</p><p class="mono text-sm font-bold" style="color:var(--indigo)">${yrsRemaining} yrs</p></div></div>`;
+    else if(startedFuture) statusHtml=`<p class="text-xs px-1" style="color:var(--indigo)">⏳ Starts in ${startCal-IN_emiCalYear()} year(s) (${startCal})</p>`;
+    else statusHtml=`<p class="text-xs px-1" style="color:var(--green)">● Active now · started ${startCal}</p>`;
+    div.innerHTML=`
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Loan Name</p>
+        <input type="text" value="${e.label}" class="si text-sm" oninput="IN_EMIS[${i}].label=this.value;IN_sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Monthly EMI (₹)</p>
+        <input type="text" value="${paymentDisplay?paymentDisplay.toLocaleString('en-IN'):''}" placeholder="0" class="si mono text-sm"
+          oninput="IN_hi(this);IN_EMIS[${i}].emi=parseFloat(this.value.replace(/,/g,''))||0;IN_sumExp();IN_rc();IN_sv()">
+        ${calcPayment&&!e.emi?'<p class="text-xs mt-0.5" style="color:var(--green)">↑ auto-calculated</p>':''}</div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Start Year</p>
+        <input type="number" value="${startCal}" min="1990" max="2060" class="si mono text-sm"
+          id="in_emi_syr_${i}"
+          oninput="IN_EMIS[${i}].startCalYear=parseInt(this.value)||${IN_emiCalYear()};IN_emiUpdStatus(${i});IN_sumExp();IN_rc();IN_sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Term (years)</p>
+        <input type="number" value="${e.yrs||20}" min="1" max="50" class="si mono text-sm"
+          id="in_emi_yrs_${i}"
+          oninput="IN_EMIS[${i}].yrs=parseInt(this.value)||1;IN_emiUpdStatus(${i});IN_rc();IN_sv()"></div>
     </div>
-    <div class="flex justify-between items-center mt-3">
-      <span class="text-xs" style="color:var(--faint)">Ends year ${endYr} <span class="pill ml-1" style="background:var(--green-lt);color:var(--green)">✓ Surplus ↑ after yr ${endYr}</span></span>
+    <div id="in_emi_status_${i}">${statusHtml}</div>
+    <div class="flex items-center gap-2 pt-1">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" class="w-4 h-4 cursor-pointer" style="accent-color:var(--indigo)" ${isHome?'checked':''}
+          onchange="IN_EMIS[${i}].isHome=this.checked;IN_rEMI();IN_sv()">
+        <span class="text-xs font-semibold" style="color:var(--indigo)">🏠 This is a home loan — track property value &amp; equity</span>
+      </label>
+    </div>
+    ${isHome?`<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end pt-1" style="border-top:1px dashed var(--border);padding-top:10px">
+      <div><p class="text-xs font-medium mb-1" style="color:var(--indigo)">Home Purchase Price (₹)</p>
+        <input type="text" value="${e.homeVal?e.homeVal.toLocaleString('en-IN'):''}" placeholder="0" class="si mono text-sm"
+          oninput="IN_hi(this);IN_EMIS[${i}].homeVal=parseFloat(this.value.replace(/,/g,''))||0;IN_rc();IN_sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--indigo)">Original Loan Amount (₹)</p>
+        <input type="text" value="${e.loanAmt?e.loanAmt.toLocaleString('en-IN'):''}" placeholder="0" class="si mono text-sm"
+          oninput="IN_hi(this);IN_EMIS[${i}].loanAmt=parseFloat(this.value.replace(/,/g,''))||0;IN_emiUpdStatus(${i});IN_rc();IN_sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--indigo)">Interest Rate (%/yr)</p>
+        <input type="number" value="${e.mortRate||8.5}" min="0" max="20" step="0.1" class="si mono text-sm"
+          oninput="IN_EMIS[${i}].mortRate=parseFloat(this.value)||0;IN_emiUpdStatus(${i});IN_rc();IN_sv()"></div>
+      <div><p class="text-xs font-medium mb-1" style="color:var(--indigo)">Appreciation (%/yr)</p>
+        <input type="number" value="${e.appRate||4}" min="0" max="20" step="0.1" class="si mono text-sm"
+          oninput="IN_EMIS[${i}].appRate=parseFloat(this.value)||0;IN_rc();IN_sv()"></div>
+    </div>`:''}
+    <div class="flex justify-between items-center pt-1" id="in_emi_footer_${i}">
+      <span class="text-xs" style="color:var(--faint)">${startCal} → ${endCal}
+        <span class="pill ml-1" style="background:var(--green-lt);color:var(--green)">✓ Surplus ↑ after ${endCal}</span>
+      </span>
       <button onclick="IN_EMIS.splice(${i},1);IN_rEMI();IN_sumExp();IN_rc();IN_sv()" class="text-sm font-semibold" style="color:var(--rose)">Remove</button>
     </div>`;
     c.appendChild(div);
   });
   setText('in_emiTot',IN_fmt(IN_EMIS.reduce((s,e)=>s+(e.emi||0),0)));
+}
+function IN_emiUpdStatus(i){
+  const e=IN_EMIS[i];
+  const startCal=e.startCalYear||IN_emiCalYear();
+  const endCal=IN_emiEndCalYear(e);
+  const yrsAlready=IN_emiYearsAlreadyPaid(e);
+  const yrsRemaining=Math.max(0,(e.yrs||20)-yrsAlready);
+  const mortRate=e.mortRate||8.5;
+  const remBal=e.loanAmt?IN_remainingBalance(e.loanAmt,mortRate,e.yrs||20,yrsAlready):0;
+  const startedPast=startCal<IN_emiCalYear(), startedFuture=startCal>IN_emiCalYear();
+  let statusHtml='';
+  if(startedPast) statusHtml=`<div class="grid grid-cols-3 gap-3 px-1 py-2 rounded-lg text-center" style="background:var(--bg)"><div><p class="text-xs" style="color:var(--faint)">Yrs already paid</p><p class="mono text-sm font-bold" style="color:var(--muted)">${yrsAlready} yrs</p></div><div><p class="text-xs" style="color:var(--faint)">Remaining balance</p><p class="mono text-sm font-bold" style="color:var(--orange)">${remBal?'~'+IN_fmt(Math.round(remBal)):'—'}</p></div><div><p class="text-xs" style="color:var(--faint)">Yrs remaining</p><p class="mono text-sm font-bold" style="color:var(--indigo)">${yrsRemaining} yrs</p></div></div>`;
+  else if(startedFuture) statusHtml=`<p class="text-xs px-1" style="color:var(--indigo)">⏳ Starts in ${startCal-IN_emiCalYear()} year(s) (${startCal})</p>`;
+  else statusHtml=`<p class="text-xs px-1" style="color:var(--green)">● Active now · started ${startCal}</p>`;
+  const statusEl=document.getElementById('in_emi_status_'+i);
+  const footerEl=document.getElementById('in_emi_footer_'+i);
+  if(statusEl) statusEl.innerHTML=statusHtml;
+  if(footerEl) footerEl.innerHTML=`<span class="text-xs" style="color:var(--faint)">${startCal} → ${endCal}<span class="pill ml-1" style="background:var(--green-lt);color:var(--green)">✓ Surplus ↑ after ${endCal}</span></span><button onclick="IN_EMIS.splice(${i},1);IN_rEMI();IN_sumExp();IN_rc();IN_sv()" class="text-sm font-semibold" style="color:var(--rose)">Remove</button>`;
 }
 
 // ── India investments ──
@@ -1316,16 +1455,24 @@ function IN_rMS(){
   list.innerHTML='';
   IN_MS.forEach((m,i)=>{
     const div=document.createElement('div'); div.className='inset p-3 flex items-center gap-3';
-    div.innerHTML=`<div style="width:10px;height:10px;border-radius:99px;background:var(--amber);border:2px solid #fff;box-shadow:0 0 0 2px var(--amber);flex-shrink:0"></div>
-      <div class="flex-1 grid grid-cols-3 gap-2">
-        <input type="text" value="${m.label}" class="si text-sm" style="padding:5px 8px"
-          oninput="IN_MS[${i}].label=this.value;IN_sv();IN_rFC()">
-        <input type="number" value="${m.year}" min="1" max="30" class="si mono text-sm" style="padding:5px 8px"
-          oninput="IN_MS[${i}].year=parseInt(this.value)||1;IN_sv();IN_rFC()">
-        <input type="text" value="${m.amount?m.amount.toLocaleString('en-IN'):''}" placeholder="₹ Target" class="si mono text-sm" style="padding:5px 8px"
-          oninput="IN_hi(this);IN_MS[${i}].amount=parseFloat(this.value.replace(/,/g,''))||0;IN_sv();IN_rFC()">
+    div.className='inset p-4 space-y-2 relative';
+    div.innerHTML=`
+      <div class="flex items-center gap-2 mb-2">
+        <div style="width:10px;height:10px;border-radius:99px;background:var(--amber);border:2px solid #fff;box-shadow:0 0 0 2px var(--amber);flex-shrink:0"></div>
+        <p class="text-xs font-semibold uppercase tracking-widest" style="color:var(--amber)">Milestone ${i+1}</p>
+        <button onclick="IN_MS.splice(${i},1);IN_rMS();IN_rFC();IN_sv()" class="ml-auto text-xs font-semibold" style="color:var(--faint)" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕ Remove</button>
       </div>
-      <button onclick="IN_MS.splice(${i},1);IN_rMS();IN_rFC();IN_sv()" style="color:var(--faint)" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕</button>`;
+      <div><p class="text-xs mb-1" style="color:var(--faint)">Label</p>
+        <input type="text" value="${m.label}" class="si text-sm w-full"
+          oninput="IN_MS[${i}].label=this.value;IN_sv();IN_rFC()"></div>
+      <div class="grid grid-cols-2 gap-2">
+        <div><p class="text-xs mb-1" style="color:var(--faint)">Year (1–30)</p>
+          <input type="number" value="${m.year}" min="1" max="30" class="si mono text-sm w-full"
+            oninput="IN_MS[${i}].year=parseInt(this.value)||1;IN_sv();IN_rFC()"></div>
+        <div><p class="text-xs mb-1" style="color:var(--faint)">₹ Target (optional)</p>
+          <input type="text" value="${m.amount?m.amount.toLocaleString('en-IN'):''}" placeholder="—" class="si mono text-sm w-full"
+            oninput="IN_hi(this);IN_MS[${i}].amount=parseFloat(this.value.replace(/,/g,''))||0;IN_sv();IN_rFC()"></div>
+      </div>`;
     list.appendChild(div);
   });
 }
@@ -1392,36 +1539,51 @@ function IN_rc(){
 }
 
 // ── India simulation engine ──
-function IN_sim(years,xE=0,lump=0,xI=0){
-  const b1=gv('in_b1'),b2=gv('in_b2'),g1=gn('in_g1')/100,g2=gn('in_g2')/100;
+function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentry=100){
+  const b1base=gv('in_b1'),b2base=gv('in_b2'),g1=gn('in_g1')/100,g2=gn('in_g2')/100;
   const fdP=gi('in_fdRng')/100,sipP=gi('in_sipRng')/100;
   const sipRt=gn('in_sipRet')/100,fdRt=gn('in_fdRt')/100;
-  const {totP,ty}=IN_getAssets(b1,b2);
-  // cFD = FD/savings bucket: starts at lump only. Investment Matrix assets are separate.
-  let cFD=lump,cSIP=0,s1=b1,s2=b2;
+  const {totP,ty}=IN_getAssets(b1base,b2base);
+  // EPF/NPS corpus: sum deductions % × salary compounded at 8.5% (EPF) for each spouse
+  const retRt=0.085;
+  let retCorpus=0;
+  // get initial retirement corpus from any pre-seeded balance in deductions (simple: assume 0 start)
+  let cFD=lump,cSIP=0,s1=b1base,s2=b2base;
   let totalFDContrib=0,totalSIPContrib=0;
+  let homeEquity=0;
   for(let yr=1;yr<=years;yr++){
-    s1*=(1+g1); s2*=(1+g2);
+    // job loss logic
+    const isPerm=jobLoss.endsWith('p');
+    const inLoss=isPerm||(yr<=jobLossYrs);
+    const aff1=jobLoss==='s1'||jobLoss==='s1p'||jobLoss==='both'||jobLoss==='bothp';
+    const aff2=jobLoss==='s2'||jobLoss==='s2p'||jobLoss==='both'||jobLoss==='bothp';
+    let sal1=s1*(1+g1), sal2=s2*(1+g2);
+    if(aff1) sal1=inLoss?0:b1base*(1+g1)*yr*(jobLossReentry/100);
+    if(aff2) sal2=inLoss?0:b2base*(1+g2)*yr*(jobLossReentry/100);
+    s1=aff1?sal1:s1*(1+g1); s2=aff2?sal2:s2*(1+g2);
     const {s1G,s2G}=IN_getAssets(s1,s2);
-    // FD interest earned this year on current balance — taxable at slab rates
     const fdYield=cFD*fdRt;
-    // Split fdYield between spouses by salary ratio for marginal tax accuracy
     const totalSal=s1+s2||1;
     const fy1=fdYield*(s1/totalSal), fy2=fdYield*(s2/totalSal);
     const t1=IN_calcTax(s1G+fy1,true),t2=IN_calcTax(s2G+fy2,true);
-    const d1=IN_DEDS[1].reduce((s,d)=>s+s1*(d.pct/100),0);
-    const d2=IN_DEDS[2].reduce((s,d)=>s+s2*(d.pct/100),0);
+    const d1=IN_DEDS[1].reduce((a,d)=>a+s1*(d.pct/100),0);
+    const d2=IN_DEDS[2].reduce((a,d)=>a+s2*(d.pct/100),0);
     const expMo=IN_totExpMo(yr);
-    // fdYield included in income; after-tax surplus drives reinvestment
     const surplus=(s1+s2+ty+fdYield-t1-t2-d1-d2-(expMo*12))/12+(xI-xE);
     const mFD=Math.max(0,surplus)*fdP, mSIP=Math.max(0,surplus)*sipP;
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=(cFD+mFD*12)*(1+fdRt); cSIP=(cSIP+mSIP*12)*(1+sipRt);
+    // EPF/NPS: total deduction % on each salary, compounded monthly at retRt
+    const retContrib1=(aff1&&inLoss)?0:d1;
+    const retContrib2=(aff2&&inLoss)?0:d2;
+    retCorpus=(retCorpus+(retContrib1+retContrib2))*(1+retRt);
+    // Home equity: sum across all home loans
+    homeEquity=IN_EMIS.filter(e=>e.isHome&&e.homeVal).reduce((s,e)=>s+IN_homeEquityAt(e,yr).equity,0);
   }
   const assetRate=totP>0?(ty/totP):0;
   return{
-    total:cFD+cSIP+totP,
-    cFD,cSIP,
+    total:cFD+cSIP+totP+retCorpus+homeEquity,
+    cFD,cSIP,retCorpus,homeEquity,
     fdPrincipal:lump, fdContrib:totalFDContrib,
     sipContrib:totalSIPContrib,
     fdRt,sipRt,totP,assetFV:totP,
@@ -1430,34 +1592,58 @@ function IN_sim(years,xE=0,lump=0,xI=0){
 }
 
 function IN_rFC(){
+  if(IN_fcMode==='short'){IN_rFC_short();return;}
   const infRate=gn('in_infR')/100, max30=IN_sim(30).total||1;
   const fdPct=gi('in_fdRng'), sipPct=gi('in_sipRng');
   const fdRtPct=gn('in_fdRt'), sipRtPct=gn('in_sipRet');
   const expEnds=new Set();
   IN_EXPS.forEach(c=>{if(c.eYr!==null) expEnds.add(c.eYr);});
-  IN_EMIS.forEach(e=>expEnds.add((e.sYr||0)+(e.yrs||0)));
+  IN_EMIS.forEach(e=>expEnds.add(IN_emiEndCalYear(e)-IN_emiCalYear()+1));
   let html='';
   [5,10,15,20,25,30].forEach(yr=>{
     const sim=IN_sim(yr);
-    const {cFD,cSIP,fdPrincipal,fdContrib,sipContrib,totP,assetFV,assetYield,assetRate}=sim;
+    const {cFD,cSIP,retCorpus,homeEquity,fdPrincipal,fdContrib,sipContrib,totP,assetYield,assetRate}=sim;
     let disp=IN_isAdj?sim.total/Math.pow(1+infRate,yr):sim.total;
-    const cr=(disp/10000000).toFixed(2);
+    const crFmt=IN_fmtCr(disp);
     const bw=Math.min(97,Math.max(3,(sim.total/max30)*100));
     const mPills=IN_MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}${m.amount?' · '+IN_fmt(m.amount):''}</span>`);
     const ePills=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
     const pills=[...mPills,...ePills].join(' ');
     const uid='infc'+yr;
-
-    // Compute gains
     const fdGain=cFD-(fdPrincipal+fdContrib);
     const sipGain=cSIP-sipContrib;
     const totalPrincipal=(fdPrincipal+fdContrib)+sipContrib;
     const totalGain=Math.max(0,disp-totalPrincipal);
-
+    const totalDedsAnn=IN_DEDS[1].reduce((s,d)=>s+gv('in_b1')*(d.pct/100),0)+IN_DEDS[2].reduce((s,d)=>s+gv('in_b2')*(d.pct/100),0);
+    const retRows=totalDedsAnn>0?`<tr style="border-bottom:1px dashed var(--border)">
+      <td class="py-2 pl-2 text-xs" style="color:var(--muted)">🏛 EPF / NPS Corpus <span style="color:var(--faint)">(deductions compounded)</span></td>
+      <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(totalDedsAnn*yr)}<br><span style="color:var(--faint);font-size:10px">${IN_fmt(totalDedsAnn)}/yr contributions</span></td>
+      <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,retCorpus-totalDedsAnn*yr))}</td>
+      <td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">${IN_fmtCr(retCorpus)}</td>
+      <td class="py-2 mono text-xs text-right" style="color:var(--faint)">8.5% cmpd</td>
+    </tr>`:'';
+    const homeRows=IN_EMIS.filter(e=>e.isHome&&e.homeVal).map(e=>{
+      const{homeVal:hv,loanBal:lb,equity:eq}=IN_homeEquityAt(e,yr);
+      const appGain=hv-(e.homeVal||0);
+      return`<tr style="border-bottom:1px dashed var(--border)">
+        <td class="py-2 pl-2 text-xs" style="color:var(--muted)">🏠 ${e.label} <span style="color:var(--faint)">(${e.appRate||4}%/yr appreciation)</span></td>
+        <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(e.homeVal||0)}<br><span style="color:var(--faint);font-size:10px">purchase price</span></td>
+        <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(appGain)}<br><span style="color:var(--faint);font-size:10px">appreciation</span></td>
+        <td class="py-2 mono text-xs text-right font-bold" style="color:var(--indigo)">${IN_fmtCr(hv)}<br><span style="color:var(--faint);font-size:10px">home value</span></td>
+        <td class="py-2 mono text-xs text-right" style="color:var(--faint)"></td>
+      </tr>
+      <tr style="border-bottom:1px dashed var(--border)">
+        <td class="py-2 pl-4 text-xs" style="color:var(--faint)">↳ Remaining Loan</td>
+        <td></td>
+        <td class="py-2 mono text-xs text-right" style="color:var(--rose)">${lb>0?'−'+IN_fmt(lb):'Paid off ✓'}</td>
+        <td class="py-2 mono text-xs text-right font-bold" style="color:var(--teal)">${IN_fmtCr(eq)}<br><span style="color:var(--faint);font-size:10px">net equity</span></td>
+        <td></td>
+      </tr>`;
+    }).join('');
     const detailTable=`
     <div id="${uid}" class="hidden" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;overflow-x:auto">
       <p class="text-xs mb-2" style="color:var(--faint)">All amounts = money you put in <strong style="color:var(--muted)">+</strong> investment growth. Total = principal + gains.</p>
-      <table class="w-full text-left" style="min-width:460px">
+      <table class="w-full text-left" style="min-width:480px">
         <thead><tr style="border-bottom:1.5px solid var(--border)">
           <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.06em">Bucket</th>
           <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">You Put In</th>
@@ -1480,6 +1666,7 @@ function IN_rFC(){
             <td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">${IN_fmtCr(cSIP)}</td>
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}%/yr</td>
           </tr>`:''}
+          ${retRows}
           ${totP>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-2 pl-2 text-xs" style="color:var(--muted)">📊 Existing Investments <span style="color:var(--faint)">(FDs, bonds, assets)</span></td>
             <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(totP)}<br><span style="color:var(--faint);font-size:10px">principal held · yield redirected to surplus</span></td>
@@ -1487,30 +1674,30 @@ function IN_rFC(){
             <td class="py-2 mono text-xs text-right font-bold" style="color:var(--teal)">${IN_fmt(totP)}</td>
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${(assetRate*100).toFixed(1)}%/yr yield</td>
           </tr>`:''}
+          ${homeRows}
         </tbody>
         <tfoot>
           <tr style="border-top:2px solid var(--border);background:var(--bg)">
             <td class="pt-3 pb-1 text-xs font-bold">TOTAL${IN_isAdj?' · inflation adj.':''}</td>
             <td class="pt-3 pb-1 mono text-xs text-right font-semibold" style="color:var(--muted)">${IN_fmtCr(totalPrincipal+totP)}<br><span style="color:var(--faint);font-size:10px">principal + contributions</span></td>
             <td class="pt-3 pb-1 mono text-xs text-right font-bold" style="color:var(--green)">+${IN_fmtCr(totalGain)}<br><span style="color:var(--faint);font-size:10px">investment growth</span></td>
-            <td class="pt-3 pb-1 mono text-base font-black text-right" style="color:var(--teal-dk)">₹${cr} Cr</td>
+            <td class="pt-3 pb-1 mono text-base font-black text-right" style="color:var(--teal-dk)">${crFmt}</td>
             <td class="pt-3 pb-1"></td>
           </tr>
         </tfoot>
       </table>
     </div>`;
-
-    html+=`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+    html+=`<div class="fr" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0">
       <div class="flex items-center gap-3" style="cursor:pointer" onclick="const el=document.getElementById('${uid}');el.classList.toggle('hidden');this.querySelector('.fc-arr').textContent=el.classList.contains('hidden')?'▸':'▾'">
-        <span class="mono text-sm font-semibold shrink-0" style="color:var(--muted);width:52px">${yr} Yrs</span>
+        <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">${yr} Yrs</span>
         <div class="flex-1 min-w-0">
           <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden${pills?';margin-bottom:5px':''}">
             <div style="height:100%;width:${bw}%;border-radius:99px;background:linear-gradient(to right,var(--teal),var(--indigo));transition:width .5s ease"></div>
           </div>
           ${pills?`<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`:''}
         </div>
-        <div class="text-right shrink-0" style="min-width:90px">
-          <span class="mono text-base font-bold block" style="color:var(--teal-dk)">₹${cr} Cr</span>
+        <div class="text-right shrink-0">
+          <span class="mono text-base font-bold block" style="color:var(--teal-dk)">${crFmt}</span>
           <span class="mono text-xs" style="color:var(--green)">▸ click to break down</span>
         </div>
         <span class="fc-arr text-xs shrink-0" style="color:var(--faint);width:12px">▸</span>
@@ -1521,6 +1708,68 @@ function IN_rFC(){
   document.getElementById('in_fcTbl').innerHTML=html;
 }
 
+function IN_rFC_short(){
+  const infRate=gn('in_infR')/100;
+  const fdP=gi('in_fdRng')/100, sipP=gi('in_sipRng')/100;
+  const fdRt=gn('in_fdRt')/100, sipRt=gn('in_sipRet')/100;
+  const b1=gv('in_b1'),b2=gv('in_b2'),g1=gn('in_g1')/100,g2=gn('in_g2')/100;
+  const {totP,ty}=IN_getAssets(b1,b2);
+  const totalDedsAnn=IN_DEDS[1].reduce((s,d)=>s+b1*(d.pct/100),0)+IN_DEDS[2].reduce((s,d)=>s+b2*(d.pct/100),0);
+  // pre-compute year snapshots for smooth interpolation
+  const snapshots={};
+  for(let yr=0;yr<=10;yr++) snapshots[yr]=IN_sim(yr);
+  let html='';
+  html+=`<p class="text-xs mb-3" style="color:var(--faint)">Month-by-month projection · click any year to expand</p>`;
+  for(let yr=1;yr<=10;yr++){
+    const simPrev=snapshots[yr-1], simCurr=snapshots[yr];
+    const retPrev=simPrev.retCorpus||0, retCurr=simCurr.retCorpus||0;
+    const heqPrev=simPrev.homeEquity||0, heqCurr=simCurr.homeEquity||0;
+    let cFD_mo=simPrev.cFD, cSIP_mo=simPrev.cSIP;
+    const monthlyFDGrowth=((simCurr.cFD-simPrev.cFD)/12);
+    const monthlySIPGrowth=((simCurr.cSIP-simPrev.cSIP)/12);
+    let yrRows='';
+    for(let mo=1;mo<=12;mo++){
+      cFD_mo+=monthlyFDGrowth; cSIP_mo+=monthlySIPGrowth;
+      const retMo=retPrev+(retCurr-retPrev)*(mo/12);
+      const heqMo=heqPrev+(heqCurr-heqPrev)*(mo/12);
+      const dispMo=IN_isAdj?(cFD_mo+cSIP_mo+totP+retMo+heqMo)/Math.pow(1+infRate,yr-1+mo/12):(cFD_mo+cSIP_mo+totP+retMo+heqMo);
+      const cal=new Date().getFullYear()+(yr-1); const calMo=mo;
+      const moName=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo-1];
+      yrRows+=`<tr style="border-bottom:1px dashed var(--border)">
+        <td class="py-1 text-xs" style="color:var(--faint)">${moName} ${cal}</td>
+        <td class="py-1 mono text-xs text-right" style="color:var(--indigo)">${IN_fmtCr(cFD_mo)}</td>
+        <td class="py-1 mono text-xs text-right" style="color:var(--purple)">${IN_fmtCr(cSIP_mo)}</td>
+        <td class="py-1 mono text-xs text-right" style="color:var(--teal)">${IN_fmtCr(retMo)}</td>
+        <td class="py-1 mono text-xs text-right font-bold" style="color:var(--teal-dk)">${IN_fmtCr(dispMo)}</td>
+      </tr>`;
+    }
+    const yrTotal=IN_isAdj?simCurr.total/Math.pow(1+infRate,yr):simCurr.total;
+    const msPills=IN_MS.filter(m=>m.year===yr).map(m=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${m.label}</span>`).join(' ');
+    html+=`<div style="border-bottom:1px solid var(--border);padding:8px 0">
+      <div class="flex items-center gap-3" style="cursor:pointer" onclick="const el=document.getElementById('insh${yr}');el.classList.toggle('hidden');this.querySelector('.fc-arr').textContent=el.classList.contains('hidden')?'▸':'▾'">
+        <span class="mono text-sm font-semibold w-14 shrink-0" style="color:var(--muted)">Yr ${yr}</span>
+        <div class="flex-1">${msPills}</div>
+        <span class="mono text-sm font-bold" style="color:var(--teal-dk)">${IN_fmtCr(yrTotal)}</span>
+        <span class="mono text-xs" style="color:var(--green)">▸ expand</span>
+        <span class="fc-arr text-xs shrink-0" style="color:var(--faint);width:12px">▸</span>
+      </div>
+      <div id="insh${yr}" class="hidden overflow-x-auto" style="margin-top:8px">
+        <table class="w-full text-left" style="min-width:400px">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th class="pb-1 text-xs" style="color:var(--faint)">Month</th>
+            <th class="pb-1 text-xs text-right" style="color:var(--indigo)">FD/Savings</th>
+            <th class="pb-1 text-xs text-right" style="color:var(--purple)">SIP/Equity</th>
+            <th class="pb-1 text-xs text-right" style="color:var(--teal)">EPF/NPS</th>
+            <th class="pb-1 text-xs text-right" style="color:var(--teal-dk)">Total</th>
+          </tr></thead>
+          <tbody>${yrRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+  document.getElementById('in_fcTbl').innerHTML=html;
+}
+
 function IN_swSC(s){
   IN_activeSC=s; ['A','B'].forEach(x=>document.getElementById('in_st'+x).classList.toggle('on',x===s));
   const c=IN_SC[s];
@@ -1528,6 +1777,10 @@ function IN_swSC(s){
   document.getElementById('in_scE').value=c.extraExp?c.extraExp.toLocaleString('en-IN'):'0';
   document.getElementById('in_scL').value=c.lumpsum?c.lumpsum.toLocaleString('en-IN'):'0';
   document.getElementById('in_scI').value=c.extraInc?c.extraInc.toLocaleString('en-IN'):'0';
+  document.getElementById('in_scJL').value=c.jobLoss||'none';
+  document.getElementById('in_scJLY').value=c.jobLossYrs||1;
+  document.getElementById('in_scJLR').value=c.jobLossReentry||100;
+  IN_rSCJobLossUI();
   IN_rSC();
 }
 function IN_saveSC(){
@@ -1536,23 +1789,34 @@ function IN_saveSC(){
   IN_SC[s].extraExp=parseFloat(document.getElementById('in_scE').value.replace(/,/g,''))||0;
   IN_SC[s].lumpsum=parseFloat(document.getElementById('in_scL').value.replace(/,/g,''))||0;
   IN_SC[s].extraInc=parseFloat(document.getElementById('in_scI').value.replace(/,/g,''))||0;
-  IN_rSC(); IN_sv();
+  IN_SC[s].jobLoss=document.getElementById('in_scJL').value;
+  IN_SC[s].jobLossYrs=parseFloat(document.getElementById('in_scJLY').value)||1;
+  IN_SC[s].jobLossReentry=parseFloat(document.getElementById('in_scJLR').value)||100;
+  IN_rSCJobLossUI(); IN_rSC(); IN_sv();
+}
+function IN_rSCJobLossUI(){
+  const jl=document.getElementById('in_scJL').value;
+  const isPerm=jl.endsWith('p');
+  const durEl=document.getElementById('in_scJLYrow');
+  const reEl=document.getElementById('in_scJLRrow');
+  if(durEl) durEl.style.opacity=isPerm?'0.3':'1';
+  if(reEl) reEl.style.opacity=isPerm?'0.3':'1';
 }
 function IN_rSC(){
   const rows=[10,20,30].map(yr=>{
-    const a=IN_sim(yr,IN_SC.A.extraExp,IN_SC.A.lumpsum,IN_SC.A.extraInc).total;
-    const b=IN_sim(yr,IN_SC.B.extraExp,IN_SC.B.lumpsum,IN_SC.B.extraInc).total;
-    const d=b-a;
+    const sc=c=>IN_sim(yr,c.extraExp,c.lumpsum,c.extraInc,c.jobLoss||'none',c.jobLossYrs||1,c.jobLossReentry||100).total;
+    const a=sc(IN_SC.A), b=sc(IN_SC.B), d=b-a;
     return`<tr style="border-bottom:1px solid var(--border)"><td class="py-3 mono text-sm font-semibold" style="color:var(--muted)">${yr} Yrs</td>
       <td class="py-3 mono text-sm font-bold" style="color:var(--indigo)">${IN_fmtCr(a)}</td>
       <td class="py-3 mono text-sm font-bold" style="color:var(--purple)">${IN_fmtCr(b)}</td>
       <td class="py-3"><span class="mono text-sm font-bold" style="color:${d>=0?'var(--green)':'var(--rose)'}">${d>=0?'+':'−'}${IN_fmtCr(Math.abs(d))}</span>
       <span class="text-xs ml-1" style="color:var(--faint)">→ ${d>=0?IN_SC.B.name:IN_SC.A.name} wins</span></td></tr>`;
   }).join('');
+  const jlPill=c=>{const jl=c.jobLoss||'none';if(jl==='none')return'';const isPerm=jl.endsWith('p');const who={'s1':'Spouse 1','s2':'Spouse 2','both':'Both','s1p':'Spouse 1','s2p':'Spouse 2','bothp':'Both'}[jl]||'';return`<span class="pill ml-1" style="background:var(--rose-lt);color:var(--rose)">💼 ${who} ${isPerm?'stops permanently':'out '+c.jobLossYrs+'yr · '+(c.jobLossReentry||100)+'% re-entry'}</span>`;};
   document.getElementById('in_scComp').innerHTML=`<table class="w-full text-left"><thead style="border-bottom:2px solid var(--border)"><tr>
     <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint)">Horizon</th>
-    <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--indigo)">${IN_SC.A.name}</th>
-    <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--purple)">${IN_SC.B.name}</th>
+    <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--indigo)">${IN_SC.A.name}${jlPill(IN_SC.A)}</th>
+    <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--purple)">${IN_SC.B.name}${jlPill(IN_SC.B)}</th>
     <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint)">Difference</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
@@ -1563,26 +1827,82 @@ function IN_rIns(){
   const expMo=IN_totExpMo(1);
   const surplus=b1+b2+ty-t1-t2-(expMo*12);
   const ins=[];
+
+  // 1. Old vs New regime comparison
+  if(b1>0||b2>0){
+    function calcOldRegimeTax(inc){
+      // Old regime slabs (with basic 80C ₹1.5L + 80D ₹25k = ~₹1.75L assumed)
+      const taxable=Math.max(0,inc-175000);
+      if(taxable<=250000) return 0;
+      let tax=0;
+      if(taxable>250000) tax+=(Math.min(taxable,500000)-250000)*0.05;
+      if(taxable>500000) tax+=(Math.min(taxable,1000000)-500000)*0.20;
+      if(taxable>1000000) tax+=(taxable-1000000)*0.30;
+      return tax*1.04;
+    }
+    const oldT1=calcOldRegimeTax(b1), oldT2=calcOldRegimeTax(b2);
+    const newT1=IN_calcTax(s1G,b1>0), newT2=IN_calcTax(s2G,b2>0);
+    const regimeSaving=(oldT1+oldT2)-(newT1+newT2);
+    if(Math.abs(regimeSaving)>1000){
+      if(regimeSaving>0) ins.push({t:'tip',i:'✅',h:`New Tax Regime saves ${IN_fmt(regimeSaving)}/year vs Old Regime`,b:`Under Old Regime (with ₹1.75L deductions) you'd pay ${IN_fmt(oldT1+oldT2)} vs New Regime ${IN_fmt(newT1+newT2)}. New Regime is better for your income profile.`});
+      else ins.push({t:'warn',i:'⚠️',h:`Old Tax Regime could save ${IN_fmt(-regimeSaving)}/year`,b:`Old Regime with deductions (80C, HRA, 80D) would cost ${IN_fmt(oldT1+oldT2)} vs current ${IN_fmt(newT1+newT2)}. Review with a CA — especially if you have significant 80C investments.`});
+    }
+  }
+
+  // 2. Income shift tip
   if(s1G>1600000&&s2G<800000&&ty>0){
     const saving=IN_calcTax(s1G,b1>0)-IN_calcTax(s1G-ty*0.5,b1>0);
-    ins.push({t:'tip',i:'💡',h:'Move investment income to Spouse 2',b:`Shifting yield-bearing assets could save up to ${IN_fmt(saving)}/year in tax.`});
+    ins.push({t:'tip',i:'💡',h:'Move investment income to Spouse 2',b:`Shifting yield-bearing assets to Spouse 2 could save up to ${IN_fmt(saving)}/year in tax.`});
   }
+
+  // 3. Tax slab proximity warnings
   [400000,800000,1200000,1600000,2000000,2400000].forEach(bnd=>{
     const lbl='₹'+(bnd/100000).toFixed(0)+'L';
-    const g1=bnd-s1G; if(g1>0&&g1<50000) ins.push({t:'warn',i:'⚠️',h:`Spouse 1 is ${IN_fmt(g1)} below ${lbl} slab`,b:'Consider routing extra income to tax-free instruments.'});
-    const g2=bnd-s2G; if(g2>0&&g2<50000) ins.push({t:'warn',i:'⚠️',h:`Spouse 2 is ${IN_fmt(g2)} below ${lbl} slab`,b:'Park additional income in tax-free instruments to stay in current bracket.'});
+    const g1=bnd-s1G; if(g1>0&&g1<50000) ins.push({t:'warn',i:'⚠️',h:`Spouse 1 is ${IN_fmt(g1)} below ${lbl} slab`,b:'Consider routing extra income to tax-free instruments to stay in current bracket.'});
+    const g2=bnd-s2G; if(g2>0&&g2<50000) ins.push({t:'warn',i:'⚠️',h:`Spouse 2 is ${IN_fmt(g2)} below ${lbl} slab`,b:'Park additional income in tax-free instruments to avoid slab jump.'});
   });
+
+  // 4. EPF/NPS utilisation
+  const totalDedPct1=IN_DEDS[1].reduce((s,d)=>s+d.pct,0);
+  const totalDedPct2=IN_DEDS[2].reduce((s,d)=>s+d.pct,0);
+  if((b1>0&&totalDedPct1<12)||(b2>0&&totalDedPct2<12))
+    ins.push({t:'tip',i:'🏛',h:'EPF contribution room available',b:`Standard EPF is 12% of basic. ${totalDedPct1<12&&b1>0?'Spouse 1 is below 12%. ':''}${totalDedPct2<12&&b2>0?'Spouse 2 is below 12%.':''} Consider voluntary EPF top-up for guaranteed 8.5% tax-exempt growth.`});
+
+  // 5. NPS additional deduction (80CCD(1B))
+  if((b1>0||b2>0)&&s1G+s2G>800000)
+    ins.push({t:'tip',i:'💼',h:'NPS ₹50k deduction available (Old Regime)',b:"If switching to Old Regime, Section 80CCD(1B) allows additional ₹50,000 NPS deduction over and above 80C — saving up to ₹15,600/yr at 30% slab."});
+
+  // 6. LTCG threshold
   if(totP>0){
-    const fdP=[...document.querySelectorAll('.in_yv')].filter(r=>(parseFloat(r.value)||0)<9).reduce((s,r)=>{const tr=r.closest('tr');return s+(parseFloat(tr.querySelector('.in_pv').value.replace(/,/g,''))||0);},0);
-    if(fdP/totP>0.7) ins.push({t:'info',i:'📊',h:'Portfolio is >70% fixed-income',b:'Equity outperforms FDs after inflation over 10+ years. Consider rebalancing.'});
+    const equityVal=[...document.querySelectorAll('.in_ar')].filter(r=>(parseFloat(r.querySelector('.in_yv').value)||0)>9).reduce((s,r)=>s+(parseFloat(r.querySelector('.in_pv').value.replace(/,/g,''))||0),0);
+    const equityYield=[...document.querySelectorAll('.in_ar')].filter(r=>(parseFloat(r.querySelector('.in_yv').value)||0)>9).reduce((s,r)=>{const p=parseFloat(r.querySelector('.in_pv').value.replace(/,/g,''))||0;return s+p*(parseFloat(r.querySelector('.in_yv').value)||0)/100;},0);
+    if(equityYield>125000) ins.push({t:'warn',i:'📈',h:`Equity gains ~${IN_fmt(equityYield)}/yr — LTCG threshold ₹1.25L exceeded`,b:'Gains above ₹1.25L/yr on equity/equity funds attract 12.5% LTCG tax. Consider tax-loss harvesting or staggering redemptions across financial years.'});
+    else if(equityYield>0&&equityYield<125000) ins.push({t:'info',i:'📈',h:`Equity gains within LTCG-free limit`,b:`Estimated equity yield ${IN_fmt(equityYield)}/yr is below ₹1.25L LTCG threshold — currently tax-free.`});
   }
+
+  // 7. Portfolio diversification
+  if(totP>0){
+    const fdVal=[...document.querySelectorAll('.in_yv')].filter(r=>(parseFloat(r.value)||0)<9).reduce((s,r)=>{const tr=r.closest('tr');return s+(parseFloat(tr.querySelector('.in_pv').value.replace(/,/g,''))||0);},0);
+    if(fdVal/totP>0.7) ins.push({t:'info',i:'📊',h:'Portfolio is >70% fixed-income',b:'Equity has historically beaten FD returns after inflation over 10+ year horizons. Consider gradually shifting 20–30% to equity SIPs.'});
+  }
+
+  // 8. Tax-free instruments
   if(totP>0&&![...document.querySelectorAll('.in_tv')].some(el=>el.checked))
-    ins.push({t:'tip',i:'💡',h:'No tax-free assets',b:'PPF, ELSS, Sukanya Samriddhi offer tax-free returns.'});
+    ins.push({t:'tip',i:'💡',h:'No tax-free assets in portfolio',b:'PPF (7.1%), ELSS, Sukanya Samriddhi Yojana offer fully tax-free returns. Adding even ₹50k/yr to PPF compounds significantly over 15 years.'});
+
+  // 9. Savings rate
   if(surplus>0&&surplus/(b1+b2||1)>0.3)
-    ins.push({t:'tip',i:'🌟',h:'Excellent savings rate — above 30%',b:'You save over 30% of household income. Even a 5% SIP increase annually compounds massively.'});
+    ins.push({t:'tip',i:'🌟',h:'Excellent savings rate — above 30%',b:'You save over 30% of gross household income. Even a 5% annual SIP step-up from here compounds to dramatically higher wealth.'});
+  else if(b1+b2>0&&surplus/(b1+b2)<0.1)
+    ins.push({t:'warn',i:'⚠️',h:'Savings rate below 10%',b:`Monthly surplus is only ${IN_fmt(Math.max(0,surplus/12))} (${((Math.max(0,surplus)/(b1+b2))*100).toFixed(1)}% of income). Review high expense categories to increase investable surplus.`});
+
+  // 10. Time-bound expenses
   const timed=IN_EXPS.filter(c=>c.eYr!==null);
-  if(timed.length){const freed=timed.reduce((s,c)=>s+(c.val||0),0); ins.push({t:'info',i:'⏳',h:`${timed.length} time-bound expense(s) will free up ${IN_fmt(freed)}/month`,b:timed.map(c=>`${c.icon} ${c.label} ends year ${c.eYr}`).join(' · ')});}
-  if(IN_EMIS.length){const emiTotal=IN_EMIS.reduce((s,e)=>s+(e.emi||0),0); ins.push({t:'info',i:'🏦',h:`${IN_EMIS.length} loan(s) totalling ${IN_fmt(emiTotal)}/month`,b:IN_EMIS.map(e=>`${e.label} — ends year ${(e.sYr||0)+(e.yrs||0)}`).join(' · ')});}
+  if(timed.length){const freed=timed.reduce((s,c)=>s+(c.val||0),0); ins.push({t:'info',i:'⏳',h:`${timed.length} time-bound expense(s) will free ${IN_fmt(freed)}/month`,b:timed.map(c=>`${c.icon} ${c.label} ends year ${c.eYr}`).join(' · ')});}
+
+  // 11. Loans
+  if(IN_EMIS.length){const emiTotal=IN_EMIS.reduce((s,e)=>s+(e.emi||0),0); ins.push({t:'info',i:'🏦',h:`${IN_EMIS.length} loan(s) totalling ${IN_fmt(emiTotal)}/month`,b:IN_EMIS.map(e=>`${e.label} — ends ${IN_emiEndCalYear(e)}`).join(' · ')});}
+
   if(!ins.length) ins.push({t:'info',i:'ℹ️',h:'Add your data to see insights',b:'Fill income, assets, and expenses on the other tabs.'});
   const cm={tip:'ic-tip',warn:'ic-warn',info:'ic-info'};
   document.getElementById('in_insP').innerHTML=ins.map(x=>`<div class="ic ${cm[x.t]}"><div class="flex items-start gap-3"><span style="font-size:1.3rem;flex-shrink:0">${x.i}</span><div><p class="font-semibold text-sm mb-1">${x.h}</p><p class="text-sm opacity-80">${x.b}</p></div></div></div>`).join('');
@@ -1591,7 +1911,7 @@ function IN_rIns(){
 // ── India persistence ──
 function IN_sv(){
   const g=id=>document.getElementById(id)?.value||'';
-  const data={b1:g('in_b1'),b2:g('in_b2'),g1:g('in_g1'),g2:g('in_g2'),fdRng:g('in_fdRng'),sipRng:g('in_sipRng'),sipRet:g('in_sipRet'),fdRt:g('in_fdRt'),infR:g('in_infR'),isAdj:IN_isAdj,expInflOn:IN_expInflOn,gC:g('in_gC'),gY:g('in_gY'),ddC:g('in_ddC'),ddW:g('in_ddW'),ddRt:g('in_ddRt'),ddI:g('in_ddI'),EXPS:IN_EXPS,EMIS:IN_EMIS,MS:IN_MS,SC:IN_SC,DEDS:IN_DEDS,assets:[]};
+  const data={b1:g('in_b1'),b2:g('in_b2'),g1:g('in_g1'),g2:g('in_g2'),fdRng:g('in_fdRng'),sipRng:g('in_sipRng'),sipRet:g('in_sipRet'),fdRt:g('in_fdRt'),infR:g('in_infR'),isAdj:IN_isAdj,expInflOn:IN_expInflOn,fcMode:IN_fcMode,gC:g('in_gC'),gY:g('in_gY'),ddC:g('in_ddC'),ddW:g('in_ddW'),ddRt:g('in_ddRt'),ddI:g('in_ddI'),EXPS:IN_EXPS,EMIS:IN_EMIS,MS:IN_MS,SC:IN_SC,DEDS:IN_DEDS,assets:[]};
   document.querySelectorAll('.in_ar').forEach(r=>data.assets.push({n:r.querySelector('.in_nm').value,p:r.querySelector('.in_pv').value,y:r.querySelector('.in_yv').value,o:r.querySelector('.in_ov').value,tf:r.querySelector('.in_tv').checked}));
   try{localStorage.setItem('cyf_india',JSON.stringify(data));}catch(e){}
 }
@@ -1609,11 +1929,26 @@ function IN_loadData(){
   setV('in_gC',d.gC||'0');setV('in_gY',d.gY||'20');
   setV('in_ddC',d.ddC||'0');setV('in_ddW',d.ddW||'0');setV('in_ddRt',d.ddRt||'8');setV('in_ddI',d.ddI||'5');
   if(d.isAdj){IN_isAdj=true;document.getElementById('in_adjBtn').classList.add('on');}
+  if(d.fcMode){IN_fcMode=d.fcMode;IN_setFcMode(d.fcMode);}
   if(d.expInflOn){IN_expInflOn=true;const btn=document.getElementById('in_eiBtn');btn.classList.add('on');btn.textContent='📈 Inflation On';}
   if(d.EXPS){IN_EXPS=d.EXPS;IN_rExp();}
-  if(d.EMIS){IN_EMIS=d.EMIS;IN_rEMI();}
+  if(d.EMIS){
+    // migrate old EMI format (sYr offset) to new (startCalYear)
+    const curCal=new Date().getFullYear();
+    IN_EMIS=(d.EMIS||[]).map(e=>({
+      id:e.id||'e'+Date.now(),label:e.label||'Loan',
+      emi:e.emi||0,
+      startCalYear:e.startCalYear||(e.sYr?curCal+(e.sYr-1):curCal),
+      yrs:e.yrs||20,
+      isHome:e.isHome||false,homeVal:e.homeVal||0,loanAmt:e.loanAmt||0,mortRate:e.mortRate||8.5,appRate:e.appRate||4
+    }));
+    IN_rEMI();
+  }
   if(d.MS){IN_MS=d.MS;IN_rMS();}
-  if(d.SC){IN_SC=d.SC;IN_swSC('A');}
+  if(d.SC){
+    ['A','B'].forEach(k=>{if(d.SC[k]){d.SC[k].jobLoss=d.SC[k].jobLoss||'none';d.SC[k].jobLossYrs=d.SC[k].jobLossYrs||1;d.SC[k].jobLossReentry=d.SC[k].jobLossReentry||100;}});
+    IN_SC=d.SC;IN_swSC('A');
+  }
   if(d.DEDS){IN_DEDS=d.DEDS;IN_rDed(1);IN_rDed(2);}
   document.getElementById('in_aBody').innerHTML='';
   (d.assets||[]).forEach(a=>IN_addARow(a.n,parseFloat((a.p||'0').replace(/,/g,'')),parseFloat(a.y),a.o,a.tf));
@@ -2534,7 +2869,7 @@ function US_rFC_short(){
           ${pills?`<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`:''}
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <span class="mono text-sm font-bold" style="color:var(--blue-dk)">$${(dispYr/1e6).toFixed(2)}M</span>
+          <span class="mono text-sm font-bold" style="color:var(--blue-dk)">${US_fmtM(dispYr)}</span>
           <span class="mono text-xs block" style="color:var(--faint)">▸ monthly detail</span>
         </div>
         <span class="fca text-xs" style="color:var(--faint);width:12px">▸</span>
@@ -2576,7 +2911,7 @@ function US_rFC(){
     const sim=US_sim(yr);
     const {cFD,cSIP,retCorpus,fdPrincipal,fdContrib,sipContrib,totP,assetFV,assetYield,assetRate,homeEquity}=sim;
     let disp=US_isAdj?sim.total/Math.pow(1+infRate,yr):sim.total;
-    const m=(disp/1000000).toFixed(2);
+    const mFmt=US_fmtM(disp);
     const bw=Math.min(97,Math.max(3,(sim.total/max30)*100));
     const mPills=US_MS.filter(ms=>ms.year===yr).map(ms=>`<span class="pill" style="background:var(--amber-lt);color:var(--amber)">🎯 ${ms.label}${ms.amount?' · '+US_fmt(ms.amount):''}</span>`);
     const ePills=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
@@ -2671,7 +3006,7 @@ function US_rFC(){
             <td class="pt-3 pb-1 text-xs font-bold">TOTAL${US_isAdj?' · inflation adj.':''}</td>
             <td class="pt-3 pb-1 mono text-xs text-right font-semibold" style="color:var(--muted)">${US_fmtM(fdPrincipal+fdContrib+sipContrib+totP+US_RET.reduce((s,p)=>{const pSal=(p.owner==='1'?gv('us_b1'):gv('us_b2'));return s+p.balance+pSal*(p.empPct/100)*yr+pSal*(p.matchPct/100)*yr;},0)+US_EMIS.filter(e=>e.isHome).reduce((s,e)=>s+(e.homeVal||0),0))}<br><span style="color:var(--faint);font-size:10px">principal + contributions + home cost</span></td>
             <td class="pt-3 pb-1 mono text-xs text-right font-bold" style="color:var(--green)">+${US_fmtM(Math.max(0,disp-(fdPrincipal+fdContrib+sipContrib+totP+US_RET.reduce((s,p)=>{const pSal=(p.owner==='1'?gv('us_b1'):gv('us_b2'));return s+p.balance+pSal*(p.empPct/100)*yr+pSal*(p.matchPct/100)*yr;},0)+US_EMIS.filter(e=>e.isHome).reduce((s,e)=>s+(e.homeVal||0),0))))}<br><span style="color:var(--faint);font-size:10px">investment + appreciation growth</span></td>
-            <td class="pt-3 pb-1 mono text-base font-black text-right" style="color:var(--blue-dk)">$${m}M</td>
+            <td class="pt-3 pb-1 mono text-base font-black text-right" style="color:var(--blue-dk)">${mFmt}</td>
             <td class="pt-3 pb-1"></td>
           </tr>
         </tfoot>
@@ -2688,7 +3023,7 @@ function US_rFC(){
           ${pills?`<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`:''}
         </div>
         <div class="text-right shrink-0">
-          <span class="mono text-base font-bold block" style="color:var(--blue-dk)">$${m}M</span>
+          <span class="mono text-base font-bold block" style="color:var(--blue-dk)">${mFmt}</span>
           <span class="mono text-xs" style="color:var(--green)">▸ click to break down</span>
         </div>
         <span class="fc-arr text-xs shrink-0" style="color:var(--faint);width:12px">▸</span>
