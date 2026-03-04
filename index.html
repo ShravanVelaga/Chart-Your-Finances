@@ -214,12 +214,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
   .card { padding:16px !important; border-radius:12px !important; }
   .inset { padding:12px !important; }
 }
-/* Persistent scrollbar for forecast tables */
-#in_fcTbl::-webkit-scrollbar, #us_fcTbl::-webkit-scrollbar { width:6px; }
-#in_fcTbl::-webkit-scrollbar-track, #us_fcTbl::-webkit-scrollbar-track { background:var(--border); border-radius:99px; }
-#in_fcTbl::-webkit-scrollbar-thumb, #us_fcTbl::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:99px; }
-#in_fcTbl::-webkit-scrollbar-thumb:hover, #us_fcTbl::-webkit-scrollbar-thumb:hover { background:var(--muted); }
-
 @media print { .np { display:none !important; } }
 </style>
 </head>
@@ -537,7 +531,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
       <button id="in_fcShortBtn" onclick="IN_setFcMode('short')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style="border-color:var(--border);color:var(--muted)">📅 Short Term <span style="color:var(--faint);font-weight:400">(monthly · 10yr)</span></button>
       <button id="in_fcLongBtn" onclick="IN_setFcMode('long')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all on" style="border-color:var(--teal);color:var(--teal);background:var(--teal-lt)">📈 Long Term <span style="font-weight:400">(5yr steps · 30yr)</span></button>
     </div>
-    <div id="in_fcTbl" style="height:520px;overflow-y:scroll;overflow-x:hidden;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--border)"></div>
+    <div id="in_fcTbl"></div>
     <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="in_adjNote">Nominal · includes salary growth, time-bound expenses &amp; EMIs</p>
   </div>
   <div class="card p-6">
@@ -1008,7 +1002,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
       <button id="us_fcShortBtn" onclick="US_setFcMode('short')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style="border-color:var(--border);color:var(--muted)">📅 Short Term <span style="color:var(--faint);font-weight:400">(monthly · 10yr)</span></button>
       <button id="us_fcLongBtn" onclick="US_setFcMode('long')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all on" style="border-color:var(--blue);color:var(--blue);background:var(--blue-lt)">📈 Long Term <span style="font-weight:400">(5yr steps · 30yr)</span></button>
     </div>
-    <div id="us_fcTbl" style="height:520px;overflow-y:scroll;overflow-x:hidden;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--border)"></div>
+    <div id="us_fcTbl"></div>
     <p class="text-xs mt-3 text-center" style="color:var(--faint)" id="us_adjNote">Nominal · includes salary growth &amp; time-bound expenses</p>
   </div>
   <div class="card p-6">
