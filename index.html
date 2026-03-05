@@ -1743,27 +1743,27 @@ function IN_rFC(){
     }).join('');
     const detailTable=`
     <div id="${uid}" class="hidden" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;overflow-x:auto">
-      <p class="text-xs mb-2" style="color:var(--faint)">All amounts = money you put in <strong style="color:var(--muted)">+</strong> investment growth. Total = principal + gains.</p>
+      <p class="text-xs mb-2" style="color:var(--faint)">All amounts = cost basis (what you deposited) + unrealized gain (investment growth). Current Worth = cost basis + gains.</p>
       <table class="w-full text-left" style="min-width:480px">
         <thead><tr style="border-bottom:1.5px solid var(--border)">
-          <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.06em">Bucket</th>
-          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">You Put In</th>
-          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Growth</th>
-          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Total Value</th>
-          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Rate</th>
+          <th class="pb-2 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.06em">Asset</th>
+          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Cost Basis</th>
+          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Unrealized Gain</th>
+          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Current Worth</th>
+          <th class="pb-2 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Return</th>
         </tr></thead>
         <tbody>
           ${fdPct>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-2 pl-2 text-xs" style="color:var(--muted)">🏦 FD / Savings <span style="color:var(--faint)">(${fdPct}% surplus)</span></td>
-            <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${IN_fmt(fdPrincipal)} start + ${IN_fmt(fdContrib)} added</span></td>
-            <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,fdGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
+            <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${IN_fmt(fdPrincipal)} opening · ${IN_fmt(fdContrib)} deposited</span></td>
+            <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,fdGain))}<br><span style="font-size:10px;color:var(--faint)">gross gain · pre-withdrawal</span></td>
             <td class="py-2 mono text-xs text-right font-bold" style="color:var(--indigo)">${IN_fmtCr(cFD)}${totalFDDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+IN_fmtCr(totalFDDed)+' cash-out</span>':''}</td>
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}%/yr</td>
           </tr>`:''}
           ${sipPct>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-2 pl-2 text-xs" style="color:var(--muted)">📈 SIP (Nifty 50, Sensex etc.) <span style="color:var(--faint)">(${sipPct}% surplus)</span></td>
-            <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">₹0 start + ${IN_fmt(sipContrib)} added</span></td>
-            <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,sipGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
+            <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">₹0 opening · ${IN_fmt(sipContrib)} deposited</span></td>
+            <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,sipGain))}<br><span style="font-size:10px;color:var(--faint)">gross gain · pre-withdrawal</span></td>
             <td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">${IN_fmtCr(cSIP)}${totalSIPDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+IN_fmtCr(totalSIPDed)+' cash-out (FD exhausted)</span>':''}</td>
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}%/yr</td>
           </tr>`:''}
@@ -1878,7 +1878,7 @@ function IN_rFC_short(){
             ${sipP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">SIP (Nifty 50)</th>`:''}
             ${totP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Investments</th>`:''}
             ${retCurr>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">EPF / NPS</th>`:''}
-            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Total Wealth${IN_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Net Worth${IN_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
           </tr></thead>
           <tbody>${yrRows}</tbody>
         </table>
@@ -3271,15 +3271,15 @@ function US_rFC_short(){
         <table class="w-full text-left" style="min-width:780px">
           <thead><tr style="border-bottom:1px solid var(--border)">
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide" style="color:var(--faint)">Month</th>
-            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--green)">Take-Home</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--green)">Net Income</th>
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--rose)">− Expenses</th>
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--orange)">− Loans</th>
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue)">= Surplus</th>
-            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--muted)">Debt Inst.</th>
-            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">SIP</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--muted)">Fixed Income</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">Equity</th>
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">Retirement</th>
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--orange)">Home Equity</th>
-            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue-dk)">Total Wealth${US_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
+            <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue-dk)">Net Worth${US_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
           </tr></thead>
           <tbody>${moRows}</tbody>
         </table>
@@ -3335,7 +3335,7 @@ function US_rFC(){
       const cashOut=simPlan.ded;
       return`<tr style="border-bottom:1px dashed var(--border)">
         <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🎓 529 · ${p.name} <span style="color:var(--faint)">(${p.stateTaxDed?'state tax ded. · ':''}drawn first if linked)</span></td>
-        <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(contrib)}<br><span style="color:var(--faint);font-size:10px">bal + contributions</span></td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(contrib)}<br><span style="color:var(--faint);font-size:10px">opening bal + deposits</span></td>
         <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(growth)}<br><span style="font-size:10px;color:var(--faint)">tax-free growth</span></td>
         <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal)">${US_fmtM(simPlan.corpus)}${cashOut>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(cashOut)+' used for edu</span>':''}</td>
         <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${(p.returnPct||7).toFixed(1)}%/yr</td>
@@ -3393,27 +3393,27 @@ function US_rFC(){
 
     const detailTable=`
     <div id="${uid}" class="hidden overflow-x-auto" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
-      <p class="text-xs mb-2" style="color:var(--faint)">All amounts = money you put in <strong style="color:var(--muted)">+</strong> investment growth. Total = principal + gains.</p>
+      <p class="text-xs mb-2" style="color:var(--faint)">All amounts = cost basis (what you deposited) + unrealized gain (investment growth). Current Worth = cost basis + gains.</p>
       <table class="w-full text-left" style="min-width:500px">
         <thead><tr style="border-bottom:1px solid var(--border)">
-          <th class="pb-1.5 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.06em">Bucket</th>
-          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">You Put In</th>
-          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Growth</th>
-          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Total Value</th>
-          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Rate</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase" style="color:var(--faint);letter-spacing:.06em">Asset</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Cost Basis</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Unrealized Gain</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Current Worth</th>
+          <th class="pb-1.5 text-xs font-semibold uppercase text-right" style="color:var(--faint);letter-spacing:.06em">Return</th>
         </tr></thead>
         <tbody>
           ${fdP>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🏦 Debt Instruments (CDs, HYSA etc.) <span style="color:var(--faint)">(${fdP}% surplus)</span></td>
-            <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${US_fmt(fdPrincipal)} start + ${US_fmt(fdContrib)} added</span></td>
-            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,fdGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${US_fmt(fdPrincipal)} opening · ${US_fmt(fdContrib)} deposited</span></td>
+            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,fdGain))}<br><span style="font-size:10px;color:var(--faint)">gross gain · pre-withdrawal</span></td>
             <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--blue)">${US_fmtM(cFD)}${fdCashOutNote}</td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}%/yr</td>
           </tr>`:''}
           ${sipP>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">📈 SIP (S&P 500 etc.) <span style="color:var(--faint)">(${sipP}% surplus)</span></td>
-            <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">$0 start + ${US_fmt(sipContrib)} added</span></td>
-            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,sipGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
+            <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">$0 opening · ${US_fmt(sipContrib)} deposited</span></td>
+            <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,sipGain))}<br><span style="font-size:10px;color:var(--faint)">gross gain · pre-withdrawal</span></td>
             <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--purple)">${US_fmtM(cSIP)}${sipCashOutNote}</td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}%/yr</td>
           </tr>`:''}
