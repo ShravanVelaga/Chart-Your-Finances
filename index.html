@@ -512,8 +512,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
   <div class="card p-6 accent-teal">
     <p class="sl tip-wrap mb-5">Reinvestment Strategy<span class="tip-icon">ⓘ</span><span class="tip-box">This controls where your monthly surplus goes. Drag the sliders to split it between FD (safer, lower return) and SIP (market-linked, higher return). Both grow your wealth — the split reflects your risk preference.</span></p>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
-      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">SIP Returns %/yr</p><input type="number" id="in_sipRet" value="12" min="1" max="30" oninput="IN_rc();IN_sv()" class="si mono"></div>
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">FD Rate %/yr</p><input type="number" id="in_fdRt" value="7" min="1" max="15" oninput="IN_rc();IN_sv()" class="si mono"></div>
+      <div><p class="text-sm font-medium mb-1.5" style="color:var(--muted)">SIP (Nifty 50, Sensex etc.) Returns %/yr</p><input type="number" id="in_sipRet" value="12" min="1" max="30" oninput="IN_rc();IN_sv()" class="si mono"></div>
       <div><p class="text-sm font-medium mb-1.5" style="color:var(--rose)">Inflation %/yr</p><input type="number" id="in_infR" value="5" min="1" max="15" oninput="IN_rc();IN_sv()" class="si mono"></div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -1751,7 +1751,7 @@ function IN_rFC(){
             <td class="py-2 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}%/yr</td>
           </tr>`:''}
           ${sipPct>0?`<tr style="border-bottom:1px dashed var(--border)">
-            <td class="py-2 pl-2 text-xs" style="color:var(--muted)">📈 SIP / Equity <span style="color:var(--faint)">(${sipPct}% surplus)</span></td>
+            <td class="py-2 pl-2 text-xs" style="color:var(--muted)">📈 SIP (Nifty 50, Sensex etc.) <span style="color:var(--faint)">(${sipPct}% surplus)</span></td>
             <td class="py-2 mono text-xs text-right" style="color:var(--muted)">${IN_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">₹0 start + ${IN_fmt(sipContrib)} added</span></td>
             <td class="py-2 mono text-xs text-right font-semibold" style="color:var(--green)">+${IN_fmtCr(Math.max(0,sipGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
             <td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">${IN_fmtCr(cSIP)}${totalSIPDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+IN_fmtCr(totalSIPDed)+' cash-out (FD exhausted)</span>':''}</td>
@@ -1865,7 +1865,7 @@ function IN_rFC_short(){
           <thead><tr style="border-bottom:1px solid var(--border)">
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide" style="color:var(--faint)">Month</th>
             ${fdP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--indigo)">FD / Savings</th>`:''}
-            ${sipP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">SIP / Equity</th>`:''}
+            ${sipP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">SIP (Nifty 50)</th>`:''}
             ${totP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Investments</th>`:''}
             ${retCurr>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">EPF / NPS</th>`:''}
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Total Wealth${IN_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
@@ -2876,7 +2876,7 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=cFD+fdNetInterest+mFD*12;
     cSIP=(cSIP+mSIP*12)*(1+sipRt);
-    // Apply life event deductions: drain Debt Instruments first, then SIP (S&P 500 etc.)
+    // Apply life event deductions: drain Debt Instruments first, then SIP
     if(!skipLE){const leDed=US_LE.filter(e=>e.deduct&&e.year===yr).reduce((s,e)=>s+(e.amount||0),0);
     if(leDed>0){
       cFDpeakBeforeDed=cFD; cSIPpeakBeforeDed=cSIP; // capture pre-deduction peak
