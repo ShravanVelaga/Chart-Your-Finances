@@ -214,7 +214,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
   .hero-s { padding:20px 16px !important; }
 
   /* Hide dev audit bar */
-  #us_audit, #in_audit { display:none !important; }
 
   /* Tighten cards */
   .card { padding:16px !important; border-radius:12px !important; }
@@ -620,7 +619,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 
 </div><!-- /tab-content -->
 
-<p id="in_audit" class="mono text-xs text-center pb-4" style="color:var(--faint)">Audit: Ready</p>
 </div><!-- /max-w -->
 </div><!-- /dashboard-india -->
 
@@ -965,6 +963,19 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     <div id="us_retNone" class="text-center py-5" style="color:var(--faint)"><p class="text-2xl mb-1">🏛</p><p class="text-sm font-medium">No retirement plans added yet</p><p class="text-xs mt-1" style="max-width:300px;margin:4px auto 0">Add SURS, 401k, 403b, or any defined-contribution pension. Enter your current balance, contribution %, employer match %, and return rate. The projected corpus is included in your 30-year forecast.</p></div>
   </div>
 
+  <!-- 529 Education Savings Plans -->
+  <div class="card p-6 accent-teal">
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
+      <div>
+        <p class="sl tip-wrap">529 Education Savings<span class="tip-icon">ⓘ</span><span class="tip-box">Tax-advantaged accounts for education expenses. Contributions grow tax-free and qualified withdrawals are tax-free federally. Some states offer a state income tax deduction on contributions — toggle "State Tax Deductible" if your state plan qualifies. When a Child Education life event fires, the 529 pool is drawn first before touching Debt Instruments or SIP.</span></p>
+        <p class="text-sm mt-1" style="color:var(--muted)">Contributions compound tax-free. Liquidated before investment accounts when education expenses fire.</p>
+      </div>
+      <button onclick="US_add529()" class="text-sm font-semibold px-4 py-2 rounded-xl text-white shrink-0 np" style="background:var(--teal)">+ Add 529</button>
+    </div>
+    <div id="us_529List" class="space-y-4"></div>
+    <div id="us_529None" class="text-center py-5" style="color:var(--faint)"><p class="text-2xl mb-1">🎓</p><p class="text-sm font-medium">No 529 plans added yet</p><p class="text-xs mt-1" style="max-width:320px;margin:4px auto 0">Add a 529 for each child. Contributions compound tax-free. When Child Education life events fire, this pool is liquidated first before touching your investment accounts.</p></div>
+  </div>
+
   </div>
 </div>
 
@@ -1082,7 +1093,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
 
 </div><!-- /tab-content -->
 
-<p id="us_audit" class="mono text-xs text-center pb-4" style="color:var(--faint)">Audit: Ready</p>
 </div><!-- /max-w -->
 </div><!-- /dashboard-usa -->
 
@@ -1606,7 +1616,6 @@ function IN_rc(){
   if(document.getElementById('in_tp-insights').classList.contains('on')) IN_rIns();
   if(document.getElementById('in_tp-scenarios').classList.contains('on')) IN_rSC();
 
-  setText('in_audit',`b1=${b1.toLocaleString()}·b2=${b2.toLocaleString()}·t1=${Math.round(t1).toLocaleString()}·t2=${Math.round(t2).toLocaleString()}·yield=${Math.round(ty).toLocaleString()}·${deficit?'deficit':'surplus'}/mo=${absVal.toLocaleString()}`);
 }
 
 // ── India simulation engine ──
@@ -2096,6 +2105,7 @@ let US_EXPS=[
 ];
 let US_DEDS={1:[],2:[]};
 let US_RET=[];          // retirement plans
+let US_529=[];          // 529 education savings plans
 let US_mTarget=1;       // which spouse the modal is adding for
 let US_mType='pct';     // 'pct' or 'fixed'
 let US_dedOpen={1:false,2:false};
@@ -2501,7 +2511,7 @@ const US_LE_TYPES=[
   {val:'custom',    label:'Custom',       icon:'📌'},
 ];
 function US_addLE(){
-  US_LE.push({type:'education',label:'Child Education',year:10,amount:0,deduct:true});
+  US_LE.push({type:'education',label:'Child Education',year:10,amount:0,deduct:true,linked529:null});
   US_rLE(); US_rFC(); US_sv();
 }
 function US_rLE(){
@@ -2541,7 +2551,16 @@ function US_rLE_render(listId,noneId){
         <div><p class="text-xs mb-1" style="color:var(--faint)">Amount ($)</p>
           <input type="text" value="${e.amount?e.amount.toLocaleString('en-US'):''}" placeholder="0" class="si mono text-sm w-full"
             oninput="US_leAmt(this,${i})"></div>
-      </div>`;
+      </div>
+      ${e.type==='education'?`<div class="flex items-center gap-2 pt-1">
+        <p class="text-xs font-semibold" style="color:var(--teal)">🎓 Linked 529:</p>
+        <select class="si text-xs" style="width:auto;padding:4px 10px"
+          onchange="US_LE[${i}].linked529=this.value||null;US_rFC();US_sv()">
+          <option value="">None — use investment accounts</option>
+          ${US_529.map(p=>`<option value="${p.id}" ${e.linked529===p.id?'selected':''}>${p.name}</option>`).join('')}
+        </select>
+        ${US_529.length===0?'<span class="text-xs" style="color:var(--faint)">No 529 plans added yet</span>':''}
+      </div>`:''}`;
     list.appendChild(div);
   });
 }
@@ -2646,10 +2665,20 @@ function US_rc(){
   if(document.getElementById('us_tp-insights').classList.contains('on')) US_rIns();
   if(document.getElementById('us_tp-scenarios').classList.contains('on')) US_rSC();
 
-  setText('us_audit',`b1=${b1.toLocaleString()}·b2=${b2.toLocaleString()}·fed=${Math.round(ft1+ft2).toLocaleString()}·state=${Math.round(st1+st2).toLocaleString()}·fica=${Math.round(fi1+fi2).toLocaleString()}·ss1Exempt=${ss1Ex}·ss2Exempt=${ss2Ex}·${deficit?'deficit':'surplus'}/mo=${absVal.toLocaleString()}`);
 }
 
-// ── US Retirement Plan functions ──
+function US_upd529proj(i){
+  const p=US_529[i];
+  const el=document.getElementById('us_529proj_'+i);
+  if(!el)return;
+  el.innerHTML=[5,10,15,20,25,30].map(yr=>{
+    const v=US_529CorpusAt(p,yr);
+    return`<div class="text-center p-2 rounded-lg" style="background:var(--bg)">
+      <p class="text-xs mb-0.5" style="color:var(--faint)">${yr}yr</p>
+      <p class="mono text-xs font-bold" style="color:var(--teal)">${US_fmtM(v)}</p>
+    </div>`;
+  }).join('');
+}
 function US_addRetPlan(){
   US_RET.push({id:'r'+Date.now(), name:'SURS', balance:0, empPct:8, matchPct:8, returnPct:7, compoundFreq:12, owner:'1'});
   US_rRetPlans(); US_sv();
@@ -2780,6 +2809,67 @@ function US_retTotalAt(years){
   return US_RET.reduce((s,p)=>s+US_retCorpusAt(p,years),0);
 }
 
+// ── 529 Education Savings ──
+function US_529CorpusAt(plan, years){
+  const rt=(plan.returnPct||6)/100;
+  let corpus=plan.balance||0;
+  const monthlyContrib=(plan.monthlyContrib||0);
+  for(let yr=1;yr<=years;yr++){
+    corpus=(corpus+monthlyContrib*12)*(1+rt);
+  }
+  return corpus;
+}
+function US_529TotalAt(years){
+  return US_529.reduce((s,p)=>s+US_529CorpusAt(p,years),0);
+}
+function US_add529(){
+  US_529.push({id:'s'+Date.now(),name:'Child '+(US_529.length+1),balance:0,monthlyContrib:0,returnPct:7,stateTaxDed:false});
+  US_r529();US_rc();US_sv();
+}
+function US_r529(){
+  const list=document.getElementById('us_529List');
+  document.getElementById('us_529None').style.display=US_529.length?'none':'block';
+  list.innerHTML='';
+  US_529.forEach((p,i)=>{
+    const div=document.createElement('div');
+    div.className='inset p-4 space-y-3';
+    div.innerHTML=`
+      <div class="flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex gap-2 items-center flex-wrap">
+          <input type="text" value="${p.name}" class="si text-sm font-semibold" style="width:160px;padding:5px 10px"
+            onchange="US_529[${i}].name=this.value;US_rc();US_sv()">
+          <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer" style="color:var(--teal)">
+            <input type="checkbox" ${p.stateTaxDed?'checked':''} onchange="US_529[${i}].stateTaxDed=this.checked;US_rc();US_sv()">
+            State Tax Deductible
+          </label>
+        </div>
+        <button onclick="US_529.splice(${i},1);US_r529();US_rc();US_sv()" class="text-sm font-semibold" style="color:var(--rose)">Remove</button>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Current Balance ($)</p>
+          <input type="text" value="${p.balance?p.balance.toLocaleString('en-US'):''}" placeholder="0" class="si mono text-sm"
+            oninput="US_hi(this);US_529[${i}].balance=parseFloat(this.value.replace(/,/g,''))||0;US_upd529proj(${i});US_rc();US_sv()"></div>
+        <div><p class="text-xs font-medium mb-1" style="color:var(--teal)">Monthly Contribution ($)</p>
+          <input type="text" value="${p.monthlyContrib?p.monthlyContrib.toLocaleString('en-US'):''}" placeholder="0" class="si mono text-sm"
+            oninput="US_hi(this);US_529[${i}].monthlyContrib=parseFloat(this.value.replace(/,/g,''))||0;US_upd529proj(${i});US_rc();US_sv()"></div>
+        <div><p class="text-xs font-medium mb-1" style="color:var(--purple)">Annual Return %</p>
+          <input type="number" value="${p.returnPct}" min="1" max="20" step="0.25" class="si mono text-sm"
+            oninput="US_529[${i}].returnPct=parseFloat(this.value)||7;US_upd529proj(${i});US_rc();US_sv()"></div>
+      </div>
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="us_529proj_${i}">
+        ${[5,10,15,20,25,30].map(yr=>{
+          const v=US_529CorpusAt(p,yr);
+          return`<div class="text-center p-2 rounded-lg" style="background:var(--bg)">
+            <p class="text-xs mb-0.5" style="color:var(--faint)">${yr}yr</p>
+            <p class="mono text-xs font-bold" style="color:var(--teal)">${US_fmtM(v)}</p>
+          </div>`;
+        }).join('')}
+      </div>
+      ${p.stateTaxDed?`<p class="text-xs" style="color:var(--teal)">✓ State tax deductible — contributions may reduce your state taxable income (limits vary by state; verify with your plan)</p>`:''}`;
+    list.appendChild(div);
+  });
+}
+
 // ── US Home equity helpers ──
 function US_remainingBalance(loanAmt, annualRate, totalYrs, elapsedYrs){
   // Standard amortization: remaining balance after elapsedYrs payments
@@ -2835,9 +2925,15 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
   // Investment Matrix assets (totP) are separate — their yield flows through ty into surplus.
   // They are NOT re-seeded into the Debt Instruments bucket to avoid double-counting.
   let cFD=lump, cSIP=0;
+  // Per-child 529 tracking: map from plan ID → {corpus, monthlyContrib, rt, totalDed}
+  const c529Map={};
+  US_529.forEach(p=>{
+    c529Map[p.id]={corpus:p.balance||0, monthly:(p.monthlyContrib||0), rt:(p.returnPct||7)/100, ded:0};
+  });
   let totalFDContrib=0, totalSIPContrib=0;
   let cFDpeakBeforeDed=0,cSIPpeakBeforeDed=0;
   let totalFDDed=0,totalSIPDed=0;
+  const leBreakdown={};
   let s1=b1,s2=b2;
   // Track base salaries separately from job-loss-adjusted salaries
   let base1=b1,base2=b2;
@@ -2876,20 +2972,37 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=cFD+fdNetInterest+mFD*12;
     cSIP=(cSIP+mSIP*12)*(1+sipRt);
-    // Apply life event deductions: drain Debt Instruments first, then SIP
-    if(!skipLE){const leDed=US_LE.filter(e=>e.deduct&&e.year===yr).reduce((s,e)=>s+(e.amount||0),0);
-    if(leDed>0){
-      cFDpeakBeforeDed=cFD; cSIPpeakBeforeDed=cSIP; // capture pre-deduction peak
-      const fromFD=Math.min(cFD,leDed);const fromSIP=Math.min(Math.max(0,cSIP),leDed-fromFD);
-      totalFDDed+=fromFD;totalSIPDed+=fromSIP;cFD=Math.max(0,cFD-fromFD);cSIP=Math.max(0,cSIP-fromSIP);}}
+    // Compound each 529 independently
+    Object.values(c529Map).forEach(p=>{p.corpus=(p.corpus+p.monthly*12)*(1+p.rt);});
+    // Apply life event deductions: per-event, linked 529 first, then Debt Instruments, then SIP
+    if(!skipLE){
+      US_LE.forEach((e,globalIdx)=>{
+        if(!e.deduct||e.year!==yr)return;
+        let rem=e.amount||0;
+        const breakdown={from529:0,fromFD:0,fromSIP:0};
+        if(e.linked529&&c529Map[e.linked529]){
+          const plan=c529Map[e.linked529];
+          const from529=Math.min(plan.corpus,rem);
+          plan.corpus=Math.max(0,plan.corpus-from529);
+          plan.ded+=from529; breakdown.from529=from529; rem-=from529;
+        }
+        if(rem>0){
+          cFDpeakBeforeDed=cFD; cSIPpeakBeforeDed=cSIP;
+          const fromFD=Math.min(cFD,rem); cFD=Math.max(0,cFD-fromFD); totalFDDed+=fromFD; breakdown.fromFD=fromFD; rem-=fromFD;
+          if(rem>0){const fromSIP=Math.min(cSIP,rem); cSIP=Math.max(0,cSIP-fromSIP); totalSIPDed+=fromSIP; breakdown.fromSIP=fromSIP;}
+        }
+        leBreakdown[globalIdx]=breakdown;
+      });
+    }
   }
   const retCorpus=US_retTotalAt(years);
   const assetRate=totP>0?(ty/totP):0;
   const homeEquity=US_totalHomeEquityAt(years);
+  const c529Total=Object.values(c529Map).reduce((s,p)=>s+p.corpus,0);
   return{
-    total:cFD+cSIP+retCorpus+totP+homeEquity,
-    cFD, cSIP, retCorpus,
-    totalFDDed,totalSIPDed,
+    total:cFD+cSIP+retCorpus+totP+homeEquity+c529Total,
+    cFD, cSIP, c529Map, c529Total, retCorpus,
+    totalFDDed,totalSIPDed,leBreakdown,
     fdPrincipal:lump, fdContrib:totalFDContrib,
     sipContrib:totalSIPContrib,
     fdRt, sipRt, totP, assetFV:totP,
@@ -3099,13 +3212,33 @@ function US_rFC(){
 
     // Build itemized rows
     // True growth = post-deduction balance + what was cashed out - contributions
-    const {totalFDDed,totalSIPDed}=sim;
+    const {totalFDDed,totalSIPDed,c529Map,c529Total,leBreakdown}=sim;
     const fdGain=(cFD+totalFDDed)-(fdPrincipal+fdContrib);
     const sipGain=(cSIP+totalSIPDed)-sipContrib;
     // Life events in this 5-year window only
     const leWindow=US_LE.filter(e=>e.deduct&&e.year>prevYrUS&&e.year<=yr);
     const leCumDed=leWindow.reduce((s,e)=>s+(e.amount||0),0);
-    // per-plan retirement breakdown
+    // Build per-event cash-out labels for Debt Instruments and SIP rows
+    const fdEventParts=US_LE.map((e,gi)=>{const bk=leBreakdown[gi];return bk&&bk.fromFD>0?`${e.label}: ${US_fmtM(bk.fromFD)}`:null;}).filter(Boolean);
+    const sipEventParts=US_LE.map((e,gi)=>{const bk=leBreakdown[gi];return bk&&bk.fromSIP>0?`${e.label}: ${US_fmtM(bk.fromSIP)}`:null;}).filter(Boolean);
+    const fdCashOutNote=totalFDDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(totalFDDed)+' cash-out'+(fdEventParts.length?' ('+fdEventParts.join(' · ')+')':'')+'</span>':'';
+    const sipCashOutNote=totalSIPDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(totalSIPDed)+' cash-out'+(sipEventParts.length?' ('+sipEventParts.join(' · ')+')':'')+'</span>':'';
+    // Per-child 529 rows
+    const plan529Rows=US_529.map(p=>{
+      const simPlan=c529Map[p.id]||{corpus:0,ded:0};
+      const grossAtYr=US_529CorpusAt(p,yr);
+      const contrib=(p.balance||0)+(p.monthlyContrib||0)*12*yr;
+      const growth=Math.max(0,grossAtYr-contrib);
+      const cashOut=simPlan.ded;
+      return`<tr style="border-bottom:1px dashed var(--border)">
+        <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🎓 529 · ${p.name} <span style="color:var(--faint)">(${p.stateTaxDed?'state tax ded. · ':''}drawn first if linked)</span></td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(contrib)}<br><span style="color:var(--faint);font-size:10px">bal + contributions</span></td>
+        <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(growth)}<br><span style="font-size:10px;color:var(--faint)">tax-free growth</span></td>
+        <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal)">${US_fmtM(simPlan.corpus)}${cashOut>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(cashOut)+' used for edu</span>':''}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${(p.returnPct||7).toFixed(1)}%/yr</td>
+      </tr>`;
+    }).join('');
+    const has529=US_529.length>0;    // per-plan retirement breakdown
     const retRows=US_RET.map(p=>{
       const pCorpus=US_retCorpusAt(p,yr);
       const pSal=(p.owner==='1'?gv('us_b1'):gv('us_b2'));
@@ -3171,20 +3304,39 @@ function US_rFC(){
             <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🏦 Debt Instruments (CDs, HYSA etc.) <span style="color:var(--faint)">(${fdP}% surplus)</span></td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(fdPrincipal+fdContrib)}<br><span style="color:var(--faint);font-size:10px">${US_fmt(fdPrincipal)} start + ${US_fmt(fdContrib)} added</span></td>
             <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,fdGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
-            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--blue)">${US_fmtM(cFD)}${totalFDDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(totalFDDed)+' cash-out</span>':''}</td>
+            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--blue)">${US_fmtM(cFD)}${fdCashOutNote}</td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${fdRtPct}%/yr</td>
           </tr>`:''}
           ${sipP>0?`<tr style="border-bottom:1px dashed var(--border)">
             <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">📈 SIP (S&P 500 etc.) <span style="color:var(--faint)">(${sipP}% surplus)</span></td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(sipContrib)}<br><span style="color:var(--faint);font-size:10px">$0 start + ${US_fmt(sipContrib)} added</span></td>
             <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(Math.max(0,sipGain))}<br><span style="font-size:10px;color:var(--faint)">earned (before spending)</span></td>
-            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--purple)">${US_fmtM(cSIP)}${totalSIPDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(totalSIPDed)+' cash-out (Debt Instruments exhausted)</span>':''}</td>
+            <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--purple)">${US_fmtM(cSIP)}${sipCashOutNote}</td>
             <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${sipRtPct}%/yr</td>
           </tr>`:''}
           ${retRows}
+          ${plan529Rows}
           ${assetRow}
           ${homeRows}
-          ${(()=>{if(!leWindow.length)return'';const totalDed=leCumDed;return'<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Spent this period — Yr '+(prevYrUS+1)+' to '+yr+'</td></tr>'+leWindow.map(e=>{const t=US_LE_TYPES.find(x=>x.val===e.type)||{icon:"📌"};return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint);font-size:10px">(Yr '+e.year+' · liquidated from Debt Instruments first, then SIP)</span></td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">cash out</td></tr>';}).join('')+(leWindow.length>1?'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Subtotal this period</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+US_fmtM(totalDed)+'</td><td></td></tr>':'');})()}
+          ${(()=>{
+            if(!leWindow.length)return'';
+            const totalDed=leCumDed;
+            const header='<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Spent this period — Yr '+(prevYrUS+1)+' to '+yr+'</td></tr>';
+            const rows=leWindow.map((e)=>{
+              const globalIdx=US_LE.indexOf(e);
+              const t=US_LE_TYPES.find(x=>x.val===e.type)||{icon:'📌'};
+              const linked=e.linked529&&US_529.find(p=>p.id===e.linked529);
+              const bk=leBreakdown[globalIdx]||{from529:0,fromFD:0,fromSIP:0};
+              const parts=[];
+              if(bk.from529>0&&linked) parts.push(`${US_fmtM(bk.from529)} from ${linked.name}'s 529`);
+              if(bk.fromFD>0) parts.push(`${US_fmtM(bk.fromFD)} from Debt Instruments`);
+              if(bk.fromSIP>0) parts.push(`${US_fmtM(bk.fromSIP)} from SIP`);
+              const sourceDetail=parts.length>0?' · <span style="color:var(--faint);font-size:10px">'+parts.join(' + ')+'</span>':'';
+              return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint);font-size:10px">(Yr '+e.year+')</span>'+sourceDetail+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+US_fmtM(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">cash out</td></tr>';
+            }).join('');
+            const subtotal=leWindow.length>1?'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Subtotal this period</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+US_fmtM(totalDed)+'</td><td></td></tr>':'';
+            return header+rows+subtotal;
+          })()}
         </tbody>
         <tfoot>
           <tr style="border-top:2px solid var(--border);background:var(--bg)">
@@ -3336,7 +3488,7 @@ function US_rIns(){
 // ── US persistence ──
 function US_sv(){
   const g=id=>document.getElementById(id)?.value||'';
-  const data={b1:g('us_b1'),b2:g('us_b2'),g1:g('us_g1'),g2:g('us_g2'),fdRng:g('us_fdRng'),sipRng:g('us_sipRng'),sipRet:g('us_sipRet'),fdRt:g('us_fdRt'),infR:g('us_infR'),filing:g('us_filing'),state:g('us_state'),customState:g('us_customState'),ssOn:document.getElementById('us_ssOn').checked,medOn:document.getElementById('us_medOn').checked,ss1Exempt:document.getElementById('us_ss1Exempt').checked,ss2Exempt:document.getElementById('us_ss2Exempt').checked,isAdj:US_isAdj,expInflOn:US_expInflOn,gC:g('us_gC'),gY:g('us_gY'),ddC:g('us_ddC'),ddW:g('us_ddW'),ddRt:g('us_ddRt'),ddI:g('us_ddI'),EXPS:US_EXPS,EMIS:US_EMIS,LE:US_LE,SC:US_SC,DEDS:US_DEDS,RET:US_RET,assets:[]};
+  const data={b1:g('us_b1'),b2:g('us_b2'),g1:g('us_g1'),g2:g('us_g2'),fdRng:g('us_fdRng'),sipRng:g('us_sipRng'),sipRet:g('us_sipRet'),fdRt:g('us_fdRt'),infR:g('us_infR'),filing:g('us_filing'),state:g('us_state'),customState:g('us_customState'),ssOn:document.getElementById('us_ssOn').checked,medOn:document.getElementById('us_medOn').checked,ss1Exempt:document.getElementById('us_ss1Exempt').checked,ss2Exempt:document.getElementById('us_ss2Exempt').checked,isAdj:US_isAdj,expInflOn:US_expInflOn,gC:g('us_gC'),gY:g('us_gY'),ddC:g('us_ddC'),ddW:g('us_ddW'),ddRt:g('us_ddRt'),ddI:g('us_ddI'),EXPS:US_EXPS,EMIS:US_EMIS,LE:US_LE,SC:US_SC,DEDS:US_DEDS,RET:US_RET,P529:US_529,assets:[]};
   document.querySelectorAll('.us_ar').forEach(r=>data.assets.push({n:r.querySelector('.us_nm').value,p:r.querySelector('.us_pv').value,y:r.querySelector('.us_yv').value,o:r.querySelector('.us_ov').value,tf:r.querySelector('.us_tv').checked}));
   try{localStorage.setItem('cyf_usa',JSON.stringify(data));}catch(e){}
 }
@@ -3374,6 +3526,7 @@ function US_loadData(){
   if(d.SC){US_SC=d.SC;US_swSC('A');}
   if(d.DEDS){US_DEDS=d.DEDS;US_rDed(1);US_rDed(2);}
   if(d.RET){US_RET=d.RET.map(p=>({compoundFreq:12,...p}));US_rRetPlans();}
+  if(d.P529){US_529=d.P529;US_r529();}
   document.getElementById('us_aBody').innerHTML='';
   (d.assets||[]).forEach(a=>US_addARow(a.n,parseFloat((a.p||'0').replace(/,/g,'')),parseFloat(a.y),a.o,a.tf));
   US_vs('fd');US_rc();
