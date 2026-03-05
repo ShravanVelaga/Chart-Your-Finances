@@ -2577,6 +2577,8 @@ function US_addLE(){
 }
 function US_rLE(){
   US_rLE_render('us_leList2','us_leNone2');
+  // Refresh 529 proj cards since edu events affect milestones
+  US_529.forEach((_,i)=>US_upd529proj(i));
 }
 function US_rLE_render(listId,noneId){
   const list=document.getElementById(listId); if(!list)return;
@@ -2737,13 +2739,51 @@ function US_upd529proj(i){
   const p=US_529[i];
   const el=document.getElementById('us_529proj_'+i);
   if(!el)return;
-  el.innerHTML=[5,10,15,20,25,30].map(yr=>{
+  const stop=p.stopYear||null;
+  // Find linked education event years for this plan
+  const eduYrs=(typeof US_LE!=='undefined'?US_LE:[])
+    .filter(e=>e.deduct&&e.linked529===p.id&&e.type==='education')
+    .map(e=>e.year).sort((a,b)=>a-b);
+  const exhaustionYr=eduYrs.length?Math.max(...eduYrs):null;
+
+  // Build milestone years dynamically
+  const base=[5,10,15,20,25,30];
+  const milestones=[];
+  base.forEach(yr=>{
+    if(exhaustionYr&&yr>exhaustionYr) return; // drop after exhaustion
+    milestones.push({yr,type:'standard'});
+  });
+  // Insert stopYear milestone if not already a standard checkpoint
+  if(stop&&!base.includes(stop)){
+    const afterIdx=milestones.findIndex(m=>m.yr>stop);
+    const entry={yr:stop,type:'stop'};
+    if(afterIdx>=0) milestones.splice(afterIdx,0,entry);
+    else if(!exhaustionYr||stop<=exhaustionYr) milestones.push(entry);
+  }
+  // Insert exhaustion year if not already present
+  if(exhaustionYr&&!base.includes(exhaustionYr)&&exhaustionYr!==stop){
+    milestones.push({yr:exhaustionYr,type:'exhausted'});
+  }
+  // Sort and deduplicate
+  const seen=new Set();
+  const sorted=milestones
+    .filter(m=>{if(seen.has(m.yr))return false;seen.add(m.yr);return true;})
+    .sort((a,b)=>a.yr-b.yr);
+
+  el.innerHTML=sorted.map(({yr,type})=>{
     const v=US_529CorpusAt(p,yr);
-    const past=p.stopYear&&yr>p.stopYear;
-    const label=past?`${yr}yr <span style="font-size:9px">(no contrib)</span>`:`${yr}yr`;
-    return`<div class="text-center p-2 rounded-lg" style="background:var(--bg);opacity:${past?0.45:1}">
-      <p class="text-xs mb-0.5" style="color:var(--faint)">${label}</p>
-      <p class="mono text-xs font-bold" style="color:${past?'var(--border-strong)':'var(--teal)'};">${US_fmtM(v)}</p>
+    const isStop=type==='stop'||(stop&&yr===stop&&type!=='exhausted');
+    const isExhausted=exhaustionYr&&yr===exhaustionYr&&v<500;
+    const isPostStop=stop&&yr>stop&&!isExhausted;
+    const opacity=(isPostStop||isExhausted)?0.5:1;
+    let sublabel='';
+    if(isStop&&!isExhausted) sublabel='<br><span style="font-size:9px;color:var(--amber)">▸ stop</span>';
+    else if(isExhausted) sublabel='<br><span style="font-size:9px;color:var(--rose)">✕ exhausted</span>';
+    else if(isPostStop) sublabel='<br><span style="font-size:9px;color:var(--faint)">(no contrib)</span>';
+    const color=isExhausted?'var(--rose)':isPostStop?'var(--border-strong)':'var(--teal)';
+    return`<div class="text-center p-2 rounded-lg" style="background:var(--bg);opacity:${opacity}">
+      <p class="text-xs mb-0.5" style="color:var(--faint)">${yr}yr${sublabel}</p>
+      <p class="mono text-xs font-bold" style="color:${color};">${isExhausted?'$0':US_fmtM(v)}</p>
     </div>`;
   }).join('');
 }
@@ -2947,22 +2987,10 @@ function US_r529(){
             oninput="US_529[${i}].stopYear=parseInt(this.value)||null;US_upd529proj(${i});US_rc();US_sv()">
           ${p.stopYear?`<p class="text-xs mt-1" style="color:var(--faint)">Contributions stop after Yr ${p.stopYear}; balance keeps growing</p>`:''}</div>
       </div>
-      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="us_529proj_${i}">
-        ${[5,10,15,20,25,30].map(yr=>{
-          const v=US_529CorpusAt(p,yr);
-          const past=p.stopYear&&yr>p.stopYear;
-          const bg=past?'var(--bg)':'var(--bg)';
-          const labelColor=past?'var(--faint)':'var(--faint)';
-          const valColor=past?'var(--border-strong)':'var(--teal)';
-          const label=past?`${yr}yr <span style="font-size:9px">(no contrib)</span>`:`${yr}yr`;
-          return`<div class="text-center p-2 rounded-lg" style="background:${bg};opacity:${past?0.45:1}">
-            <p class="text-xs mb-0.5" style="color:${labelColor}">${label}</p>
-            <p class="mono text-xs font-bold" style="color:${valColor}">${US_fmtM(v)}</p>
-          </div>`;
-        }).join('')}
-      </div>
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="us_529proj_${i}"></div>
       ${p.stateTaxDed?`<p class="text-xs" style="color:var(--teal)">✓ State tax saving applied — annual contribution deducted from state taxable income (or credit applied). Saving flows into your monthly surplus.</p>`:''}`;
     list.appendChild(div);
+    US_upd529proj(i);
   });
 }
 
