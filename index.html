@@ -2333,7 +2333,8 @@ function US_529StateSaving(filing){
   const benefit=US_529_STATE_BENEFITS[stateName];
   if(!benefit) return 0;
   // Total annual 529 contributions across all state-tax-deductible plans
-  const annualContrib529=US_529.filter(p=>p.stateTaxDed).reduce((s,p)=>s+(p.monthlyContrib||0)*12,0);
+  // Only count contributions for plans still active (stopYear null or >= 1 = contributing now)
+  const annualContrib529=US_529.filter(p=>p.stateTaxDed&&(p.stopYear===null||p.stopYear===undefined||p.stopYear>=1)).reduce((s,p)=>s+(p.monthlyContrib||0)*12,0);
   if(annualContrib529<=0) return 0;
   const isMFJ=filing==='mfj';
   const limit=isMFJ?benefit.limit_mfj:benefit.limit_single;
@@ -2737,9 +2738,11 @@ function US_upd529proj(i){
   if(!el)return;
   el.innerHTML=[5,10,15,20,25,30].map(yr=>{
     const v=US_529CorpusAt(p,yr);
-    return`<div class="text-center p-2 rounded-lg" style="background:var(--bg)">
-      <p class="text-xs mb-0.5" style="color:var(--faint)">${yr}yr</p>
-      <p class="mono text-xs font-bold" style="color:var(--teal)">${US_fmtM(v)}</p>
+    const past=p.stopYear&&yr>p.stopYear;
+    const label=past?`${yr}yr <span style="font-size:9px">(no contrib)</span>`:`${yr}yr`;
+    return`<div class="text-center p-2 rounded-lg" style="background:var(--bg);opacity:${past?0.45:1}">
+      <p class="text-xs mb-0.5" style="color:var(--faint)">${label}</p>
+      <p class="mono text-xs font-bold" style="color:${past?'var(--border-strong)':'var(--teal)'};">${US_fmtM(v)}</p>
     </div>`;
   }).join('');
 }
@@ -2878,8 +2881,10 @@ function US_529CorpusAt(plan, years){
   const rt=(plan.returnPct||6)/100;
   let corpus=plan.balance||0;
   const monthlyContrib=(plan.monthlyContrib||0);
+  const stop=plan.stopYear||Infinity;
   for(let yr=1;yr<=years;yr++){
-    corpus=(corpus+monthlyContrib*12)*(1+rt);
+    const contrib=yr<=stop?monthlyContrib*12:0;
+    corpus=(corpus+contrib)*(1+rt);
   }
   return corpus;
 }
@@ -2887,7 +2892,7 @@ function US_529TotalAt(years){
   return US_529.reduce((s,p)=>s+US_529CorpusAt(p,years),0);
 }
 function US_add529(){
-  US_529.push({id:'s'+Date.now(),name:'Child '+(US_529.length+1),balance:0,monthlyContrib:0,returnPct:7,stateTaxDed:false});
+  US_529.push({id:'s'+Date.now(),name:'Child '+(US_529.length+1),balance:0,monthlyContrib:0,returnPct:7,stateTaxDed:false,stopYear:null,rolloverIRA:false});
   US_r529();US_rc();US_sv();
 }
 function US_r529(){
@@ -2906,10 +2911,20 @@ function US_r529(){
             <input type="checkbox" ${p.stateTaxDed?'checked':''} onchange="US_529[${i}].stateTaxDed=this.checked;US_rc();US_sv()">
             State Tax Deductible
           </label>
+          <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer" style="color:var(--purple)">
+            <input type="checkbox" ${p.rolloverIRA?'checked':''} onchange="US_529[${i}].rolloverIRA=this.checked;US_rc();US_sv()">
+            Rollover unused → Roth IRA
+          </label>
         </div>
         <button onclick="US_529.splice(${i},1);US_r529();US_rc();US_sv()" class="text-sm font-semibold" style="color:var(--rose)">Remove</button>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      ${(()=>{
+        const linked=US_LE.filter(e=>e.deduct&&e.linked529===p.id&&e.type==='education');
+        if(!linked.length) return '';
+        const notes=linked.map(e=>`Yr ${e.year}: ${e.label} (${US_fmtM(e.amount||0)})`).join(' · ');
+        return`<div class="text-xs px-2 py-1.5 rounded-lg" style="background:var(--rose-lt);color:var(--rose)">⚠ Linked education events: ${notes} — balance may be partially or fully used at those years</div>`;
+      })()}
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div><p class="text-xs font-medium mb-1" style="color:var(--muted)">Current Balance ($)</p>
           <input type="text" value="${p.balance?p.balance.toLocaleString('en-US'):''}" placeholder="0" class="si mono text-sm"
             oninput="US_hi(this);US_529[${i}].balance=parseFloat(this.value.replace(/,/g,''))||0;US_upd529proj(${i});US_rc();US_sv()"></div>
@@ -2919,13 +2934,22 @@ function US_r529(){
         <div><p class="text-xs font-medium mb-1" style="color:var(--purple)">Annual Return %</p>
           <input type="number" value="${p.returnPct}" min="1" max="20" step="0.25" class="si mono text-sm"
             oninput="US_529[${i}].returnPct=parseFloat(this.value)||7;US_upd529proj(${i});US_rc();US_sv()"></div>
+        <div><p class="text-xs font-medium mb-1" style="color:var(--amber)">Stop Contributing Yr</p>
+          <input type="number" value="${p.stopYear||''}" placeholder="never" min="1" max="30" class="si mono text-sm"
+            oninput="US_529[${i}].stopYear=parseInt(this.value)||null;US_upd529proj(${i});US_rc();US_sv()">
+          ${p.stopYear?`<p class="text-xs mt-1" style="color:var(--faint)">Contributions stop after Yr ${p.stopYear}; balance keeps growing</p>`:''}</div>
       </div>
       <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="us_529proj_${i}">
         ${[5,10,15,20,25,30].map(yr=>{
           const v=US_529CorpusAt(p,yr);
-          return`<div class="text-center p-2 rounded-lg" style="background:var(--bg)">
-            <p class="text-xs mb-0.5" style="color:var(--faint)">${yr}yr</p>
-            <p class="mono text-xs font-bold" style="color:var(--teal)">${US_fmtM(v)}</p>
+          const past=p.stopYear&&yr>p.stopYear;
+          const bg=past?'var(--bg)':'var(--bg)';
+          const labelColor=past?'var(--faint)':'var(--faint)';
+          const valColor=past?'var(--border-strong)':'var(--teal)';
+          const label=past?`${yr}yr <span style="font-size:9px">(no contrib)</span>`:`${yr}yr`;
+          return`<div class="text-center p-2 rounded-lg" style="background:${bg};opacity:${past?0.45:1}">
+            <p class="text-xs mb-0.5" style="color:${labelColor}">${label}</p>
+            <p class="mono text-xs font-bold" style="color:${valColor}">${US_fmtM(v)}</p>
           </div>`;
         }).join('')}
       </div>
@@ -2992,7 +3016,7 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
   // Per-child 529 tracking: map from plan ID → {corpus, monthlyContrib, rt, totalDed}
   const c529Map={};
   US_529.forEach(p=>{
-    c529Map[p.id]={corpus:p.balance||0, monthly:(p.monthlyContrib||0), rt:(p.returnPct||7)/100, ded:0};
+    c529Map[p.id]={corpus:p.balance||0, monthly:(p.monthlyContrib||0), rt:(p.returnPct||7)/100, ded:0, stop:p.stopYear||Infinity, rollover:p.rolloverIRA||false, rolled:false, rollCorpus:0};
   });
   let totalFDContrib=0, totalSIPContrib=0;
   let cFDpeakBeforeDed=0,cSIPpeakBeforeDed=0;
@@ -3037,8 +3061,23 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=cFD+fdNetInterest+mFD*12;
     cSIP=(cSIP+mSIP*12)*(1+sipRt);
-    // Compound each 529 independently
-    Object.values(c529Map).forEach(p=>{p.corpus=(p.corpus+p.monthly*12)*(1+p.rt);});
+    // Compound each 529 independently, stopping contributions after stopYear
+    // At stopYear: if rolloverIRA enabled, roll remaining balance (up to $35k SECURE 2.0 limit) into Roth IRA
+    Object.values(c529Map).forEach(p=>{
+      const contrib=yr<=p.stop?p.monthly*12:0;
+      p.corpus=(p.corpus+contrib)*(1+p.rt);
+      // Rollover: fire once at stopYear if enabled and not yet rolled
+      if(p.rollover&&!p.rolled&&p.stop!==Infinity&&yr===p.stop){
+        const rollAmt=Math.min(p.corpus,35000); // SECURE 2.0 lifetime cap
+        p.rollCorpus=rollAmt;
+        p.corpus=Math.max(0,p.corpus-rollAmt);
+        p.rolled=true;
+      }
+      // Grow rollover corpus at SIP rate each year after rollover fires
+      if(p.rolled&&yr>p.stop){
+        p.rollCorpus=p.rollCorpus*(1+sipRt);
+      }
+    });
     // Apply life event deductions: per-event, linked 529 first, then Debt Instruments, then SIP
     if(!skipLE){
       US_LE.forEach((e,globalIdx)=>{
@@ -3064,9 +3103,10 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
   const assetRate=totP>0?(ty/totP):0;
   const homeEquity=US_totalHomeEquityAt(years);
   const c529Total=Object.values(c529Map).reduce((s,p)=>s+p.corpus,0);
+  const c529RollTotal=Object.values(c529Map).reduce((s,p)=>s+p.rollCorpus,0);
   return{
-    total:cFD+cSIP+retCorpus+totP+homeEquity+c529Total,
-    cFD, cSIP, c529Map, c529Total, retCorpus,
+    total:cFD+cSIP+retCorpus+totP+homeEquity+c529Total+c529RollTotal,
+    cFD, cSIP, c529Map, c529Total, c529RollTotal, retCorpus,
     totalFDDed,totalSIPDed,leBreakdown,
     fdPrincipal:lump, fdContrib:totalFDContrib,
     sipContrib:totalSIPContrib,
@@ -3278,7 +3318,7 @@ function US_rFC(){
 
     // Build itemized rows
     // True growth = post-deduction balance + what was cashed out - contributions
-    const {totalFDDed,totalSIPDed,c529Map,c529Total,leBreakdown}=sim;
+    const {totalFDDed,totalSIPDed,c529Map,c529Total,c529RollTotal,leBreakdown}=sim;
     const fdGain=(cFD+totalFDDed)-(fdPrincipal+fdContrib);
     const sipGain=(cSIP+totalSIPDed)-sipContrib;
     // Life events in this 5-year window only
@@ -3293,7 +3333,8 @@ function US_rFC(){
     const plan529Rows=US_529.map(p=>{
       const simPlan=c529Map[p.id]||{corpus:0,ded:0};
       const grossAtYr=US_529CorpusAt(p,yr);
-      const contrib=(p.balance||0)+(p.monthlyContrib||0)*12*yr;
+      const stop=p.stopYear||Infinity;
+      const contrib=(p.balance||0)+Math.min(yr,stop)*(p.monthlyContrib||0)*12;
       const growth=Math.max(0,grossAtYr-contrib);
       const cashOut=simPlan.ded;
       return`<tr style="border-bottom:1px dashed var(--border)">
@@ -3302,6 +3343,20 @@ function US_rFC(){
         <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(growth)}<br><span style="font-size:10px;color:var(--faint)">tax-free growth</span></td>
         <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal)">${US_fmtM(simPlan.corpus)}${cashOut>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(cashOut)+' used for edu</span>':''}</td>
         <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${(p.returnPct||7).toFixed(1)}%/yr</td>
+      </tr>`;
+    }).join('');
+    // Per-child Roth IRA rollover rows (only for plans with rolloverIRA enabled and stopYear set)
+    const rolloverRows=US_529.filter(p=>p.rolloverIRA&&p.stopYear).map(p=>{
+      const simPlan=c529Map[p.id]||{rollCorpus:0,rolled:false};
+      if(!simPlan.rolled&&yr<=(p.stopYear||0)) return ''; // rollover hasn't fired yet
+      const rollAmt=Math.min(US_529CorpusAt(p,p.stopYear),35000);
+      const rollGrowth=Math.max(0,simPlan.rollCorpus-rollAmt);
+      return`<tr style="border-bottom:1px dashed var(--border)">
+        <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🔄 529→Roth IRA · ${p.name} <span style="color:var(--faint)">(SECURE 2.0 · rolled at Yr ${p.stopYear} · grows at SIP rate)</span></td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmtM(rollAmt)}<br><span style="color:var(--faint);font-size:10px">rolled amount (≤$35k cap)</span></td>
+        <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(rollGrowth)}<br><span style="font-size:10px;color:var(--faint)">tax-free growth</span></td>
+        <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--purple)">${US_fmtM(simPlan.rollCorpus)}</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${gn('us_sipRet').toFixed(1)}%/yr</td>
       </tr>`;
     }).join('');
     const has529=US_529.length>0;    // per-plan retirement breakdown
@@ -3382,6 +3437,7 @@ function US_rFC(){
           </tr>`:''}
           ${retRows}
           ${plan529Rows}
+          ${rolloverRows}
           ${assetRow}
           ${homeRows}
           ${(()=>{
