@@ -3320,25 +3320,33 @@ function US_rFC(){
     // Life events in this 5-year window only
     const leWindow=US_LE.filter(e=>e.deduct&&e.year>prevYrUS&&e.year<=yr);
     const leCumDed=leWindow.reduce((s,e)=>s+(e.amount||0),0);
-    // Build per-event cash-out labels for Debt Instruments and SIP rows
-    const fdEventParts=US_LE.map((e,gi)=>{const bk=leBreakdown[gi];return bk&&bk.fromFD>0?`${e.label}: ${US_fmtM(bk.fromFD)}`:null;}).filter(Boolean);
-    const sipEventParts=US_LE.map((e,gi)=>{const bk=leBreakdown[gi];return bk&&bk.fromSIP>0?`${e.label}: ${US_fmtM(bk.fromSIP)}`:null;}).filter(Boolean);
-    const fdCashOutNote=totalFDDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(totalFDDed)+' cash-out'+(fdEventParts.length?' ('+fdEventParts.join(' · ')+')':'')+'</span>':'';
-    const sipCashOutNote=totalSIPDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(totalSIPDed)+' cash-out'+(sipEventParts.length?' ('+sipEventParts.join(' · ')+')':'')+'</span>':'';
-    // Per-child 529 rows
+    // Build per-event cash-out labels — only for events within THIS 5-yr window
+    const fdEventParts=US_LE.map((e,gi)=>{const bk=leBreakdown[gi];return bk&&bk.fromFD>0&&e.year>prevYrUS&&e.year<=yr?`${e.label}: ${US_fmtM(bk.fromFD)}`:null;}).filter(Boolean);
+    const sipEventParts=US_LE.map((e,gi)=>{const bk=leBreakdown[gi];return bk&&bk.fromSIP>0&&e.year>prevYrUS&&e.year<=yr?`${e.label}: ${US_fmtM(bk.fromSIP)}`:null;}).filter(Boolean);
+    // Window FD/SIP deductions to this period only
+    const windowFDDed=US_LE.reduce((s,e,gi)=>{const bk=leBreakdown[gi];return s+(bk&&bk.fromFD>0&&e.year>prevYrUS&&e.year<=yr?bk.fromFD:0);},0);
+    const windowSIPDed=US_LE.reduce((s,e,gi)=>{const bk=leBreakdown[gi];return s+(bk&&bk.fromSIP>0&&e.year>prevYrUS&&e.year<=yr?bk.fromSIP:0);},0);
+    const fdCashOutNote=windowFDDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(windowFDDed)+' cash-out'+(fdEventParts.length?' ('+fdEventParts.join(' · ')+')':'')+'</span>':'';
+    const sipCashOutNote=windowSIPDed>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(windowSIPDed)+' cash-out'+(sipEventParts.length?' ('+sipEventParts.join(' · ')+')':'')+'</span>':'';
+    // Per-child 529 rows — show if has balance, OR if exhausted within this 5-yr window; hide if already gone in prior window
     const plan529Rows=US_529.map(p=>{
       const simPlan=c529Map[p.id]||{corpus:0,ded:0};
-      const grossAtYr=US_529CorpusAt(p,yr);
+      const fullyWithdrawn=simPlan.corpus<=0&&simPlan.ded>0;
+      // Find the year this plan was exhausted (last linked edu event year)
+      const linkedEvents=US_LE.filter(e=>e.deduct&&e.linked529===p.id&&e.type==='education');
+      const exhaustionYr=linkedEvents.length?Math.max(...linkedEvents.map(e=>e.year)):null;
+      // Skip if fully withdrawn AND exhaustion happened in a prior 5-yr window
+      if(fullyWithdrawn&&exhaustionYr&&exhaustionYr<=prevYrUS) return '';
       const stop=p.stopYear||Infinity;
       const contrib=(p.balance||0)+Math.min(yr,stop)*(p.monthlyContrib||0)*12;
-      const growth=Math.max(0,grossAtYr-contrib);
       const cashOut=simPlan.ded;
-      return`<tr style="border-bottom:1px dashed var(--border)">
-        <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🎓 529 · ${p.name} <span style="color:var(--faint)">(${p.stateTaxDed?'state tax ded. · ':''}drawn first if linked)</span></td>
+      const growth=Math.max(0,simPlan.corpus-(contrib-cashOut));
+      return`<tr style="border-bottom:1px dashed var(--border);${fullyWithdrawn?'opacity:0.45':''}">
+        <td class="py-1.5 pl-2 text-xs" style="color:var(--muted)">🎓 529 · ${p.name} ${fullyWithdrawn?'<span style="font-size:10px;color:var(--rose);font-weight:700">✕ exhausted</span>':'<span style="color:var(--faint)">('+( p.stateTaxDed?'state tax ded. · ':'')+'drawn first if linked)</span>'}</td>
         <td class="py-1.5 mono text-xs text-right" style="color:var(--muted)">${US_fmt(contrib)}<br><span style="color:var(--faint);font-size:10px">opening bal + deposits</span></td>
-        <td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--green)">+${US_fmtM(growth)}<br><span style="font-size:10px;color:var(--faint)">tax-free growth</span></td>
+        <td class="py-1.5 mono text-xs text-right font-semibold" style="color:${fullyWithdrawn?'var(--faint)':'var(--green)'};">${fullyWithdrawn?'—':'+'+US_fmtM(growth)}<br><span style="font-size:10px;color:var(--faint)">${fullyWithdrawn?'fully withdrawn':'tax-free growth'}</span></td>
         <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal)">${US_fmtM(simPlan.corpus)}${cashOut>0?'<br><span style="font-size:10px;color:var(--rose)">−'+US_fmtM(cashOut)+' used for edu</span>':''}</td>
-        <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${(p.returnPct||7).toFixed(1)}%/yr</td>
+        <td class="py-1.5 mono text-xs text-right" style="color:var(--faint)">${fullyWithdrawn?'—':(p.returnPct||7).toFixed(1)+'%/yr'}</td>
       </tr>`;
     }).join('');
     const has529=US_529.length>0;    // per-plan retirement breakdown
