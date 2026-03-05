@@ -800,6 +800,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
         <div class="sr"><span class="text-sm" style="color:var(--faint)">Federal Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s1ft">$0</span></div>
         <div class="sr"><span class="text-sm" style="color:var(--faint)">State Tax</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s1st">$0</span></div>
         <div class="sr"><span class="text-sm" style="color:var(--faint)">FICA</span><span class="mono text-sm font-semibold" style="color:var(--rose)" id="us_s1fi">$0</span></div>
+        <div class="sr" id="us_529savRow" style="display:none"><span class="text-sm" style="color:var(--teal)">529 State Saving 🎓</span><span class="mono text-sm font-semibold" style="color:var(--teal)" id="us_529sav">+$0</span></div>
         <div class="sr" style="border-top:1.5px solid var(--border);margin-top:4px;padding-top:6px"><span class="text-base font-black">Net</span><span class="mono text-base font-black" id="us_s1n">$0</span></div>
         <div class="sr"><span class="text-xs" style="color:var(--faint)">Eff. Rate</span><span class="mono text-xs font-semibold" id="us_s1r">0%</span></div>
       </div>
@@ -2288,6 +2289,65 @@ function US_calcFedTax(taxableIncome, filing){
   }
   return tax;
 }
+// ── 529 State Tax Deduction Lookup ──
+// Format: stateName → {type:'deduction'|'credit', limit_single, limit_mfj, rate (for credit states only)}
+// limit = max annual contribution eligible for deduction/credit per taxpayer
+// Sources: each state's department of revenue / 529 plan documentation (2024)
+const US_529_STATE_BENEFITS={
+  'Illinois':         {type:'deduction', limit_single:10000, limit_mfj:20000},
+  'Colorado':         {type:'deduction', limit_single:Infinity, limit_mfj:Infinity}, // unlimited
+  'New Mexico':       {type:'deduction', limit_single:Infinity, limit_mfj:Infinity},
+  'South Carolina':   {type:'deduction', limit_single:Infinity, limit_mfj:Infinity},
+  'West Virginia':    {type:'deduction', limit_single:Infinity, limit_mfj:Infinity},
+  'Michigan':         {type:'deduction', limit_single:5000,  limit_mfj:10000},
+  'Wisconsin':        {type:'deduction', limit_single:3560,  limit_mfj:3560},  // per beneficiary
+  'Virginia':         {type:'deduction', limit_single:4000,  limit_mfj:4000},  // per account, unlimited carryforward
+  'Georgia':          {type:'deduction', limit_single:4000,  limit_mfj:8000},
+  'Mississippi':      {type:'deduction', limit_single:10000, limit_mfj:20000},
+  'Iowa':             {type:'deduction', limit_single:3785,  limit_mfj:7570},
+  'Kansas':           {type:'deduction', limit_single:3000,  limit_mfj:6000},
+  'Missouri':         {type:'deduction', limit_single:8000,  limit_mfj:16000},
+  'Montana':          {type:'deduction', limit_single:3000,  limit_mfj:6000},
+  'Nebraska':         {type:'deduction', limit_single:10000, limit_mfj:10000},
+  'New York':         {type:'deduction', limit_single:5000,  limit_mfj:10000},
+  'North Dakota':     {type:'deduction', limit_single:5000,  limit_mfj:10000},
+  'Ohio':             {type:'deduction', limit_single:4000,  limit_mfj:4000},  // per beneficiary
+  'Oklahoma':         {type:'deduction', limit_single:10000, limit_mfj:20000},
+  'Pennsylvania':     {type:'deduction', limit_single:17000, limit_mfj:34000},
+  'Rhode Island':     {type:'deduction', limit_single:500,   limit_mfj:1000},
+  'Maryland':         {type:'deduction', limit_single:2500,  limit_mfj:5000},
+  'Alabama':          {type:'deduction', limit_single:5000,  limit_mfj:10000},
+  'Arkansas':         {type:'deduction', limit_single:5000,  limit_mfj:10000},
+  'Idaho':            {type:'deduction', limit_single:6000,  limit_mfj:12000},
+  'Louisiana':        {type:'deduction', limit_single:2400,  limit_mfj:4800},
+  'Minnesota':        {type:'deduction', limit_single:1500,  limit_mfj:3000},
+  'North Carolina':   {type:'deduction', limit_single:0,     limit_mfj:0},    // no deduction
+  'Oregon':           {type:'credit',    limit_single:300,   limit_mfj:300,   rate:1}, // credit up to $300/$150
+  'Indiana':          {type:'credit',    limit_single:5000,  limit_mfj:5000,  rate:0.20}, // 20% credit up to $1000
+  'Utah':             {type:'credit',    limit_single:2130,  limit_mfj:4260,  rate:0.0465}, // 4.65% credit
+};
+
+function US_529StateSaving(filing){
+  const stateEl=document.getElementById('us_state');
+  const stateName=stateEl.options[stateEl.selectedIndex].getAttribute('data-name')||'';
+  const benefit=US_529_STATE_BENEFITS[stateName];
+  if(!benefit) return 0;
+  // Total annual 529 contributions across all state-tax-deductible plans
+  const annualContrib529=US_529.filter(p=>p.stateTaxDed).reduce((s,p)=>s+(p.monthlyContrib||0)*12,0);
+  if(annualContrib529<=0) return 0;
+  const isMFJ=filing==='mfj';
+  const limit=isMFJ?benefit.limit_mfj:benefit.limit_single;
+  const eligibleContrib=Math.min(annualContrib529,limit);
+  if(benefit.type==='credit'){
+    // Credit: direct reduction in tax owed
+    return eligibleContrib*benefit.rate;
+  } else {
+    // Deduction: reduce state taxable income, saving = eligible × marginal state rate
+    const stateRate=parseFloat(stateEl.value)||0;
+    // For progressive states use approximate marginal rate from value
+    return eligibleContrib*(stateRate/100);
+  }
+}
 function US_calcStateTax(income, filing){
   const stateEl=document.getElementById('us_state');
   const selectedOpt=stateEl.options[stateEl.selectedIndex];
@@ -2603,8 +2663,12 @@ function US_rc(){
   US_updDedAmts();
   setText('us_s1g',US_fmt(s1G)); setText('us_s1d',d1>0?'−'+US_fmt(d1):'$0');
   setText('us_s1ft',US_fmt(ft1)); setText('us_s1st',US_fmt(st1)); setText('us_s1fi',US_fmt(fi1));
-  setText('us_s1n',US_fmt(s1G-d1-ft1-st1-fi1));
-  const tot1=ft1+st1+fi1; setText('us_s1r',s1G>0?((tot1/s1G)*100).toFixed(1)+'%':'0%');
+  const saving529=US_529StateSaving(filing);
+  const sav529Row=document.getElementById('us_529savRow');
+  if(sav529Row){sav529Row.style.display=saving529>0?'flex':'none';}
+  setText('us_529sav','+'+US_fmt(saving529));
+  setText('us_s1n',US_fmt(s1G-d1-ft1-st1-fi1+saving529));
+  const tot1=ft1+st1+fi1; setText('us_s1r',s1G>0?(((tot1-saving529)/s1G)*100).toFixed(1)+'%':'0%');
   setText('us_s2g',US_fmt(s2G)); setText('us_s2d',d2>0?'−'+US_fmt(d2):'$0');
   setText('us_s2ft',US_fmt(ft2)); setText('us_s2st',US_fmt(st2)); setText('us_s2fi',US_fmt(fi2));
   setText('us_s2n',US_fmt(s2G-d2-ft2-st2-fi2));
@@ -2612,7 +2676,7 @@ function US_rc(){
 
   const expMo=US_totExpMo(1); // yr=1 = current year; matches sim loop start
   const retMo=US_retMonthlyContrib(b1,b2);
-  const annSurplus=b1+b2+ty-d1-d2-ft1-ft2-st1-st2-fi1-fi2-(expMo*12);
+  const annSurplus=b1+b2+ty-d1-d2-ft1-ft2-st1-st2-fi1-fi2-(expMo*12)+saving529;
   const mo=annSurplus/12, deficit=mo<0, absVal=Math.abs(Math.round(mo));
 
   const card=document.getElementById('us_sCard');
@@ -2627,7 +2691,7 @@ function US_rc(){
   // Waterfall breakdown: Net Take-Home - Expenses - Loans = Surplus
   const usExpOnly=US_EXPS.reduce((s,c)=>s+(c.val||0),0);
   const usEmiOnly=US_EMIS.reduce((s,e)=>s+(e.emi||0),0);
-  const usNetHome=(b1+b2+ty-d1-d2-ft1-ft2-st1-st2-fi1-fi2)/12; // monthly net take-home
+  const usNetHome=(b1+b2+ty-d1-d2-ft1-ft2-st1-st2-fi1-fi2+saving529)/12; // monthly net take-home incl. 529 state saving
   setText('us_outNetHome',US_fmt(Math.max(0,usNetHome)));
   setText('us_outExp',US_fmt(usExpOnly));
   setText('us_outEmi',US_fmt(usEmiOnly));
@@ -2865,7 +2929,7 @@ function US_r529(){
           </div>`;
         }).join('')}
       </div>
-      ${p.stateTaxDed?`<p class="text-xs" style="color:var(--teal)">✓ State tax deductible — contributions may reduce your state taxable income (limits vary by state; verify with your plan)</p>`:''}`;
+      ${p.stateTaxDed?`<p class="text-xs" style="color:var(--teal)">✓ State tax saving applied — annual contribution deducted from state taxable income (or credit applied). Saving flows into your monthly surplus.</p>`:''}`;
     list.appendChild(div);
   });
 }
@@ -2967,7 +3031,8 @@ function US_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=0,jobLossReentr
     const fdNetInterest=fdInterest-fdTax;
     const fi1=US_calcFICA(s1,ss1Ex),fi2=US_calcFICA(s2,ss2Ex);
     const expMo=US_totExpMo(yr);
-    const surplus=(s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12))/12+(xI-xE);
+    const saving529=US_529StateSaving(filing);
+    const surplus=(s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12)+saving529)/12+(xI-xE);
     const mFD=Math.max(0,surplus)*fdP, mSIP=Math.max(0,surplus)*sipP;
     totalFDContrib+=mFD*12; totalSIPContrib+=mSIP*12;
     cFD=cFD+fdNetInterest+mFD*12;
@@ -3070,8 +3135,9 @@ function US_rFC_short(){
     const expMo=US_totExpMo(yr);
     const xI=US_SC?((US_SC[US_activeSC]?.extraInc||0)):0;
     const xE=US_SC?((US_SC[US_activeSC]?.extraExp||0)):0;
-    const annualSurplus=s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12)+(xI-xE)*12;
-    const netHomeMo=(s1+s2+ty-d1-d2-ft-st-fi1-fi2)/12;
+    const saving529=US_529StateSaving(filing);
+    const annualSurplus=s1+s2+ty-d1-d2-ft-st-fi1-fi2-(expMo*12)+(xI-xE)*12+saving529;
+    const netHomeMo=(s1+s2+ty-d1-d2-ft-st-fi1-fi2+saving529)/12;
     const surplusMo=annualSurplus/12;
     const mFD=Math.max(0,surplusMo)*fdP, mSIP=Math.max(0,surplusMo)*sipP;
 
