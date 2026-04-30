@@ -660,6 +660,62 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
     </div>
     <div id="in_scComp" class="mt-5"></div>
   </div>
+
+  <!-- 🇺🇸 401K Locked Corpus Card -->
+  <div class="card accent-blue p-5">
+    <div class="card-header-blue -mx-5 -mt-5 mb-5 flex items-center justify-between">
+      <div>
+        <p class="sl" style="color:var(--blue)">🇺🇸 US 401K — Locked Corpus</p>
+        <p class="text-sm mt-1" style="color:var(--muted)">Grows in USD · unlocks at age 59½ · taxed on withdrawal</p>
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer np">
+        <span class="text-xs font-semibold" style="color:var(--faint)">Enable</span>
+        <div class="relative" style="width:36px;height:20px;flex-shrink:0">
+          <input type="checkbox" id="in_401on" onchange="IN_r401();IN_rc();IN_sv()" style="opacity:0;position:absolute;width:100%;height:100%;cursor:pointer;z-index:1;margin:0">
+          <div id="in_401onBg" style="width:36px;height:20px;border-radius:99px;background:var(--border-strong);transition:background .2s;position:relative">
+            <div id="in_401onKnob" style="position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:99px;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div id="in_401body" style="display:none" class="space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div>
+          <p class="text-xs font-medium mb-1.5" style="color:var(--muted)">Current Balance (USD $)</p>
+          <input type="text" id="in_401bal" value="0" class="si mono" oninput="IN_hi(this);IN_r401();IN_rc();IN_sv()">
+        </div>
+        <div>
+          <p class="text-xs font-medium mb-1.5 tip-wrap" style="color:var(--muted)">Annual Growth %<span class="tip-icon">ⓘ</span><span class="tip-box">Expected annual return inside the 401K (equity funds typically 7–10%). Growth is in USD terms.</span></p>
+          <input type="number" id="in_401gr" value="8" min="0" max="20" step="0.5" class="si mono" oninput="IN_r401();IN_rc();IN_sv()">
+        </div>
+        <div>
+          <p class="text-xs font-medium mb-1.5" style="color:var(--muted)">Your Current Age</p>
+          <input type="number" id="in_401age" value="35" min="18" max="58" class="si mono" oninput="IN_r401();IN_rc();IN_sv()">
+        </div>
+        <div>
+          <p class="text-xs font-medium mb-1.5 tip-wrap" style="color:var(--muted)">Withdrawal Tax %<span class="tip-icon">ⓘ</span><span class="tip-box">Effective US tax rate on 401K withdrawals as NRI. Under DTAA (India-US treaty), US withholding is capped at 15% on pension/retirement distributions. Add ~3–5% for any state tax if applicable. India gives credit for US tax paid.</span></p>
+          <input type="number" id="in_401tax" value="15" min="0" max="40" class="si mono" oninput="IN_r401();IN_rc();IN_sv()">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div>
+          <p class="text-xs font-medium mb-1.5" style="color:var(--muted)">USD → ₹ Rate (today)</p>
+          <input type="number" id="in_401fx" value="95" min="50" max="200" class="si mono" oninput="IN_r401();IN_rc();IN_sv()">
+        </div>
+        <div>
+          <p class="text-xs font-medium mb-1.5 tip-wrap" style="color:var(--muted)">₹ Depreciation %/yr<span class="tip-icon">ⓘ</span><span class="tip-box">Historical INR depreciation vs USD averages ~2%/yr long-term. This compounds the exchange rate forward: ₹95 today → ₹115 in ~10 yrs at 2%/yr. Makes your 401K more valuable in INR terms over time.</span></p>
+          <input type="number" id="in_401dep" value="2" min="0" max="10" step="0.5" class="si mono" oninput="IN_r401();IN_rc();IN_sv()">
+        </div>
+        <div>
+          <p class="text-xs font-medium mb-1.5" style="color:var(--muted)">Early Withdrawal Penalty</p>
+          <p class="si mt-2" style="color:var(--rose)">10% + tax if before 59½</p>
+        </div>
+      </div>
+      <!-- Summary panel -->
+      <div id="in_401summary" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- TAB: INSIGHTS -->
@@ -1912,6 +1968,8 @@ function IN_rFC(){
     let disp=IN_isAdj?sim.total/Math.pow(1+infRate,yr):sim.total;
     const crFmt=IN_fmtCr(disp);
     const bw=Math.min(97,Math.max(3,(sim.total/max30)*100));
+    const k401yr=IN_401atYr(yr);
+    const k401note=IN_401on&&k401yr&&k401yr.usd>0?` <span style="font-size:10px;background:var(--blue-lt);color:var(--blue);padding:1px 5px;border-radius:4px;font-family:'DM Mono',monospace;font-weight:700">${k401yr.locked?'🔒':'🔓'} 401K +${IN_fmtCr(k401yr.afterTaxInr)}</span>`:''
     const prevYr=({5:0,10:5,15:10,20:15,25:20,30:25})[yr]||0;
     const mPills=IN_LE.filter(e=>e.year>prevYr&&e.year<=yr).map(e=>{const t=IN_LE_TYPES.find(x=>x.val===e.type)||{icon:'📌'};const yrSuffix=e.year!==yr?' · Yr '+e.year:'';const amtSuffix=e.amount?' · '+IN_fmtCr(e.amount):'';const dedSuffix=e.deduct?' ↓':'';const bg=e.deduct?'var(--rose-lt)':'var(--amber-lt)';const col=e.deduct?'var(--rose)':'var(--amber)';return'<span class="pill" style="background:'+bg+';color:'+col+';">'+t.icon+' '+e.label+yrSuffix+amtSuffix+dedSuffix+'</span>';});
     const ePills=[...expEnds].filter(y=>y===yr).map(()=>`<span class="pill" style="background:var(--green-lt);color:var(--green)">✓ Expense ends · surplus ↑</span>`);
@@ -1991,6 +2049,24 @@ function IN_rFC(){
           </tr>`:''}
           ${homeRows}
           ${sim.simAppr&&sim.simAppr.length?sim.simAppr.map(a=>{const gain=a.curP-a.origP;const pct=(a.appr*100).toFixed(1);return'<tr style="border-bottom:1px dashed var(--border)"><td class="py-2 pl-2 text-xs" style="color:var(--muted)">&#x1F3D8; '+a.name+' <span style="color:var(--faint)">('+pct+'%/yr appreciation &middot; excl. net worth)</span></td><td class="py-2 mono text-xs text-right" style="color:var(--muted)">'+IN_fmt(a.origP)+'<br><span style="color:var(--faint);font-size:10px">original value</span></td><td class="py-2 mono text-xs text-right font-semibold" style="color:var(--amber)">+'+IN_fmtCr(gain)+'<br><span style="font-size:10px;color:var(--faint)">appreciation</span></td><td class="py-2 mono text-xs text-right font-bold" style="color:var(--amber)">'+IN_fmtCr(a.curP)+'<br><span style="font-size:10px;color:var(--faint)">current value</span></td><td class="py-2 mono text-xs text-right" style="color:var(--faint)">'+pct+'%/yr</td></tr>';}).join(''):''}
+          ${(()=>{
+            const k401=IN_401atYr(yr);
+            if(!IN_401on||!k401||k401.usd<=0) return '';
+            const locked=k401.locked;
+            const col=locked?'var(--blue)':'var(--green)';
+            const lockLabel=locked?'&#x1F512; locked — unlocks yr '+k401.unlockYr:'&#x1F513; accessible (age 59½)';
+            const valLabel=locked?'pre-tax INR est.':'after-tax INR';
+            const c401=IN_get401();
+            const fxNow=c401?c401.fx:95,dep=c401?c401.dep:0.02;
+            const fxAtYr=fxNow*Math.pow(1+dep,yr);
+            return'<tr style="border-bottom:1px dashed var(--border);background:var(--blue-lt)">'
+              +'<td class="py-2 pl-2 text-xs font-semibold" style="color:var(--blue)">🇺🇸 US 401K <span style="font-weight:400;color:var(--faint)">'+lockLabel+'</span></td>'
+              +'<td class="py-2 mono text-xs text-right" style="color:var(--muted)">$'+Math.round(k401.usd).toLocaleString()+('<br><span style="color:var(--faint);font-size:10px">₹'+Math.round(fxAtYr).toLocaleString()+'/$ in yr '+yr+'</span>')+'</td>'
+              +'<td class="py-2 mono text-xs text-right font-semibold" style="color:'+col+'">₹'+IN_fmtCr(k401.afterTaxInr)+'<br><span style="font-size:10px;color:var(--faint)">'+valLabel+'</span></td>'
+              +'<td class="py-2 mono text-xs text-right font-bold" style="color:'+col+'">₹'+IN_fmtCr(k401.inr)+'<br><span style="font-size:10px;color:var(--faint)">gross INR</span></td>'
+              +'<td class="py-2 mono text-xs text-right" style="color:var(--faint)">'+IN_get401().tax*100+'% US tax</td>'
+              +'</tr>';
+          })()}
           ${(()=>{if(!leWindow.length)return'';const totalDed=leCumDed;return'<tr style="border-top:1.5px solid var(--rose);background:var(--rose-lt)"><td colspan="5" class="py-1.5 pl-2 text-xs font-semibold" style="color:var(--rose)">💸 Spent this period — Yr '+(prevYr+1)+' to '+yr+'</td></tr>'+leWindow.map(e=>{const t=IN_LE_TYPES.find(x=>x.val===e.type)||{icon:"📌"};return'<tr style="border-bottom:1px dashed var(--border);background:var(--rose-lt)"><td class="py-1.5 pl-4 text-xs" style="color:var(--rose)">'+t.icon+' '+e.label+' <span style="color:var(--faint);font-size:10px">(Yr '+e.year+' · liquidated from FD first, then SIP)</span></td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">—</td><td class="py-1.5 mono text-xs text-right font-semibold" style="color:var(--rose)">−'+IN_fmtCr(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--rose)">−'+IN_fmtCr(e.amount||0)+'</td><td class="py-1.5 mono text-xs text-right" style="color:var(--rose)">cash out</td></tr>';}).join('')+(leWindow.length>1?'<tr style="background:var(--rose-lt)"><td class="py-1 pl-2 text-xs font-bold" style="color:var(--rose)">Subtotal this period</td><td colspan="2"></td><td class="py-1 mono text-xs text-right font-black" style="color:var(--rose)">−'+IN_fmtCr(totalDed)+'</td><td></td></tr>':'');})()}
         </tbody>
         <tfoot>
@@ -2014,7 +2090,7 @@ function IN_rFC(){
           ${pills?`<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`:''}
         </div>
         <div class="text-right shrink-0">
-          <span class="mono text-base font-bold block" style="color:var(--teal-dk)">${crFmt}${IN_isAdj?` <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);vertical-align:middle">adj</span>`:''}</span>
+          <span class="mono text-base font-bold block" style="color:var(--teal-dk)">${crFmt}${k401note}${IN_isAdj?` <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);vertical-align:middle">adj</span>`:''}</span>
           <span class="mono text-xs" style="color:var(--green)">▸ click to break down</span>
         </div>
         <span class="fc-arr text-xs shrink-0" style="color:var(--faint);width:12px">▸</span>
@@ -2065,6 +2141,7 @@ function IN_rFC_short(){
         ${totP>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--teal-dk)">${IN_fmtCr(totP)}</td>`:''}
         ${retCurr>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--teal)">${IN_fmtCr(retMo)}</td>`:''}
         ${hasAppr?`<td class="py-1.5 mono text-xs text-right" style="color:var(--amber)">${IN_fmtCr(propMo)}</td>`:''}
+        ${IN_401on?(()=>{ const k=IN_401atYr(yr-1+mo/12); const col=k.locked?'var(--blue)':'var(--green)'; return `<td class="py-1.5 mono text-xs text-right" style="color:${col}">${k.locked?'🔒 ':''}${IN_fmtCr(k.afterTaxInr)}</td>`; })():''}
         <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal-dk)">${IN_fmtCr(dispMo)}${IN_isAdj?`<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);margin-left:4px;font-family:'DM Sans',sans-serif;vertical-align:middle">adj</span>`:''}</td>
       </tr>`;
     }
@@ -2100,6 +2177,7 @@ function IN_rFC_short(){
             ${totP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Investments</th>`:''}
             ${retCurr>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">EPF / NPS</th>`:''}
             ${hasAppr?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--amber)">Property Value</th>`:''}
+            ${IN_401on?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue)">401K 🔒</th>`:''}
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Net Worth${IN_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
           </tr></thead>
           <tbody>${yrRows}</tbody>
@@ -2260,9 +2338,73 @@ function IN_rIns(){
 }
 
 // ── India persistence ──
+// ── India 401K locked corpus ──────────────────────────────────────────────
+let IN_401on = false;
+
+function IN_get401(){
+  if(!IN_401on) return null;
+  const bal  = parseFloat((document.getElementById('in_401bal').value||'0').replace(/,/g,''))||0;
+  const gr   = (parseFloat(document.getElementById('in_401gr').value)||8)/100;
+  const age  = parseFloat(document.getElementById('in_401age').value)||35;
+  const tax  = (parseFloat(document.getElementById('in_401tax').value)||15)/100;
+  const fx   = parseFloat(document.getElementById('in_401fx').value)||95;
+  const dep  = (parseFloat(document.getElementById('in_401dep').value)||2)/100;
+  const yrsToUnlock = Math.max(0, 59.5 - age);
+  return {bal, gr, age, tax, fx, dep, yrsToUnlock};
+}
+
+// Returns 401K corpus in INR at forecast year `yr`, after-tax
+// balUSD grows at gr, FX depreciates at dep; tax applied at unlock year
+function IN_401atYr(yr){
+  const c = IN_get401();
+  if(!c || c.bal<=0) return {inr:0, usd:0, locked:true, unlockYr:Math.ceil(c?.yrsToUnlock||0)};
+  const unlockYr = c.yrsToUnlock;
+  const usdAtYr  = c.bal * Math.pow(1+c.gr, yr);
+  const fxAtYr   = c.fx  * Math.pow(1+c.dep, yr);
+  // Before unlock: locked, show pre-tax value for awareness
+  if(yr < unlockYr){
+    return {inr: usdAtYr * fxAtYr, usd: usdAtYr, locked: true, unlockYr: Math.ceil(unlockYr), afterTaxInr: usdAtYr*(1-c.tax)*fxAtYr};
+  }
+  // At or after unlock: apply tax, show accessible value
+  const usdAfterTax = usdAtYr * (1 - c.tax);
+  return {inr: usdAfterTax * fxAtYr, usd: usdAtYr, locked: false, unlockYr: Math.ceil(unlockYr), afterTaxInr: usdAfterTax*fxAtYr};
+}
+
+function IN_r401(){
+  const chk = document.getElementById('in_401on');
+  IN_401on = chk.checked;
+  // toggle visibility
+  document.getElementById('in_401body').style.display = IN_401on ? '' : 'none';
+  document.getElementById('in_401onBg').style.background = IN_401on ? 'var(--blue)' : 'var(--border-strong)';
+  document.getElementById('in_401onKnob').style.left = IN_401on ? '18px' : '2px';
+  if(!IN_401on){ document.getElementById('in_401summary').innerHTML=''; return; }
+  const c = IN_get401();
+  if(!c||c.bal<=0){ document.getElementById('in_401summary').innerHTML=''; return; }
+  // Compute key milestones
+  const unlockYr = c.yrsToUnlock;
+  const usdUnlock = c.bal * Math.pow(1+c.gr, unlockYr);
+  const fxUnlock  = c.fx  * Math.pow(1+c.dep, unlockYr);
+  const inrGross  = usdUnlock * fxUnlock;
+  const inrNet    = usdUnlock * (1-c.tax) * fxUnlock;
+  const earlyPenalty = c.bal * 0.10;
+  const earlyInr  = c.bal*(1-0.10-c.tax)*c.fx;
+  const fmt = v => v>=10000000 ? (v/10000000).toFixed(2)+' Cr' : v>=100000 ? (v/100000).toFixed(1)+' L' : Math.round(v).toLocaleString('en-IN');
+  const tiles = [
+    {label:'Unlocks in', val: unlockYr<=0 ? 'Now!' : Math.ceil(unlockYr)+' yrs (age 59½)', color:'var(--blue)'},
+    {label:'USD at unlock', val: '$'+Math.round(usdUnlock).toLocaleString(), color:'var(--blue)'},
+    {label:'After-tax in ₹', val: '₹'+fmt(inrNet), color:'var(--green)'},
+    {label:'If early exit now', val: '₹'+fmt(earlyInr)+' (−10% penalty)', color:'var(--rose)'},
+  ];
+  document.getElementById('in_401summary').innerHTML = tiles.map(t=>`
+    <div class="inset p-3 text-center">
+      <p class="text-xs font-semibold mb-1" style="color:var(--faint)">${t.label}</p>
+      <p class="mono text-sm font-bold" style="color:${t.color}">${t.val}</p>
+    </div>`).join('');
+}
+
 function IN_sv(){
   const g=id=>document.getElementById(id)?.value||'';
-  const data={b1:g('in_b1'),b2:g('in_b2'),g1:g('in_g1'),g2:g('in_g2'),fdRng:g('in_fdRng'),sipRng:g('in_sipRng'),sipRet:g('in_sipRet'),fdRt:g('in_fdRt'),infR:g('in_infR'),isAdj:IN_isAdj,expInflOn:IN_expInflOn,fcMode:IN_fcMode,gC:g('in_gC'),gY:g('in_gY'),ddC:g('in_ddC'),ddW:g('in_ddW'),ddRt:g('in_ddRt'),ddI:g('in_ddI'),EXPS:IN_EXPS,EMIS:IN_EMIS,LE:IN_LE,SC:IN_SC,DEDS:IN_DEDS,assets:[]};
+  const data={b1:g('in_b1'),b2:g('in_b2'),g1:g('in_g1'),g2:g('in_g2'),fdRng:g('in_fdRng'),sipRng:g('in_sipRng'),sipRet:g('in_sipRet'),fdRt:g('in_fdRt'),infR:g('in_infR'),isAdj:IN_isAdj,expInflOn:IN_expInflOn,fcMode:IN_fcMode,gC:g('in_gC'),gY:g('in_gY'),ddC:g('in_ddC'),ddW:g('in_ddW'),ddRt:g('in_ddRt'),ddI:g('in_ddI'),EXPS:IN_EXPS,EMIS:IN_EMIS,LE:IN_LE,SC:IN_SC,DEDS:IN_DEDS,k401on:IN_401on,k401bal:g('in_401bal'),k401gr:g('in_401gr'),k401age:g('in_401age'),k401tax:g('in_401tax'),k401fx:g('in_401fx'),k401dep:g('in_401dep'),assets:[]};
   document.querySelectorAll('.in_ar').forEach(r=>data.assets.push({n:r.querySelector('.in_nm').value,p:r.querySelector('.in_pv').value,y:r.querySelector('.in_yv').value,appr:r.querySelector('.in_av')?.value||'0',o:r.querySelector('.in_ov').value,tf:r.querySelector('.in_tv').checked}));
   try{localStorage.setItem('cyf_india',JSON.stringify(data));}catch(e){}
 }
@@ -2282,6 +2424,16 @@ function IN_loadData(){
   if(d.isAdj){IN_isAdj=true;document.getElementById('in_adjBtn').classList.add('on');}
   if(d.fcMode){IN_fcMode=d.fcMode;IN_setFcMode(d.fcMode);}
   if(d.expInflOn){IN_expInflOn=true;const btn=document.getElementById('in_eiBtn');btn.classList.add('on');btn.textContent='📈 Inflation On';}
+  if(d.k401on){
+    document.getElementById('in_401on').checked=true;
+    if(d.k401bal) document.getElementById('in_401bal').value=d.k401bal;
+    if(d.k401gr)  document.getElementById('in_401gr').value=d.k401gr;
+    if(d.k401age) document.getElementById('in_401age').value=d.k401age;
+    if(d.k401tax) document.getElementById('in_401tax').value=d.k401tax;
+    if(d.k401fx)  document.getElementById('in_401fx').value=d.k401fx;
+    if(d.k401dep) document.getElementById('in_401dep').value=d.k401dep;
+    IN_r401();
+  }
   if(d.EXPS){IN_EXPS=d.EXPS;IN_rExp();}
   if(d.EMIS){
     // migrate old EMI format (sYr offset) to new (startCalYear)
