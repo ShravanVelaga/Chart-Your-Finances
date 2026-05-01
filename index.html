@@ -508,6 +508,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
           <option value="7.5">Govt Schemes (7.5%)</option>
           <option value="3.5">Rental Property (3.5%)</option>
           <option value="0.0">Custom Asset</option>
+          <option value="8.0" data-locked="true">Locked / Insurance / MF (8%)</option>
         </select>
         <button onclick="IN_addAssetRow()" class="text-sm font-semibold px-4 py-2 rounded-xl text-white shrink-0" style="background:var(--indigo)">+ Add</button>
       </div>
@@ -518,7 +519,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
         <thead><tr>
           <th class="text-left">Asset</th><th class="text-left">Principal (₹)</th>
           <th class="text-center">ROI %</th><th class="text-center" style="color:var(--amber)" title="Annual appreciation % — tracked separately in forecast, excluded from net worth">Appr %</th><th class="text-left">Owner</th>
-          <th class="text-center">Tax-Free</th><th class="np"></th>
+          <th class="text-center">Tax-Free</th><th class="text-center" style="color:var(--purple)" title="Locked / compounding — yield stays inside the instrument and compounds. Not withdrawn into surplus. E.g. insurance policies, long-term MF held untouched.">Locked 🔒</th><th class="np"></th>
         </tr></thead>
         <tbody id="in_aBody"></tbody>
         <tfoot><tr style="border-top:2px solid var(--border)">
@@ -1577,8 +1578,8 @@ function IN_emiUpdStatus(i){
 }
 
 // ── India investments ──
-function IN_addAssetRow(){ const sel=document.getElementById('in_catSel'); IN_addARow(sel.options[sel.selectedIndex].text.split('(')[0].replace(/—.*/,'').trim(),0,parseFloat(sel.value)); IN_sv(); }
-function IN_addARow(name='Asset',p=0,y=0,o='1',tf=false,appr=0){
+function IN_addAssetRow(){ const sel=document.getElementById('in_catSel'); const isLocked=sel.options[sel.selectedIndex].getAttribute('data-locked')==='true'; IN_addARow(sel.options[sel.selectedIndex].text.split('(')[0].replace(/—.*/,'').trim(),0,parseFloat(sel.value),'1',false,0,isLocked); IN_sv(); }
+function IN_addARow(name='Asset',p=0,y=0,o='1',tf=false,appr=0,locked=false){
   const tr=document.createElement('tr'); tr.className='in_ar';
   tr.innerHTML=`<td><input type="text" value="${name}" class="in_nm bg-transparent text-sm outline-none w-24 italic" style="color:var(--muted)" onchange="IN_sv()"></td>
     <td><input type="text" value="${p.toLocaleString('en-IN')}" class="in_pv bg-transparent border-b mono text-sm font-medium w-28 outline-none" style="border-color:var(--border)" oninput="IN_hi(this);IN_rcD();IN_sv()"></td>
@@ -1586,24 +1587,33 @@ function IN_addARow(name='Asset',p=0,y=0,o='1',tf=false,appr=0){
     <td class="text-center"><input type="number" value="${appr}" min="0" max="30" step="0.5" class="in_av bg-transparent border-b mono text-sm font-medium w-12 outline-none text-center" style="border-color:var(--border);color:var(--amber)" oninput="IN_rc();IN_sv()" title="Annual appreciation % — grows asset value each year (e.g. property). Separate from yield."></td>
     <td><select class="in_ov si text-sm" style="width:auto;padding:5px 8px" onchange="IN_rc();IN_sv()"><option value="1" ${o==='1'?'selected':''}>Spouse 1</option><option value="2" ${o==='2'?'selected':''}>Spouse 2</option></select></td>
     <td class="text-center"><input type="checkbox" class="in_tv w-4 h-4 cursor-pointer" style="accent-color:var(--teal)" ${tf?'checked':''} onchange="IN_rc();IN_sv()"></td>
+    <td class="text-center"><input type="checkbox" class="in_lv w-4 h-4 cursor-pointer" style="accent-color:var(--purple)" ${locked?'checked':''} onchange="IN_rc();IN_sv()" title="Locked: yield compounds internally, not withdrawn to surplus"></td>
     <td class="text-right np"><button onclick="this.closest('tr').remove();IN_rc();IN_sv()" style="color:var(--faint)" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--faint)'">✕</button></td>`;
   document.getElementById('in_aBody').appendChild(tr); IN_rc();
 }
 function IN_chkROI(el){ el.style.color=(parseFloat(el.value)||0)>30?'var(--amber)':'var(--teal)'; document.getElementById('in_roiW').classList.toggle('hidden',[...document.querySelectorAll('.in_yv')].every(i=>(parseFloat(i.value)||0)<=30)); }
 function IN_getAssets(s1b,s2b){
   let totP=0,s1G=s1b,s2G=s2b,ty=0;
-  const apprAssets=[];
+  const apprAssets=[], lockedAssets=[];
   document.querySelectorAll('.in_ar').forEach(r=>{
     const p=parseFloat(r.querySelector('.in_pv').value.replace(/,/g,''))||0;
     const y=parseFloat(r.querySelector('.in_yv').value)||0;
     const appr=parseFloat(r.querySelector('.in_av')?.value||0)||0;
     const o=r.querySelector('.in_ov').value, tf=r.querySelector('.in_tv').checked;
+    const locked=r.querySelector('.in_lv')?.checked||false;
     const name=r.querySelector('.in_nm').value||'Asset';
-    const ya=(p*y)/100; totP+=p; ty+=ya;
-    if(!tf){if(o==='1')s1G+=ya;else s2G+=ya;}
-    if(appr>0) apprAssets.push({name,origP:p,roi:y/100,appr:appr/100,tf,o,curP:p});
+    const ya=(p*y)/100;
+    totP+=p;
+    if(locked){
+      // Locked: principal in totP but yield stays inside — not added to surplus/tax
+      lockedAssets.push({name,origP:p,roi:y/100,appr:appr/100,tf,o,curV:p});
+    } else {
+      ty+=ya;
+      if(!tf){if(o==='1')s1G+=ya;else s2G+=ya;}
+    }
+    if(appr>0 && !locked) apprAssets.push({name,origP:p,roi:y/100,appr:appr/100,tf,o,curP:p});
   });
-  return{totP,s1G,s2G,ty,apprAssets};
+  return{totP,s1G,s2G,ty,apprAssets,lockedAssets};
 }
 
 let IN_LE=[], IN_EMIS=[];
@@ -1886,9 +1896,11 @@ function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentr
   const b1base=gv('in_b1'),b2base=gv('in_b2'),g1=gn('in_g1')/100,g2=gn('in_g2')/100;
   const fdP=gi('in_fdRng')/100,sipP=gi('in_sipRng')/100;
   const sipRt=gn('in_sipRet')/100,fdRt=gn('in_fdRt')/100;
-  const {totP,ty,apprAssets}=IN_getAssets(b1base,b2base);
+  const {totP,ty,apprAssets,lockedAssets}=IN_getAssets(b1base,b2base);
   // Deep-copy apprAssets so we can mutate curP per year
   const simAppr=apprAssets.map(a=>({...a}));
+  // Deep-copy lockedAssets so we can compound their value per year
+  const simLocked=lockedAssets.map(a=>({...a}));
   // EPF/NPS corpus: sum deductions % × salary compounded at 8.5% (EPF) for each spouse
   const retRt=0.085;
   let retCorpus=0;
@@ -1939,17 +1951,21 @@ function IN_sim(years,xE=0,lump=0,xI=0,jobLoss='none',jobLossYrs=1,jobLossReentr
     homeEquity=IN_EMIS.filter(e=>e.isHome&&e.homeVal).reduce((s,e)=>s+IN_homeEquityAt(e,yr).equity,0);
     // Property/asset appreciation: compound principal each year
     simAppr.forEach(a=>{ a.curP*=(1+a.appr); });
+    // Locked assets: compound internally at their ROI (+ appreciation if any)
+    simLocked.forEach(a=>{ a.curV*=(1+a.roi+a.appr); });
   }
   const assetRate=totP>0?(ty/totP):0;
+  const lockedCorpus=simLocked.reduce((s,a)=>s+a.curV,0);
   return{
-    total:cFD+cSIP+totP+retCorpus+homeEquity,
+    total:cFD+cSIP+totP+retCorpus+homeEquity+lockedCorpus,
     cFD,cSIP,retCorpus,homeEquity,
     totalFDDed,totalSIPDed,
     fdPrincipal:lump, fdContrib:totalFDContrib,
     sipContrib:totalSIPContrib,
     fdRt,sipRt,totP,assetFV:totP,
     assetYield:ty, assetRate,
-    simAppr  // per-asset appreciation snapshots after 'years' of compounding
+    simAppr,   // per-asset appreciation snapshots
+    simLocked  // locked assets compounded values
   };
 }
 
@@ -2049,6 +2065,17 @@ function IN_rFC(){
           </tr>`:''}
           ${homeRows}
           ${sim.simAppr&&sim.simAppr.length?sim.simAppr.map(a=>{const gain=a.curP-a.origP;const pct=(a.appr*100).toFixed(1);return'<tr style="border-bottom:1px dashed var(--border)"><td class="py-2 pl-2 text-xs" style="color:var(--muted)">&#x1F3D8; '+a.name+' <span style="color:var(--faint)">('+pct+'%/yr appreciation &middot; excl. net worth)</span></td><td class="py-2 mono text-xs text-right" style="color:var(--muted)">'+IN_fmt(a.origP)+'<br><span style="color:var(--faint);font-size:10px">original value</span></td><td class="py-2 mono text-xs text-right font-semibold" style="color:var(--amber)">+'+IN_fmtCr(gain)+'<br><span style="font-size:10px;color:var(--faint)">appreciation</span></td><td class="py-2 mono text-xs text-right font-bold" style="color:var(--amber)">'+IN_fmtCr(a.curP)+'<br><span style="font-size:10px;color:var(--faint)">current value</span></td><td class="py-2 mono text-xs text-right" style="color:var(--faint)">'+pct+'%/yr</td></tr>';}).join(''):''}
+          ${sim.simLocked&&sim.simLocked.length?sim.simLocked.map(a=>{
+            const gain=a.curV-a.origP;
+            const roi=(a.roi*100).toFixed(1);
+            return '<tr style="border-bottom:1px dashed var(--border);background:var(--purple-lt)">'
+              +'<td class="py-2 pl-2 text-xs font-semibold" style="color:var(--purple)">🔒 '+a.name+' <span style="font-weight:400;color:var(--faint)">('+roi+'%/yr · compounding internally)</span></td>'
+              +'<td class="py-2 mono text-xs text-right" style="color:var(--muted)">'+IN_fmt(a.origP)+'<br><span style="color:var(--faint);font-size:10px">original invested</span></td>'
+              +'<td class="py-2 mono text-xs text-right font-semibold" style="color:var(--purple)">+'+IN_fmtCr(gain)+'<br><span style="font-size:10px;color:var(--faint)">internal growth</span></td>'
+              +'<td class="py-2 mono text-xs text-right font-bold" style="color:var(--purple)">'+IN_fmtCr(a.curV)+'<br><span style="font-size:10px;color:var(--faint)">corpus value</span></td>'
+              +'<td class="py-2 mono text-xs text-right" style="color:var(--faint)">'+roi+'%/yr</td>'
+              +'</tr>';
+          }).join(''):''}
           ${(()=>{
             const k401=IN_401atYr(yr);
             if(!IN_401on||!k401||k401.usd<=0) return '';
@@ -2106,8 +2133,9 @@ function IN_rFC_short(){
   const fdP=gi('in_fdRng')/100, sipP=gi('in_sipRng')/100;
   const fdRt=gn('in_fdRt')/100, sipRt=gn('in_sipRet')/100;
   const b1=gv('in_b1'),b2=gv('in_b2'),g1=gn('in_g1')/100,g2=gn('in_g2')/100;
-  const {totP,ty,apprAssets}=IN_getAssets(b1,b2);
+  const {totP,ty,apprAssets,lockedAssets}=IN_getAssets(b1,b2);
   const hasAppr=apprAssets.length>0;
+  const hasLocked=lockedAssets.length>0;
   const totalDedsAnn=IN_DEDS[1].reduce((s,d)=>s+b1*(d.pct/100),0)+IN_DEDS[2].reduce((s,d)=>s+b2*(d.pct/100),0);
   // pre-compute year snapshots for smooth interpolation
   const snapshots={};
@@ -2130,6 +2158,10 @@ function IN_rFC_short(){
       const propPrev=snapshots[yr-1]&&snapshots[yr-1].simAppr?snapshots[yr-1].simAppr.reduce((s,a)=>s+a.curP,0):apprAssets.reduce((s,a)=>s+a.origP,0);
       const propCurr=snapshots[yr]&&snapshots[yr].simAppr?snapshots[yr].simAppr.reduce((s,a)=>s+a.curP,0):propPrev;
       const propMo=hasAppr?propPrev+(propCurr-propPrev)*(mo/12):0;
+      // Locked corpus: interpolate between year snapshots
+      const lockPrev=snapshots[yr-1]&&snapshots[yr-1].simLocked?snapshots[yr-1].simLocked.reduce((s,a)=>s+a.curV,0):lockedAssets.reduce((s,a)=>s+a.origP,0);
+      const lockCurr=snapshots[yr]&&snapshots[yr].simLocked?snapshots[yr].simLocked.reduce((s,a)=>s+a.curV,0):lockPrev;
+      const lockMo=hasLocked?lockPrev+(lockCurr-lockPrev)*(mo/12):0;
       const dispMo=IN_isAdj?(cFD_mo+cSIP_mo+totP+retMo+heqMo)/Math.pow(1+infRate,yr-1+mo/12):(cFD_mo+cSIP_mo+totP+retMo+heqMo);
       const cal=new Date().getFullYear()+(yr-1);
       const moName=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo-1];
@@ -2141,6 +2173,7 @@ function IN_rFC_short(){
         ${totP>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--teal-dk)">${IN_fmtCr(totP)}</td>`:''}
         ${retCurr>0?`<td class="py-1.5 mono text-xs text-right" style="color:var(--teal)">${IN_fmtCr(retMo)}</td>`:''}
         ${hasAppr?`<td class="py-1.5 mono text-xs text-right" style="color:var(--amber)">${IN_fmtCr(propMo)}</td>`:''}
+        ${hasLocked?`<td class="py-1.5 mono text-xs text-right" style="color:var(--purple)">${IN_fmtCr(lockMo)}</td>`:''}
         ${IN_401on?(()=>{ const k=IN_401atYr(yr-1+mo/12); const col=k.locked?'var(--blue)':'var(--green)'; return `<td class="py-1.5 mono text-xs text-right" style="color:${col}">${k.locked?'🔒 ':''}${IN_fmtCr(k.afterTaxInr)}</td>`; })():''}
         <td class="py-1.5 mono text-xs text-right font-bold" style="color:var(--teal-dk)">${IN_fmtCr(dispMo)}${IN_isAdj?`<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);margin-left:4px;font-family:'DM Sans',sans-serif;vertical-align:middle">adj</span>`:''}</td>
       </tr>`;
@@ -2177,6 +2210,7 @@ function IN_rFC_short(){
             ${totP>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Investments</th>`:''}
             ${retCurr>0?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal)">EPF / NPS</th>`:''}
             ${hasAppr?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--amber)">Property Value</th>`:''}
+            ${hasLocked?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--purple)">Locked 🔒</th>`:''}
             ${IN_401on?`<th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--blue)">401K 🔒</th>`:''}
             <th class="pb-2 text-xs font-semibold uppercase tracking-wide text-right" style="color:var(--teal-dk)">Net Worth${IN_isAdj?' <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-lt);color:var(--amber);font-weight:700;text-transform:uppercase;vertical-align:middle">Infl. Adj</span>':''}</th>
           </tr></thead>
@@ -2405,7 +2439,7 @@ function IN_r401(){
 function IN_sv(){
   const g=id=>document.getElementById(id)?.value||'';
   const data={b1:g('in_b1'),b2:g('in_b2'),g1:g('in_g1'),g2:g('in_g2'),fdRng:g('in_fdRng'),sipRng:g('in_sipRng'),sipRet:g('in_sipRet'),fdRt:g('in_fdRt'),infR:g('in_infR'),isAdj:IN_isAdj,expInflOn:IN_expInflOn,fcMode:IN_fcMode,gC:g('in_gC'),gY:g('in_gY'),ddC:g('in_ddC'),ddW:g('in_ddW'),ddRt:g('in_ddRt'),ddI:g('in_ddI'),EXPS:IN_EXPS,EMIS:IN_EMIS,LE:IN_LE,SC:IN_SC,DEDS:IN_DEDS,k401on:IN_401on,k401bal:g('in_401bal'),k401gr:g('in_401gr'),k401age:g('in_401age'),k401tax:g('in_401tax'),k401fx:g('in_401fx'),k401dep:g('in_401dep'),assets:[]};
-  document.querySelectorAll('.in_ar').forEach(r=>data.assets.push({n:r.querySelector('.in_nm').value,p:r.querySelector('.in_pv').value,y:r.querySelector('.in_yv').value,appr:r.querySelector('.in_av')?.value||'0',o:r.querySelector('.in_ov').value,tf:r.querySelector('.in_tv').checked}));
+  document.querySelectorAll('.in_ar').forEach(r=>data.assets.push({n:r.querySelector('.in_nm').value,p:r.querySelector('.in_pv').value,y:r.querySelector('.in_yv').value,appr:r.querySelector('.in_av')?.value||'0',o:r.querySelector('.in_ov').value,tf:r.querySelector('.in_tv').checked,locked:r.querySelector('.in_lv')?.checked||false}));
   try{localStorage.setItem('cyf_india',JSON.stringify(data));}catch(e){}
 }
 function IN_exportData(){const s=localStorage.getItem('cyf_india');if(!s){alert('No data yet.');return;} const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([s],{type:'application/json'})); a.download='cyf-india-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();}
@@ -2455,7 +2489,7 @@ function IN_loadData(){
   }
   if(d.DEDS){IN_DEDS=d.DEDS;IN_rDed(1);IN_rDed(2);}
   document.getElementById('in_aBody').innerHTML='';
-  (d.assets||[]).forEach(a=>IN_addARow(a.n,parseFloat((a.p||'0').replace(/,/g,'')),parseFloat(a.y),a.o,a.tf,parseFloat(a.appr||0)));
+  (d.assets||[]).forEach(a=>IN_addARow(a.n,parseFloat((a.p||'0').replace(/,/g,'')),parseFloat(a.y),a.o,a.tf,parseFloat(a.appr||0),a.locked||false));
   IN_vs('fd'); IN_rc();
 }
 function IN_resetAll(){if(!confirm('Clear all India data?'))return;try{localStorage.removeItem('cyf_india');}catch(e){} location.reload();}
